@@ -35,7 +35,7 @@ body {
 }
 @media (min-width: 768px) {
   .sidebar {
-    /* position: fixed;
+     /*position: fixed;
     top: 15px; */
     bottom: 0;
     height: 650px;

@@ -147,6 +147,14 @@
 				
 					margin: 0px 20px;
 			}
+
+			table.dataTable thead th, table.dataTable thead td {
+				padding: 10px 10px;
+				border-bottom: 1px solid #ddd;
+			}
+			table.dataTable.no-footer {
+				border-bottom: none;
+			}
 	</style>
 		 
   </head>
@@ -169,7 +177,7 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
 			                
-            <li class=""><a href="#">데시보드</a></li>
+            <li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
             <li><a class="active" href="<?php echo base_url(); ?>order/index">신규주문(0) </a></li>
             <li><a href="#">출력관리</a></li>
             <li><a href="#">제품관리</a></li>
@@ -336,13 +344,30 @@
 											<div class="panel-heading" role="tab" id="headingOne">
 												<h4 class="panel-title">
 													<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-														<span class="fa fa-caret-right" style="color: #286090"></span> 1. 배송 수단설정
+														<span class="fa fa-caret-down" style="color: #286090"></span> 1. 배송 수단설정 <span style="color: #ef5227">(우체국, 소형포장)</span>
 													</a>
 												</h4>
 											</div>
-											<div id="collapseOne" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingOne">
+											<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 												<div class="panel-body">
-													Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+														<h5>라벨출력을 위한 배송 수단을 선택하세요</h5>
+														<form class="form-inline"  style="">
+															<div class="form-group">
+																<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">배송수단  </label>
+																<select class="form-control" id="exampleInputName2" style="width: 150px">
+																<option class="option-1">우체국  </option>
+																</select>
+																 <img src="img/info.png" style="">
+															</div>
+															<div class="form-group">
+																<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">배송유형   </label>
+																<select class="form-control" id="exampleInputName2" style="width: 150px">
+																<option class="option-1">소형포장(CN22)   </option>
+																</select>
+																 <img src="img/info.png" style="">
+															</div>
+														</form>
+														<p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p>
 												</div>
 											</div>
 										</div>
@@ -350,13 +375,60 @@
 											<div class="panel-heading" role="tab" id="headingTwo">
 												<h4 class="panel-title">
 													<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-														<span class="fa fa-caret-right" style="color: #286090"></span> 2. 라벨 출력설정
+														<span class="fa fa-caret-down" style="color: #286090"></span> 2. 라벨 출력설정
 													</a>
 												</h4>
 											</div>
-											<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+											<div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
 												<div class="panel-body">
-													Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+														<h5>라벨에 포함될 내용을 선택하세요</h5>
+															<div class="col-lg-6" style="padding: 0px;border-right: 1px solid #bbb;">
+																<form class="form-inline"  style="">
+																	
+																	<table>
+																		 <tr>
+																			<Td colspan="2"><div class="form-group">
+																				<label for="exampleInputName2" style=" margin: 0px">From </label>
+																				<input type="checkbox" class="form-group tick" checked >
+																				<label for="exampleInputName2" style="  margin: 0px">To </label>
+																				<input type="checkbox" class="form-group tick"  checked >
+																			</div>
+																			</Td>
+																		 </tr>
+																		<tr>
+																			<td><label for="exampleInputName2" style=" margin: 0px">세관 신고서(CN22)  </label></td>
+																			<td>	<input type="checkbox" class="form-group tick" ></td>
+																		</tr>
+																		<tr>
+																			<td><label for="exampleInputName2" style=" margin: 0px">판매자 로고  </label>
+																		<img src="img/info.png" style=""></td>
+																			<td><input type="checkbox" class="form-group tick" ></td>
+																		</tr>
+																		<tr>
+																			<td><label for="exampleInputName2" style=" margin: 0px">판매자 문구  </label>
+																		<img src="img/info.png" style=""></td>
+																			<td><input type="checkbox" class="form-group tick" ></td>
+																		</tr>
+																	</table>
+																		<button type="submit" class="btn btn-primary" style="width: 95%">문구 입력하기</button>
+																</form>
+															</div>
+															<div class="col-lg-6">
+																<table class="spacer">
+																	<tr >
+																		<td style=" background: #21b4f9;padding: 10px 10px 20px 10px;">From</td>
+																		<td rowspan="2" style="padding: 0px 10px 60px 10px;background: #eeeeee;">CN22</td>
+																	</tr>
+																	<tr class="spacer">
+																		<td style=" background: #21b4f9;padding: 10px 10px 20px 10px;">To</td>
+																	</tr>
+																	<tr>
+																		<td style="padding: 10px;background: #eeeeee;">문구</td>
+																		<td style="padding: 10px;background: #eeeeee;">LOGO</td>
+																	</tr>
+																</table>
+																
+															</div>
 												</div>
 											</div>
 										</div>
@@ -364,13 +436,51 @@
 											<div class="panel-heading" role="tab" id="headingThree">
 												<h4 class="panel-title">
 													<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-														<span class="fa fa-caret-right" style="color: #286090"></span> 3. 라벨 템플릿
+														<span class="fa fa-caret-down" style="color: #286090"></span> 3. 라벨 템플릿 <span style="color: #ef5227">(폼텍, 1x1)</span>
 													</a>
 												</h4>
 											</div>
-											<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+											<div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
 												<div class="panel-body">
-													Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+													<h5>라벨 템플릿을 선택하세요</h5>
+													<div class="row" style="margin: 0px;">
+														<div class="col-lg-8" style="padding: 0px;">
+															<form class="form-inline"  style="">
+																<div class="form-group">
+																	<label for="exampleInputName2" style="    margin: 0px 22px 0px 0px;">라벨지  </label>
+																	<select class="form-control" id="exampleInputName2" style="width: 90px">
+																	<option class="option-1">폼텍   </option>
+																	</select>
+																	 <img src="img/info.png" style="">
+																</div>
+																<div class="form-group">
+																	<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">라벨규격   </label>
+																	<select class="form-control" id="exampleInputName2" style="width: 90px">
+																	<option class="option-1">1x2   </option>
+																	</select>
+																	 <img src="img/info.png" style="">
+																</div>
+															</form>
+														</div>
+														<div class="col-lg-4">
+															<table class="table table-bordered">
+																<tr>
+																	<td colspan="3">&nbsp;</td>
+																</tr>
+																
+															</table>
+															<table class="table table-bordered"  style="display: none">
+																<tr>
+																	<td>&nbsp;</td>
+																</tr>
+																<tr>
+																	<td>&nbsp;</td>
+																</tr>
+															</table>
+														</div>
+													</div>
+													<h5>라벨 시작 위치 지정 |  <span style="font-weight: 200;font-size: 12px;"> 1열 2행 </span>		<button type="submit" class="btn btn-primary" style="">문구 입력하기</button></h5>
+													<p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p>
 												</div>
 											</div>
 										</div>
@@ -505,7 +615,7 @@
 		        //Set column definition initialisation properties.
 		        "columnDefs": [
 		        { 
-		            "targets": [ 0,2,3,4,5,6 ], //first column / numbering column
+		            "targets": [ 0,1,2,3,4,5,6 ], //first column / numbering column
 		            "orderable": false, //set not orderable
 		        },
 		        ],

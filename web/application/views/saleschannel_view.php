@@ -95,7 +95,7 @@
 	        <div id="navbar" class="collapse navbar-collapse">
 	          <ul class="nav navbar-nav">
 				                
-	            <li class=""><a href="#">데시보드</a></li>
+	            <li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
 	            <li><a href="<?php echo base_url(); ?>order/index">신규주문(0) </a></li>
 	            <li><a href="#">출력관리</a></li>
 	            <li><a href="#">제품관리</a></li>
