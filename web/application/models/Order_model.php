@@ -46,7 +46,7 @@ class Order_model extends CI_Model
         $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
 		$this->db->where('ord.ol_user_id', 1);
-		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -15 day ) and NOW()";
+		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
 		$this->db->where($where);
 
         $i = 0;
@@ -118,4 +118,6 @@ class Order_model extends CI_Model
         return $this->db->count_all_results();
     }
 
+
+    
 }
