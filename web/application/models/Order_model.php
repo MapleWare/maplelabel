@@ -13,6 +13,57 @@ class Order_model extends CI_Model
         $this->load->database();
     }
 
+    public function get_specific_order($id)
+    {
+    	$this->db->select('ord.sc_ordered_id, 
+	    				   ord.ordered_date, 
+	    				   channel.sc_market,
+	    				   ord.delivery_status,
+	    				   ord.print_status,
+	    				   ord.order_user_name,
+	    				   ord.order_title,
+	    				   ord.paid_item_cnt as cnt,
+	    				   ord.paid_amount as amount, 
+	    				   ord.feedback_point as feedback_score, 
+	    				   shipto.address_owner,
+	    				   shipto.city_name,
+	    				   shipto.country_code,
+	    				   shipto.country_name,
+	    				   shipto.name,
+	    				   shipto.postal_code,
+	    				   shipto.stateorprovince,
+	    				   shipto.street1,
+	    				   shipto.street2,
+	    				   shipto.phone_no as shipto_phone_no,
+	    				   shipfrom.seller_company_name,
+	    				   shipfrom.seller_country,
+	    				   shipfrom.seller_first_name,
+	    				   shipfrom.seller_last_name,
+	    				   shipfrom.seller_street1,
+	    				   shipfrom.seller_street2,
+	    				   shipfrom.seller_postal_code,
+	    				   shipfrom.city as seller_city,
+	    				   shipfrom.stateorprovice as seller_stateorprovice,
+	    				   shipfrom.phone_no as seller_phone_no,
+	    				   shipitem.item_weight,
+	    				   shipitem.item_weight_unit,
+	    				   shipitem.item_depth,
+	    				   shipitem.item_depth_unit,
+	    				   shipitem.item_price,
+	    				   shipitem.item_price_currency');
+        $this->db->from($this->table);
+        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
+        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
+        $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
+		$this->db->where('ord.sc_ordered_id', $id);
+		//$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
+		//$this->db->where($where);
+
+		$query = $this->db->get();
+		return $query->row_array();
+    }
+
     private function _get_query()
     {
     	$this->db->select('ord.sc_ordered_id, 
@@ -119,5 +170,5 @@ class Order_model extends CI_Model
     }
 
 
-    
+
 }

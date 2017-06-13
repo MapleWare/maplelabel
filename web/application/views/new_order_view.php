@@ -441,7 +441,7 @@
 																		 </tr>
 																		<tr>
 																			<td><label for="exampleInputName2" style=" margin: 0px">세관 신고서(CN22)  </label></td>
-																			<td>	<input type="checkbox" class="form-group tick cn22tick" ></td>
+																			<td>	<input type="checkbox" class="form-group tick cn22tick" checked></td>
 																		</tr>
 																		<tr>
 																			<td><label for="exampleInputName2" style=" margin: 0px">판매자 로고  </label>
@@ -454,14 +454,14 @@
 																			<td><input type="checkbox" class="form-group tick cn22phrase" ></td>
 																		</tr>
 																	</table>
-																		<button type="submit" class="btn btn-primary" style="width: 95%">문구 입력하기</button>
+																		<button type="submit" class="btn btn-primary" style="width: 95%" id="phrase_pop">문구 입력하기</button>
 																</form>
 															</div>
 															<div class="col-lg-6">
 																<table class="spacer">
 																	<tr >
 																		<td class="cn22frombox" style=" background: #21b4f9;padding: 10px 10px 20px 10px; cursor: pointer;">From</td>
-																		<td class="cn22box" rowspan="2" style="padding: 0px 10px 60px 10px;background: #eeeeee; cursor: pointer;">CN22</td>
+																		<td class="cn22box" rowspan="2" style="padding: 0px 10px 60px 10px;background: #21b4f9; cursor: pointer;">CN22</td>
 																	</tr>
 																	<tr class="spacer">
 																		<td class="cn22tobox" style=" background: #21b4f9;padding: 10px 10px 20px 10px; cursor: pointer;">To</td>
@@ -528,7 +528,7 @@
 															</table>
 														</div>
 													</div>
-													<h5>라벨 시작 위치 지정 |  <span style="font-weight: 200;font-size: 12px;"> 1열 2행 </span>		<button type="submit" class="btn btn-primary" style="">문구 입력하기</button></h5>
+													<h5>라벨 시작 위치 지정 |  <span style="font-weight: 200;font-size: 12px;"> 1열 2행 </span>		<button type="submit" class="btn btn-primary" style="" id="phrase_pop">문구 입력하기</button></h5>
 													<!-- <p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p> -->
 												</div>
 											</div>
@@ -536,6 +536,7 @@
 
 										<div class="panel panel-default">
 												<button type="submit" class="btn btn-primary generatepdf" style="width: 100%">PRINT</button>
+												<input type="hidden" id="orderids">
 										</div>
 									</div>
 							
@@ -606,6 +607,330 @@
 		</div>
 		<!--/.footer-bottom--> 
 	</footer>
+
+	<style>
+	.table-bordered {
+	    border: 0px solid #ddd;
+	}
+	.onebytwo{
+		    padding: 20px 20px 30px 20px;
+	    font-size: 40px;
+	    color: #21b4f9;
+	}
+	.twobytwo{
+		padding: 10px 40px !important;
+		font-size: 70px;
+		color: #21b4f9;
+	}
+	.threebyseven{
+		padding: 0px 32px !important;
+		font-size: 26px;
+		color: #21b4f9;
+	}
+	.table{
+		margin-bottom: 0px;
+	}
+</style>
+<div class="modal fade in" id="myModal" style="display: none">
+<div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="text-center">라벨 시작 위치 지정</h3>
+						<h5 class="text-left">라벨 출력 시작 위치를 선택 하세요</h5>
+						<h5 class="text-left">라벨지의 여분이 남아 있는 경우 재활용 가능합니다</h5>
+						
+						<form class="form-inline">
+							<div class="form-group">
+								<label for="exampleInputName2">라벨규격</label>
+								<select class="form-control" id="exampleInputName2" style="/*width: 50px;*/">
+									<option class="option-11">1x1 </option>
+									<option class="option-11">1x2 </option>
+									<option class="option-11">2x2 </option>
+									<option class="option-11">3x7 </option>
+									<option class="option-11">3x8 </option>
+								</select>
+							</div>
+							<div class="form-group" style="width: 25%">
+								<label for="exampleInputEmail2">열 :</label>
+								<input type="text" class="form-control" id="" placeholder="1" style="width:38%">
+							</div>
+							
+							<div class="form-group" style="width: 25%">
+								<label for="exampleInputEmail2">행 :</label>
+								<input type="text" class="form-control" id="" placeholder="1" style="width:38%">
+							</div>
+						</form>
+        </div>
+        <div class="modal-body">
+					<div style="padding: 10px;border: 1px solid #ccc;margin-bottom: 10px">
+						<!-- 1x2 -->
+								<table class="table table-bordered" style="display: none">
+																<tr>
+																	<td class="onebytwo">
+																		<input type="radio" name="1x2" checked class="form-group tick" style="
+    margin: 0px 160px 0px 10px;
+"> 1</td>
+																</tr>
+																<tr>
+																	<td class="onebytwo">
+																		<input type="radio" name="1x2"  class="form-group tick" style="
+    margin: 0px 160px 0px 10px;
+"> 2</td>
+																</tr>
+															</table>
+							<!-- 2x2 -->		
+									<table class="table table-bordered" style="display: none">
+																<tr>
+																	<td class="twobytwo" style="">
+																		<input type="radio" name="1x2"  class="form-group tick" style="
+    margin: 0px 10px 0px 10px;
+"> 1</td>
+																	<td class="twobytwo" style="">
+																		<input type="radio" name="1x2"  class="form-group tick" style="
+    margin: 0px 10px 0px 10px;
+"> 3</td>
+																</tr>
+																<tr>
+																	<td class="twobytwo" style="">
+																		<input type="radio" name="1x2"  class="form-group tick" style="
+    margin: 0px 10px 0px 10px;
+"> 2</td>
+																	<td class="twobytwo" style="">
+																		<input type="radio" name="1x2"  class="form-group tick" style="
+    margin: 0px 10px 0px 10px;
+"> 4</td>
+																</tr>
+															</table>
+								<!-- 3x7 -->		
+									<table class="table table-bordered" style="display: none">
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 1</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 8</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 15</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 2</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 9</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 16</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 3</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 10</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 17</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 4</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 11</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 18</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 5</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 12</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 19</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 6</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 13</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 20</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 7</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 14</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 21</td>
+											</tr>
+									</table>
+									<!-- 3x8 -->		
+									<table class="table table-bordered" style="display: block">
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 1</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 9</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 17</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 2</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 10</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 18</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 3</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 11</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 19</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 4</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 12</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 20</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 5</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 13</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 21</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 6</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 14</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 22</td>
+											</tr>
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 7</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 15</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 21</td>
+											</tr>
+											
+											<tr>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 8</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 16</td>
+												<td class="threebyseven" style="">
+													<input type="radio" name="1x2"  class="form-group tick" style="
+			margin: 0px 10px 0px 10px;
+	"> 24</td>
+											</tr>
+									</table>
+							
+					</div>
+						<div class="form-group " style="width: 50%; margin: 0px auto;">
+								 <button class="btn btn-lg btn-default"   style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
+								 <button class="btn btn-lg btn-primary"   style="padding: 10px 31px;">확인</button>
+									<div class="clearfix"></div>
+						</div>
+					</div>
+     
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 
 	<!-- <div class="container">
@@ -776,11 +1101,31 @@
 			}
 		}
 
+		$('body').on('click','#phrase_pop', function() {
+			$('#myModal').modal('show');
+			return false;
+		});
 
 		var table;
 
-		$('.generatepdf').on('click', function(){
-			window.open("<?php echo base_url('/order/generate'); ?>", "_blank");
+		$('.generatepdf').on('click', function() {
+			var orderids = $('#orderids').val();
+			var dimensions = $('#print_label_dimensions').val();
+
+			if (orderids == "") 
+			{
+				alert ('Please select order(s) to continue');
+				return null;
+			}
+			$.ajax({
+				url  : '<?php echo base_url('/order/process'); ?>',
+				data : 'ids=' + orderids + ',' + dimensions,
+				type : 'POST',
+				dataType: 'JSON',
+				success : function(data) {
+					window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
+				}
+			});
 		});
 
 		$('#order-select-all').on('click', function(){
@@ -807,16 +1152,20 @@
 		function getallCheckOrders()
 		{
 			var orderItems = '';
+			var orderItemsValue = '';
 			table.$('input[type="checkbox"]').each(function() {
 				if(this.checked){
 					// Create a hidden element
 					//console.log (this.value);
 					//console.log (this.id);
 					orderItems += this.id + ',';
+					orderItemsValue += this.value + ',';
 				}
 			});	
-			console.log (orderItems.length-1);
+			//console.log (orderItems.length-1);
 			$('.info_order_list').html('주문 '+orderItems.substr(0, orderItems.length-1)+'개가 선택되었습니다');
+
+			$('#orderids').val(orderItemsValue.substr(0, orderItemsValue.length-1));
 		}
 
 		$(document).ready(function() {
