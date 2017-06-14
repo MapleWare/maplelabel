@@ -9,7 +9,7 @@ class PersistanceManager {
     private $dbHost = 'onlabelsdev.chzjzofxptj9.us-west-2.rds.amazonaws.com';
     private $dbUserName = 'onlabelsdev';
     private $dbPassword = 'successonlabels';
-    private $dbName = 'onlablespilotdev';
+    private $dbName = 'onlabelspilotdev';
     
 
     public function __construct() {
