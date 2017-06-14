@@ -676,6 +676,42 @@ endif;
         $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
     }
 
+    function pdf3x7($pdf, $order, $startpoint)
+    {
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+
+        $count=0;
+        for ($x=3; $x<150; $x+=67.3)
+        {  
+            for ($y=10; $y<250; $y+=39.4)
+            {   
+                $count++;
+                $this->createBoxForm($x, $y, 66, 38.1, $pdf, $order, $count, $startpoint);
+            }
+        }
+    }
+
+    function pdf3x8($pdf, $order, $startpoint)
+    {
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+
+        $count=0;
+        for ($x=3; $x<150; $x+=67.3)
+        {
+            for ($y=6; $y<280; $y+=35.3)
+            {
+                $count++;
+                $this->createBoxForm($x, $y, 66, 34, $pdf, $order, $count, $startpoint);
+            }
+        }   
+    }
+
     function createAirMail3Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
     {
         $pdf->SetDrawColor(0);
@@ -958,6 +994,28 @@ endif;
         $pdf->SetTextColor(0);
         $pdf->SetFont('Arial','B',7);
         $pdf->MultiCell(61,2,'Date and senders signature(8)',0,'L');
+    }
+
+    function createBoxForm($xToAdd = 0, $yToAdd = 0, $sizex, $sizey, $pdf, $order, $count=0, $startpoint=0)
+    {   
+        //echo $count . "<br>";
+        if ($startpoint==0)
+        {
+            $pdf->SetDrawColor(0);
+            $pdf->SetLineWidth(0.1);
+            $pdf->SetFillColor(255);
+            $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'DF');
+        }
+        else
+        {
+            if (($startpoint-1)<$count)
+            {
+                $pdf->SetDrawColor(0);
+                $pdf->SetLineWidth(0.1);
+                $pdf->SetFillColor(255);
+                $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'DF');
+            }    
+        }
     }
 
     function RoundedRect($x, $y, $w, $h, $r, $style = '')

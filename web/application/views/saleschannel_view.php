@@ -96,7 +96,7 @@
 	          <ul class="nav navbar-nav">
 				                
 	            <li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-	            <li><a href="<?php echo base_url(); ?>order/index">신규주문(0) </a></li>
+	            <li><a href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
 	            <li><a href="#">출력관리</a></li>
 	            <li><a href="#">제품관리</a></li>
 				
@@ -152,7 +152,7 @@
                 </div>
                 <div class="col-md-3"></div>
                 <div class="col-md-6 col-xs-12">
-                  <form name="form" id="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+                  <form name="form" id="form" class="form-horizontal" enctype="multipart/form-data" method="POST" action="<?php echo base_url('dashboard/index');?>">
                      
                      <div class="form-group">
                      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>

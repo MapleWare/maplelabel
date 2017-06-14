@@ -23,6 +23,7 @@ class Order extends CI_Controller
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 			$data['print_labels'] = $this->print_label->get_print_labels();
+			$data['total_orders'] = $this->orders->count_all();
 			$this->load->view('new_order_view', $data);	
 		}
 		else redirect(base_url());
@@ -38,13 +39,15 @@ class Order extends CI_Controller
 	{	
 		$this->load->library('fpdflibrary');
 		$decoded_ids = decode($ids);
-
 		
 		$order_ids = explode(",", $decoded_ids);
+		$startpoint = $order_ids[(count($order_ids)-1)];
+		array_pop($order_ids);
 		$dimension = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
+
 		$orientation = 'L';
-		if ($dimension==2) $orientation = 'P';
+		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
 
 		//print_r($decoded_ids);
 		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
@@ -55,6 +58,8 @@ class Order extends CI_Controller
 				case 1: $this->fpdflibrary->pdf1x1($pdf, $order); break;
 				case 2: $this->fpdflibrary->pdf1x2($pdf, $order); break;
 				case 3: $this->fpdflibrary->pdf2x2($pdf, $order); break;
+				case 4: $this->fpdflibrary->pdf3x7($pdf, $order, $startpoint); break;
+				case 5: $this->fpdflibrary->pdf3x8($pdf, $order, $startpoint); break;
 				default: break;
 			}
 		}
