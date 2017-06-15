@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Login - onLabels</title>
+    <title>Login - OnLabels</title>
 
     <!-- Bootstrap core CSS -->
     <link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">

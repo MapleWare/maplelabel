@@ -9,7 +9,7 @@
 	<meta name="author" content="">
 	<link rel="icon" href="../../favicon.ico">
 
-	<title>New Order - onLabels</title>
+	<title>Orders - OnLabels</title>
 
 	<!-- Bootstrap core CSS -->
 	<link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
@@ -225,11 +225,11 @@
   				<ul class="nav navbar-nav">
 
   					<li><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-  					<li><a class="active" href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
-  					<li><a href="#">출력관리</a></li>
+  					<li><a class="active" href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
+  					<li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
   					<li><a href="#">제품관리</a></li>
 
-  					<li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" style="padding: 12px;width: 50px;"/></li>
+  					<li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
   				</ul>
   				<ul class="nav navbar-nav navbar-right">
   					<li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
@@ -248,7 +248,7 @@
   				<h3></h3>
   				<ul  class="nav nav-pills">
   					<li class="active">
-  						<a  href="#1b" data-toggle="tab">전체(<?php echo $total_orders; ?>)</a>
+  						<a  href="#1b" data-toggle="tab">전체(<span id="total_order_count"><?php echo $total_orders; ?></span>)</a>
   					</li>
   					<li>
   						<a href="#2b" data-toggle="tab">결제완료(배송전)</a>
@@ -272,8 +272,9 @@
   									</div>
   									<div class="form-group">
   										<label for="exampleInputEmail2">판매채널 </label>
-  										<select class="form-control" id="exampleInputName2"  style="width: 120px;">
+  										<select class="form-control" id="salechannel"  style="width: 120px;">
   											<option class="option-22">eBay </option>
+  											<option class="option-22">Amazon </option>
   										</select>
   									</div>
   									<div class="form-group">
@@ -299,7 +300,7 @@
   										</thead>
   										<tbody>
 
-  											<tr>
+  											<!-- <tr>
   												<td><input type="checkbox" class="form-group tick"></td>
   												<td>1-123</td>
   												<td>2017.06.17 오후 3시 30분</td>
@@ -335,7 +336,7 @@
   													<span><img src="<?php echo base_url("assets2/img/icon-4.png"); ?>"></span>
   													<span><img src="<?php echo base_url("assets2/img/icon-5.png"); ?>"></span>
   												</td>
-  											</tr>
+  											</tr> -->
   										</tbody>
   									</table>
   								</div>
@@ -1303,6 +1304,10 @@
 			$('#print_label_dimensions').val(sizeid);
 		});
 
+		$('body').on('click','#refreshorders', function() {
+			$('#table').DataTable().ajax.reload();
+		});
+
 		$('body').on('click','#phrase_pop', function() {
 			$('#myModalPhrase').modal('show');
 			return false;
@@ -1334,6 +1339,12 @@
 				dataType: 'JSON',
 				success : function(data) {
 					window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
+					setTimeout(function(){ 
+						$('#table').DataTable().ajax.reload();
+						var total_order_count = $('#total_order_count').html();
+						
+					}, 2000);
+					
 				}
 			});
 		});
@@ -1347,17 +1358,17 @@
 		// Handle click on checkbox to set state of "Select all" control
 		$('#table tbody').on('change', 'input[type="checkbox"]', function(){
 			// If checkbox is not checked
-			if (!this.checked){
-				var el = $('#order-select-all').get(0);
-				// If "Select all" control is checked and has 'indeterminate' property
-				if(el && el.checked && ('indeterminate' in el)){
-				// Set visual state of "Select all" control
-				// as 'indeterminate'
-				el.indeterminate = true;
+				if (!this.checked){
+					var el = $('#order-select-all').get(0);
+					// If "Select all" control is checked and has 'indeterminate' property
+					if(el && el.checked && ('indeterminate' in el)){
+					// Set visual state of "Select all" control
+					// as 'indeterminate'
+					el.indeterminate = true;
+				}
 			}
-		}
-		getallCheckOrders();
-	});
+			getallCheckOrders();
+		});
 
 		function getallCheckOrders()
 		{
@@ -1393,7 +1404,7 @@
 		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
 		        "processing": true, //Feature control the processing indicator.
 		       	"serverSide": true, //Feature control DataTables' servermside processing mode.
-		        //"order": [], //Initial no order.
+		        "order": [], //Initial no order.
 		        "iDisplayLength" :5,
 		        // Load data for the table's content from an Ajax source
 		        "ajax": {
@@ -1401,10 +1412,11 @@
 		        	"type": "POST",
 		        	"dataType": "json",
 		        	"dataSrc": function (jsonData) {
+
 		        		return jsonData.data;
 		        	}
 		        },
-		        "order": [],
+		        // "order": [],
 		        //Set column definition initialisation properties.
 		        "columnDefs": [
 		        { 
@@ -1412,8 +1424,13 @@
 		            "orderable": false, //set not orderable
 		        },
 		        ],
-		        
 		    });
+
+			// $('#salechannel').on('change', function() {
+			// 	var myValue = 'amazon';
+			// 	regExSearch = '^\\s' + myValue +'\\s*$';
+			// 	table.search('1000 GB', false, false).draw();
+			// });
 
 		    $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
 		});

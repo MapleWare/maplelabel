@@ -15,7 +15,8 @@ class Order_model extends CI_Model
 
     public function get_specific_order($id)
     {
-    	$this->db->select('ord.sc_ordered_id, 
+    	$this->db->select('ord.id,
+    					   ord.sc_ordered_id, 
 	    				   ord.ordered_date, 
 	    				   channel.sc_market,
 	    				   ord.delivery_status,
@@ -64,7 +65,17 @@ class Order_model extends CI_Model
 		return $query->row_array();
     }
 
-    private function _get_query()
+	public function edit($values,$id)
+	{
+		$this->db->set($values);
+		$this->db->where('sc_ordered_id', $id);
+		$this->db->update('sales_order');
+		if ($this->db->affected_rows())
+			return true;
+		return false;
+	}
+
+    private function _get_query($custom_where = '')
     {
     	$this->db->select('ord.sc_ordered_id, 
 	    				   ord.ordered_date, 
@@ -85,20 +96,46 @@ class Order_model extends CI_Model
 	    				   shipto.stateorprovince,
 	    				   shipto.street1,
 	    				   shipto.street2,
+	    				   shipto.phone_no as shipto_phone_no,
 	    				   shipfrom.seller_company_name,
 	    				   shipfrom.seller_country,
 	    				   shipfrom.seller_first_name,
 	    				   shipfrom.seller_last_name,
 	    				   shipfrom.seller_street1,
 	    				   shipfrom.seller_street2,
-	    				   shipfrom.seller_postal_code');
+	    				   shipfrom.seller_postal_code,
+	    				   shipfrom.city as seller_city,
+	    				   shipfrom.stateorprovice as seller_stateorprovice,
+	    				   shipfrom.phone_no as seller_phone_no,
+	    				   shipitem.item_weight,
+	    				   shipitem.item_weight_unit,
+	    				   shipitem.item_depth,
+	    				   shipitem.item_depth_unit,
+	    				   shipitem.item_price,
+	    				   shipitem.item_price_currency,
+
+	    				   printlist.created as print_date,
+	    				   printlist.pdf_down_cnt,
+	    				   printlist.is_ship_from_print,
+	    				   printlist.is_ship_to,
+	    				   printlist.is_cn22,
+	    				   printlist.pdf_file,
+	    				   printlog.start_point');
         $this->db->from($this->table);
         $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
         $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
+
+
+        $this->db->join('print_list printlist', 'ord.id = printlist.sales_order_id', 'left');
+        $this->db->join('print_log printlog', 'printlist.id = printlog.print_list_id', 'left');
+
 		$this->db->where('ord.ol_user_id', 1);
 		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
 		$this->db->where($where);
+
+		if ($custom_where != '') $this->db->where($custom_where);
 
         $i = 0;
         foreach ($this->column_search as $emp) // loop column 
@@ -139,9 +176,9 @@ class Order_model extends CI_Model
 		}
     }
 
-    function get_orders()
+    function get_orders($where = '')
     {
-        $this->_get_query();
+        $this->_get_query($where);
 		if(isset($_POST['length']) && $_POST['length'] < 1) {
 			$_POST['length']= '10';
 		} else
@@ -151,22 +188,25 @@ class Order_model extends CI_Model
 			$_POST['start']= $_POST['start'];
 		}
         $this->db->limit($_POST['length'], $_POST['start']);
-		//print_r($_POST);die;
+		// print_r($_POST);die;
         $query = $this->db->get();
         return $query->result();
     }
 
-    function count_filtered()
+    function count_filtered($where = '')
     {
-        $this->_get_query();
+        $this->_get_query($where);
         $query = $this->db->get();
         return $query->num_rows();
     }
 
-    public function count_all()
+    public function count_all($where = '')
     {
-        $this->db->from($this->table);
-        return $this->db->count_all_results();
+        //$this->db->from($this->table);
+        $this->_get_query($where);
+        $query = $this->db->get();
+        return $query->num_rows();
+        // return $this->db->count_all_results();
     }
 
 

@@ -1,5 +1,5 @@
 <?php
-class Order extends CI_Controller
+class Output extends CI_Controller
 {
 	public function __construct()
 	{
@@ -10,7 +10,8 @@ class Order extends CI_Controller
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
 		$this->load->model('printlabels_model', 'print_label');
-		$this->load->model('printlist_model', 'print_list');
+
+		
 		$this->load->helper('encrypter');
 	}
 	
@@ -21,9 +22,9 @@ class Order extends CI_Controller
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			$data['print_labels'] = $this->print_label->get_print_labels();
 			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
-			$this->load->view('new_order_view', $data);	
+			$data['print_labels'] = $this->print_label->get_print_labels();
+			$this->load->view('output_view', $data);	
 		}
 		else redirect(base_url());
 	}
@@ -53,24 +54,6 @@ class Order extends CI_Controller
 		for ($i=0; $i<count($order_ids); $i++)
 		{
 			$order = $this->orders->get_specific_order($order_ids[$i]);
-
-			// update order from preprint to postprint sales order table
-			$this->orders->edit(array('print_status'=>'postprint'),$order_ids[$i]);
-			// insert to print list talbe
-			$is_cn22 = 0;
-			if ($dimension<3) $is_cn22 = 1;
-			$print_list_maxid = ($this->print_list->getmaxid()+1);
-			$printlist = array('id'=>$print_list_maxid,
-							   'pdf_file'=>$dimension,
-							   'ol_user_id'=>$this->session->userdata('uid'),
-							   'sales_order_id'=>$order['id'],
-							   'pdf_down_cnt'=>1,
-							   'is_ship_from_print'=>1,
-							   'is_ship_to'=>1,
-							   'is_cn22'=>$is_cn22);
-			$printlog = array('start_point'=>$startpoint);
-			$this->print_list->create($printlist, $printlog);
-			
 			switch ($dimension) {
 				case 1: $this->fpdflibrary->pdf1x1($pdf, $order); break;
 				case 2: $this->fpdflibrary->pdf1x2($pdf, $order); break;
@@ -85,7 +68,7 @@ class Order extends CI_Controller
 
 	public function ajax_list()
     {
-        $list = $this->orders->get_orders("print_status = 'preprint'");
+        $list = $this->orders->get_orders("print_status = 'postprint'");       
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $orders) {
@@ -94,37 +77,40 @@ class Order extends CI_Controller
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = substr($orders->sc_ordered_id, -7);
-	        $row[] = date("Y.m.d h:i A",strtotime($orders->ordered_date));
+	        $row[] = date("Y.m.d h:i A",strtotime($orders->print_date));
 	        
-	        $row[] = $orders->sc_market;
-	        
-	        $row[] = $orders->order_title."<br>수량 : ".$orders->cnt."개 <br>가격 : ".$orders->amount.
-	        '<br><br><a class="collapse_tbl" role="button" data-toggle="collapse" href="#no'.$no.'" aria-expanded="false" aria-controls="#'.$no.'">
-				<span class="fa fa-caret-right"> </span> 배송정보
-				</a>
-				<div class="collapse out" id="no'.$no.'">
-				주문자   :  '.$orders->seller_first_name.' '.$orders->seller_last_name.' <br/>
-				연략처   :  '.$orders->seller_phone_no.' <br/>
-				Email  : - <br/>
-				주소<br/>
-					 '.$orders->seller_street1.' <br/>
-					 '.$orders->seller_street2.'<br/>
-					 '.$orders->seller_country.'<br/>
-				</div>';
-	        
-	        $row[] = $orders->order_user_name."<br>"."피드백 : ".$orders->feedback_score."점 주문수 : ".$orders->cnt."회";
-	        $row[] = '<span><a href=""><img src="'.base_url("assets2/img/icon-1.png").'"></a></span>
-					  <span><a href=""><img src="'.base_url("assets2/img/icon-2.png").'"></a></span>
-					  <span><a href=""><img src="'.base_url("assets2/img/icon-3.png").'"></a></span>';
+	        $row[] = $orders->pdf_down_cnt;
+
+	        $isfrom = $orders->is_ship_from_print==1?'From, ':'';
+	        $isto = $orders->is_ship_to==1?'To, ':'';
+	        $iscn22 = $orders->is_cn22==1?'CN22 ':'';
+	        $isvalues = $isfrom.$isto.$iscn22;
+
+	        switch ($orders->pdf_file) {
+				case 1: $dimension = '1x1'; break;
+				case 2: $dimension = '1x2'; break;
+				case 3: $dimension = '2x2'; break;
+				case 4: $dimension = '3x7'; break;
+				case 5: $dimension = '3x8'; break;
+				default: break;
+			}
+
+	        $row[] = '배송수단 : <strong style="color: #346896"> 우체국, 소형포장 </strong> <br/><br/>
+	        		  라벨 출력내용 : <strong style="color: #346896">'.$isvalues.'</strong><br/><br/>
+                      라벨 템플릿 :  <strong style="color: #346896">폼텍 '.$dimension.'</strong><br/><br/>';
+	        $row[] = '<select class="form-control" id="exampleInputName2" style="width: 100px;">
+                      	<option class="option-11">선택  </option>
+                      </select>';
 
 	        $data[] = $row;
+
 	        //$_POST['draw']='';
         }
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_all("print_status = 'preprint'"),
-            "recordsFiltered" => $this->orders->count_filtered("print_status = 'preprint'"),
+            "recordsTotal" => $this->orders->count_all("print_status = 'postprint'"),
+            "recordsFiltered" => $this->orders->count_filtered("print_status = 'postprint'"),
             "data" => $data,
         );
         //output to json format

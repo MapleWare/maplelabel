@@ -11,7 +11,7 @@ class Home extends CI_Controller
 	
 	function index()
 	{
-		$data['total_orders'] = $this->orders->count_all();
+		$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
 		$this->load->view('home_view', $data);
 	}
 	
