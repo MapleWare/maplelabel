@@ -18,7 +18,8 @@ class Fpdflibrary extends tFPDF {
 
     function pdf1x1($pdf, $order)
     {
-        $pdf->AddPage();    
+        $pdf->AddPage(); 
+        $pdf->SetAutoPageBreak(false);   
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
         $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
         $pdf->SetLineWidth(0.2);
@@ -171,6 +172,10 @@ endif;
 
         $pdf->SetXY(41,157);
         $pdf->Cell(91,4,$order['shipto_phone_no'],0,1,'L');
+
+
+        $pdf->SetXY(16,168);
+        $pdf->Cell(115,22,$order['seller_msg'],0,1,'C');
 
 
         ////////////////////////////////////////////////////////////////

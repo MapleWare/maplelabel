@@ -51,17 +51,24 @@ class Order_model extends CI_Model
 	    				   shipitem.item_depth,
 	    				   shipitem.item_depth_unit,
 	    				   shipitem.item_price,
-	    				   shipitem.item_price_currency');
+	    				   shipitem.item_price_currency,
+	    				   msg_template.seller_msg');
         $this->db->from($this->table);
         $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
         $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
+
+        $this->db->join('print_list printlist', 'ord.id = printlist.sales_order_id', 'left');
+        $this->db->join('seller_msg_template msg_template', 'printlist.seller_msg_template_id = msg_template.id', 'left');
+
 		$this->db->where('ord.sc_ordered_id', $id);
+		$this->db->order_by('ord.id DESC');
 		//$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
 		//$this->db->where($where);
 
 		$query = $this->db->get();
+		// echo $this->db->last_query();
 		return $query->row_array();
     }
 
@@ -75,7 +82,7 @@ class Order_model extends CI_Model
 		return false;
 	}
 
-    private function _get_query($custom_where = '')
+    private function _get_query($custom_where = '', $dates = array())
     {
     	$this->db->select('ord.sc_ordered_id, 
 	    				   ord.ordered_date, 
@@ -133,6 +140,7 @@ class Order_model extends CI_Model
 
 		$this->db->where('ord.ol_user_id', 1);
 		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
+		if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and '".$dates['to_date']."'";
 		$this->db->where($where);
 
 		if ($custom_where != '') $this->db->where($custom_where);
@@ -176,9 +184,9 @@ class Order_model extends CI_Model
 		}
     }
 
-    function get_orders($where = '')
+    function get_orders($where = '', $dates = array())
     {
-        $this->_get_query($where);
+        $this->_get_query($where, $dates);
 		if(isset($_POST['length']) && $_POST['length'] < 1) {
 			$_POST['length']= '10';
 		} else
@@ -190,20 +198,21 @@ class Order_model extends CI_Model
         $this->db->limit($_POST['length'], $_POST['start']);
 		// print_r($_POST);die;
         $query = $this->db->get();
+        //echo $this->db->last_query();
         return $query->result();
     }
 
-    function count_filtered($where = '')
+    function count_filtered($where = '', $dates = array())
     {
-        $this->_get_query($where);
+        $this->_get_query($where, $dates);
         $query = $this->db->get();
         return $query->num_rows();
     }
 
-    public function count_all($where = '')
+    public function count_all($where = '', $dates = array())
     {
         //$this->db->from($this->table);
-        $this->_get_query($where);
+        $this->_get_query($where, $dates);
         $query = $this->db->get();
         return $query->num_rows();
         // return $this->db->count_all_results();
