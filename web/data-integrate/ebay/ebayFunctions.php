@@ -65,4 +65,19 @@ function callapi($post_data, $call_name) {
     return $body;
 }
 
+
+function getTimestampFromEbay($ebaytime) {
+    $date = new DateTime($ebaytime);
+    $date->add(new DateInterval('P0DT0H1M4S'));
+    return $date->getTimestamp();
+
+}
+
+
+function getDatetimeFromEbay($ebaytime) {
+    $date = new DateTime($ebaytime);
+    $date->add(new DateInterval('P0DT0H1M4S'));
+    return  $date->format("Y-m-d H:i:s");;
+}
+
 ?>
