@@ -262,7 +262,7 @@
                         </span>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+                    <button type="submit" class="btn btn-primary" id="search_date">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
                   </form>
                   <div class="table-responsive">
                     <table class="table" id="table">
@@ -488,42 +488,55 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+      $("#from_date").datepicker().datepicker("setDate", new Date(new Date().getTime()-(30*24*60*60*1000)));
+      $("#to_date").datepicker().datepicker("setDate", new Date());
+    });
+    </script>
     <script>
       var table;
+      
       $(document).ready(function() {
         //datatables
         table = $('#table').DataTable({ 
-          // "dom": '<"top"i>rt<"bottom"flp><"clear">',
           "sDom": '<t><"#info"lip>',
-          // dom: 'Bfrtip',
-          // buttons: [
-          //   'excel'
-          // ],
           "lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
-          "processing": true, //Feature control the processing indicator.
-          "serverSide": true, //Feature control DataTables' servermside processing mode.
-          "order": [], //Initial no order.
+          "processing": true, 
+          "serverSide": true, 
+          "order": [],
           "iDisplayLength" :5,
-          // Load data for the table's content from an Ajax source
           "ajax": {
             "url": "<?php echo base_url('/output/ajax_list')?>",
             "type": "POST",
             "dataType": "json",
-            "dataSrc": function (jsonData) {
+            "data": function (jsonData) {
+              jsonData.from_date = $('#from_date').val();
+              jsonData.to_date = $('#to_date').val();
               return jsonData.data;
               }
           },
-          // "order": [],
-          //Set column definition initialisation properties.
-          "columnDefs": [
-            { 
-            "targets": [ 0,1,2,3,4,5 ], //first column / numbering column
-            "orderable": false, //set not orderable
-            },
-          ],
+          "columnDefs": [{ 
+            "targets": [ 0,1,2,3,4,5 ], 
+            "orderable": false,
+            }],
         });
 
+        $('body').on('click','#search_date', function() {
+          table.draw();
+          return false;
+        });
+
+
       });
+
+      function parseDateValue(rawDate) {
+        var dateArray= rawDate.split("/");
+        var parsedDate= dateArray[2] + dateArray[0] + dateArray[1];
+        return parsedDate;
+      }
+
+
 
       $('#order-select-all').on('click', function(){
         var rows = table.rows({ 'search': 'applied' }).nodes();
@@ -548,20 +561,7 @@
         $('.tbl_border').addClass("border-bottom");
       });
     </script>
-    <script type="text/javascript">
-      $(function () {
-        $("#from_date").datepicker().datepicker("setDate", new Date(new Date().getTime()-(30*24*60*60*1000)));
-        $("#to_date").datepicker().datepicker("setDate", new Date());
-
-        $('#datetimepicker5').datepicker({
-          defaultDate: "11/1/2013",
-        });
-
-        $('#datetimepicker6').datepicker({
-          defaultDate: "11/1/2013",
-        });
-     });
-   </script>
+    
    <script>
     var originalLeave = $.fn.popover.Constructor.prototype.leave;
     $.fn.popover.Constructor.prototype.leave = function(obj){

@@ -24,8 +24,8 @@
 	<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
 	<link href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">
 
-
-
+	<!-- <link href="<?php echo base_url("assets2/css/bootstrap-editable.css"); ?>" rel="stylesheet"> -->
+	<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 
 	<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]>
@@ -187,7 +187,9 @@
       		margin-top: 20px;
       	}
 
-      	#table_length {
+      	#table_length, 
+      	#table_delivery_length, 
+      	#table_feedback_length {
       		margin-top: 10px;
       		position: absolute;
       		margin-left: -180px;
@@ -201,6 +203,22 @@
       	#threebyeight td {
       		padding: 0;
       		line-height: 8px;
+      	}
+
+      	#info_msg {
+      		display: none;
+      	}
+
+      	#myModalPhrase table td:nth-child(3) {
+      		width: 105px;
+      	}
+      	#myModalPhrase table td:nth-child(2),
+      	#myModalPhrase table td:nth-child(1) { 
+      		vertical-align: middle;
+      	}
+
+      	table.dataTable {
+      		width:100% !important;
       	}
       </style>
 
@@ -246,7 +264,7 @@
 
   			<div class="col-sm-9 ">
   				<h3></h3>
-  				<ul  class="nav nav-pills">
+  				<ul  class="nav nav-pills nav-orders">
   					<li class="active">
   						<a  href="#1b" data-toggle="tab">전체(<span id="total_order_count"><?php echo $total_orders; ?></span>)</a>
   					</li>
@@ -255,11 +273,11 @@
   					</li>
 
   					<li>
-  						<a href="#2b" data-toggle="tab">피드백 대기</a>
+  						<a href="#3b" data-toggle="tab">피드백 대기</a>
   					</li>
 
   				</ul>
-  				<div class="tab-content clearfix">
+  				<div class="tab-content tab-content-orders clearfix">
   					<div class="tab-pane active" id="1b">
   						<div class="row" >
   							<div class="col-md-12">
@@ -368,8 +386,101 @@
 				</div>
 
 				<div class="tab-pane" id="2b">
-					<h3></h3>
+					<div class="row">
+  							<div class="col-md-12">
+  								<form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
+  									<div class="form-group">
+  										<label for="exampleInputName2">기간 </label>
+  										<select class="form-control" id="exampleInputName2" style="width: 80px;">
+  											<option class="option-11">15일 </option>
+  										</select>
+  									</div>
+  									<div class="form-group">
+  										<label for="exampleInputEmail2">판매채널 </label>
+  										<select class="form-control" id="salechannel"  style="width: 120px;">
+  											<option class="option-22">eBay </option>
+  											<option class="option-22">Amazon </option>
+  										</select>
+  									</div>
+  									<div class="form-group">
+  										<label for="exampleInputEmail2">피드백 대기 </label>
+  										<select class="form-control" id="exampleInputName2"  style="width: 150px;">
+  											<option class="option-33">최근 주문 </option>
+  										</select>
+  									</div>
+  									<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+  								</form>
+  								<div class="table-responsive">
+  									<table class="table" id="table_delivery">
+  										<thead>
+  											<tr>
+  												<th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+  												<th>일련번호</th>
+  												<th>주문일자</th>
+  												<th>판매채널</th>
+  												<th>주문내역</th>
+  												<th>주문자ID</th>
+  												<th>진행현황</th>
+  											</tr>
+  										</thead>
+  										<tbody>
+  										</tbody>
+  									</table>
+  								</div>
+  								<div class="col-md-6"  style="margin: 30px 0px;">
+  								</div>
+						</div>
+					</div>
 				</div>
+
+				<div class="tab-pane" id="3b">
+					<div class="row">
+  							<div class="col-md-12">
+  								<form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
+  									<div class="form-group">
+  										<label for="exampleInputName2">기간 </label>
+  										<select class="form-control" id="exampleInputName2" style="width: 80px;">
+  											<option class="option-11">15일 </option>
+  										</select>
+  									</div>
+  									<div class="form-group">
+  										<label for="exampleInputEmail2">판매채널 </label>
+  										<select class="form-control" id="salechannel"  style="width: 120px;">
+  											<option class="option-22">eBay </option>
+  											<option class="option-22">Amazon </option>
+  										</select>
+  									</div>
+  									<div class="form-group">
+  										<label for="exampleInputEmail2">피드백 대기 </label>
+  										<select class="form-control" id="exampleInputName2"  style="width: 150px;">
+  											<option class="option-33">최근 주문 </option>
+  										</select>
+  									</div>
+  									<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+  								</form>
+  								<div class="table-responsive">
+  									<table class="table" id="table_feedback">
+  										<thead>
+  											<tr>
+  												<th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+  												<th>일련번호</th>
+  												<th>주문일자</th>
+  												<th>판매채널</th>
+  												<th>주문내역</th>
+  												<th>주문자ID</th>
+  												<th>진행현황</th>
+  											</tr>
+  										</thead>
+  										<tbody>
+  										</tbody>
+  									</table>
+  								</div>
+  								<div class="col-md-6"  style="margin: 30px 0px;">
+  								</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 		</div>
 
@@ -723,14 +834,14 @@
 
 										<div class="form-group col-xs-10">
 
-											<input type="text" class="form-control" id="" placeholder="최대 20자로 입력할 수 있습니다 " style="width: 100%">
+											<input type="text" class="form-control" id="seller_msg_search" placeholder="최대 20자로 입력할 수 있습니다 " style="width: 100%">
 										</div>
 										<button type="submit" class="btn btn-default" style="background: #444444;color: #fff;padding-left: 20px; padding-right: 20px">등록</button>
 									</form>
 								</div>
 								<div class="modal-body">
 
-									<table class="table table-striped" id="tblGrid">
+									<table class="table table-striped" id="table_msg">
 										<thead id="tblHead">
 											<tr>
 												<th> &nbsp; </th>
@@ -753,7 +864,7 @@
 									<br>
 									<div class="form-group " style="width: 50%; margin: 0px auto;">
 										<button class="btn btn-lg btn-default" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
-										<button class="btn btn-lg btn-primary">입력하기</button>
+										<button class="btn btn-lg btn-primary" data-dismiss="modal">입력하기</button>
 										<div class="clearfix"></div>
 									</div>
 								</div>
@@ -1068,8 +1179,8 @@
 
 																																																											</div>
 																																																											<div class="form-group " style="width: 50%; margin: 0px auto;">
-																																																												<button class="btn btn-lg btn-default" data-dismiss="modal"  style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
-																																																												<button class="btn btn-lg btn-primary"   style="padding: 10px 31px;">확인</button>
+																																																												<button class="btn btn-lg btn-default" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
+																																																												<button class="btn btn-lg btn-primary" data-dismiss="modal" style="padding: 10px 31px;">확인</button>
 																																																												<div class="clearfix"></div>
 																																																											</div>
 																																																										</div>
@@ -1077,32 +1188,6 @@
 																																																									</div><!-- /.modal-content -->
 																																																								</div><!-- /.modal-dialog -->
 																																																							</div><!-- /.modal -->
-
-
-	<!-- <div class="container">
-        <h1 style="font-size:20pt">Simple Example of ServerSide jQuery Datatable</h1>
-        <table id="table" class="display" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Salary</th>
-                    <th>Age</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-
-            <tfoot>
-                <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Salary</th>
-                    <th>Age</th>
-                </tr>
-            </tfoot>
-        </table>
-    </div> -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -1121,9 +1206,9 @@
     <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
     <!-- <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.print.min.js"></script> -->
 
-    <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
-
-
+    <!-- <script src="<?php echo base_url("assets2/js/bootstrap-editable.js"); ?>"></script> -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    
     <script>
 
     	$('.collapse_tbl').click(function(){
@@ -1153,7 +1238,10 @@
     		else $('.cn22logobox').css({'background-color':'#eee'});
     	});
     	$('body').on('click', '.cn22phrase', function() {
-    		if ($(this).is(":checked")) $('.cn22phrasebox').css({'background-color':'#21b4f9'});
+    		if ($(this).is(":checked")) {
+    			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
+    			$('#phrase_pop').click();
+    		}
     		else $('.cn22phrasebox').css({'background-color':'#eee'});
     	});
 		////////////////////////////////////////////////////////////////////////////////
@@ -1215,6 +1303,7 @@
 			{
 				$(this).css({'background-color':'#21b4f9'});
 				$('.cn22phrase').prop('checked', true);
+				$('#phrase_pop').click();
 			} 
 		});
 
@@ -1254,7 +1343,6 @@
 		function displaySize(id)
 		{
 			var sizes = id.val();
-
 			switch (sizes)
 			{
 				case '1' :
@@ -1305,7 +1393,7 @@
 		});
 
 		$('body').on('click','#refreshorders', function() {
-			$('#table').DataTable().ajax.reload();
+			$('#table, ##table_delivery, #table_feedback').DataTable().ajax.reload();
 		});
 
 		$('body').on('click','#phrase_pop', function() {
@@ -1318,45 +1406,32 @@
 			return false;
 		});
 
-		var table;
-		$('.generatepdf').on('click', function() {
-			var orderids = $('#orderids').val();
-			var dimensions = $('#print_label_dimensions').val();
+		var table, table_msg, table_delivery, table_feedback;
 
-			var startpoint = $('input[name=startpoint'+dimensions+']:checked').val();
-			if (startpoint == undefined) startpoint = 0;
-			//return null;
-
-			if (orderids == "") 
+		var selected_tab = table;
+		$('.nav-orders').on('shown.bs.tab', function (e) {
+			var target = $(e.target).attr("href");
+			switch(target)
 			{
-				alert ('Please select order(s) to continue');
-				return null;
+				case '#2b' : selected_tab = table_delivery; break;
+				case '#3b' : selected_tab = table_feedback; break;
+				default : selected_tab = table; break;
 			}
-			$.ajax({
-				url  : '<?php echo base_url('/order/process'); ?>',
-				data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint,
-				type : 'POST',
-				dataType: 'JSON',
-				success : function(data) {
-					window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
-					setTimeout(function(){ 
-						$('#table').DataTable().ajax.reload();
-						var total_order_count = $('#total_order_count').html();
-						
-					}, 2000);
-					
-				}
-			});
+			$('#order-select-all').prop('checked', false);
+			$('body').find('input:checkbox[class^="table_order_check"]').prop('checked', false);
+			$('.info_order_list').html('주문 0개가 선택되었습니다');
 		});
 
-		$('#order-select-all').on('click', function(){
-			var rows = table.rows({ 'search': 'applied' }).nodes();
-			$('input[type="checkbox"]', rows).prop('checked', this.checked);
+		$('body').on('click','#order-select-all', function(){
+			var rows = selected_tab.rows({ 'search': 'applied' }).nodes();
+			//$('input[type="checkbox"]', rows).prop('checked', this.checked);
+			$('input:checkbox[class^="table_order_check"]', rows).prop('checked', this.checked);
 			getallCheckOrders();
 		});
 
 		// Handle click on checkbox to set state of "Select all" control
-		$('#table tbody').on('change', 'input[type="checkbox"]', function(){
+		//$('#table tbody').on('change', 'input[type="checkbox"]', function(){
+		$('table').on('change', 'input:checkbox[class^="table_order_check"]', function(){
 			// If checkbox is not checked
 				if (!this.checked){
 					var el = $('#order-select-all').get(0);
@@ -1374,22 +1449,78 @@
 		{
 			var orderItems = 0;
 			var orderItemsValue = '';
-			table.$('input[type="checkbox"]').each(function() {
+			if (selected_tab == undefined) selected_tab = table;
+
+			selected_tab.$('input:checkbox[class^="table_order_check"]').each(function() {
 				if(this.checked){
 					// Create a hidden element
 					//console.log (this.value);
 					//console.log (this.id);
 					//orderItems += this.id + ',';
 					orderItemsValue += this.value + ',';
-
 					orderItems++;
 				}
 			});	
 			//console.log (orderItems.length-1);
 			$('.info_order_list').html('주문 '+orderItems+'개가 선택되었습니다');
-
 			$('#orderids').val(orderItemsValue.substr(0, orderItemsValue.length-1));
 		}
+
+		$('body').on('click','#editmsg', function(e) {
+			e.stopPropagation();
+			id = $(this).attr('ref');
+
+			$('#editmsgs'+id).editable({
+			    pk: id,
+			    url: '<?php echo base_url("/order/template/edit"); ?>',
+			    title: 'Edit template'
+   			});
+			$('#editmsgs'+id).editable('toggle');
+			//$("*[id^=editmsgs]").each(function( index ) {
+			//  console.log( index + ": " + $( this ).attr('ref') );
+			//});
+		});
+
+		var msg_template = '';
+		$('body').on('change','#msg_template', function() {
+			msg_template = $(this).val();
+			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
+			$('.cn22phrase').prop("checked", true);
+		});
+
+
+		$('.generatepdf').on('click', function() {
+			var orderids = $('#orderids').val();
+			var dimensions = $('#print_label_dimensions').val();
+
+			var startpoint = $('input[name=startpoint'+dimensions+']:checked').val();
+			if (startpoint == undefined) startpoint = 0;
+
+			if (selected_tab == undefined) selected_tab = table;
+			var table_selected = selected_tab.context[0].nTable.id;
+			//return null;
+
+			if (orderids == "") 
+			{
+				alert ('Please select order(s) to continue');
+				return null;
+			}
+			$.ajax({
+				url  : '<?php echo base_url('/order/process'); ?>',
+				data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + msg_template,
+				type : 'POST',
+				dataType: 'JSON',
+				success : function(data) {
+					window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
+					setTimeout(function(){ 
+						$('#table').DataTable().ajax.reload();
+						var total_order_count = $('#total_order_count').html();
+
+					}, 2000);
+					
+				}
+			});
+		});
 
 		$(document).ready(function() {
 			checkDimensionToSelect();
@@ -1408,7 +1539,7 @@
 		        "iDisplayLength" :5,
 		        // Load data for the table's content from an Ajax source
 		        "ajax": {
-		        	"url": "<?php echo base_url('/order/ajax_list')?>",
+		        	"url": "<?php echo base_url('/order/order_list')?>",
 		        	"type": "POST",
 		        	"dataType": "json",
 		        	"dataSrc": function (jsonData) {
@@ -1418,19 +1549,89 @@
 		        },
 		        // "order": [],
 		        //Set column definition initialisation properties.
-		        "columnDefs": [
-		        { 
+		        "columnDefs": [{ 
 		            "targets": [ 0,1,2,3,4,5,6 ], //first column / numbering column
 		            "orderable": false, //set not orderable
+		        }],
+		    });
+
+		    table_delivery = $('#table_delivery').DataTable({ 
+		    	"sDom": '<t><"#info"lip><"#export"B>',
+		    	buttons: ['excel'],
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		        "processing": true, 
+		       	"serverSide": true, 
+		        "order": [],
+		        "iDisplayLength" :5,
+		        "ajax": {
+		        	"url": "<?php echo base_url('/order/order_list/beforedelivery')?>",
+		        	"type": "POST",
+		        	"dataType": "json",
+		        	"dataSrc": function (jsonData) {
+		        		return jsonData.data;
+		        	}
 		        },
+		        "columnDefs": [{ 
+		            "targets": [ 0,1,2,3,4,5,6 ], 
+		            "orderable": false, 
+		        }],
+		    });
+
+		    table_feedback = $('#table_feedback').DataTable({ 
+		    	"sDom": '<t><"#info"lip><"#export"B>',
+		    	buttons: ['excel'],
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		        "processing": true, 
+		       	"serverSide": true, 
+		        "order": [],
+		        "iDisplayLength" :5,
+		        "ajax": {
+		        	"url": "<?php echo base_url('/order/order_list/waitingforfeedback')?>",
+		        	"type": "POST",
+		        	"dataType": "json",
+		        	"dataSrc": function (jsonData) {
+		        		return jsonData.data;
+		        	}
+		        },
+		        "columnDefs": [{ 
+		            "targets": [ 0,1,2,3,4,5,6 ], 
+		            "orderable": false, 
+		        }],
+		    });
+
+			$('#salechannel').on('change', function() {
+				var myValue = 'amazon';
+				regExSearch = '^\\s' + myValue +'\\s*$';
+				table.search('1000 GB', false, false).draw();
+			});
+
+			table_msg = $('#table_msg').DataTable({ 
+		    	"sDom": '<t><"#info_msg"lip>',
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		        "processing": true, 
+		       	"serverSide": true, 
+		        "order": [], 
+		        "iDisplayLength" :5,
+		        "ajax": {
+		        	"url": "<?php echo base_url('/order/msg_list')?>",
+		        	"type": "POST",
+		        	"dataType": "json",
+		        	"dataSrc": function (jsonData) {
+		        		return jsonData.data;
+		        	}
+		        },
+		        "columnDefs": [
+			        { 
+			            "targets": [ 0,1,2 ], 
+			            "orderable": false,
+			        },
 		        ],
 		    });
 
-			// $('#salechannel').on('change', function() {
-			// 	var myValue = 'amazon';
-			// 	regExSearch = '^\\s' + myValue +'\\s*$';
-			// 	table.search('1000 GB', false, false).draw();
-			// });
+		    $('#seller_msg_search').on('keyup', function() {
+		    	var value = $(this).val();
+				table_msg.search(value, false, false).draw();
+			});
 
 		    $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
 		});
@@ -1457,8 +1658,6 @@
 					})
 			}
 		};
-
-
 		$('body').popover({ selector: '[data-popover]', trigger: 'click hover', placement: 'right', delay: {show: 50, hide: 200}});
 	</script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

@@ -68,7 +68,12 @@ class Output extends CI_Controller
 
 	public function ajax_list()
     {
-        $list = $this->orders->get_orders("print_status = 'postprint'");       
+    	$post = $this->input->post();
+    	$from_date = date("Y-m-d", strtotime($post['from_date']));
+    	$to_date = date("Y-m-d", strtotime($post['to_date']));
+    	$dates = array('from_date'=>$from_date, 
+    				   'to_date'=>$to_date);
+        $list = $this->orders->get_orders("print_status = 'postprint'", $dates);       
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $orders) {
@@ -76,7 +81,7 @@ class Output extends CI_Controller
 	        $row = array();
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
-	        $row[] = substr($orders->sc_ordered_id, -7);
+	        $row[] = $no; //substr($orders->sc_ordered_id, -7);
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->print_date));
 	        
 	        $row[] = $orders->pdf_down_cnt;
@@ -109,8 +114,8 @@ class Output extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_all("print_status = 'postprint'"),
-            "recordsFiltered" => $this->orders->count_filtered("print_status = 'postprint'"),
+            "recordsTotal" => $this->orders->count_all("print_status = 'postprint'", $dates),
+            "recordsFiltered" => $this->orders->count_filtered("print_status = 'postprint'", $dates),
             "data" => $data,
         );
         //output to json format

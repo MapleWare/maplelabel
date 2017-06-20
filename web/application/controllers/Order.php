@@ -11,6 +11,7 @@ class Order extends CI_Controller
 		$this->load->model('order_model', 'orders');
 		$this->load->model('printlabels_model', 'print_label');
 		$this->load->model('printlist_model', 'print_list');
+		$this->load->model('seller_msg_model', 'seller_msg');
 		$this->load->helper('encrypter');
 	}
 	
@@ -40,20 +41,30 @@ class Order extends CI_Controller
 		$decoded_ids = decode($ids);
 		
 		$order_ids = explode(",", $decoded_ids);
+		$msg_template = $order_ids[(count($order_ids)-1)];
+		array_pop($order_ids);
+		$table_selected = $order_ids[(count($order_ids)-1)];
+		array_pop($order_ids);
 		$startpoint = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
 		$dimension = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
 
+		// print_r($order_ids);
+		// echo $msg_template . '<br>';
+		// echo $table_selected . '<br>';
+		// echo $startpoint . '<br>';
+		// echo $dimension . '<br>';
+
 		$orientation = 'L';
 		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
+
 
 		//print_r($decoded_ids);
 		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
 		for ($i=0; $i<count($order_ids); $i++)
 		{
 			$order = $this->orders->get_specific_order($order_ids[$i]);
-
 			// update order from preprint to postprint sales order table
 			$this->orders->edit(array('print_status'=>'postprint'),$order_ids[$i]);
 			// insert to print list talbe
@@ -68,9 +79,23 @@ class Order extends CI_Controller
 							   'is_ship_from_print'=>1,
 							   'is_ship_to'=>1,
 							   'is_cn22'=>$is_cn22);
+			$printlist['seller_msg_template_id'] = $msg_template;
 			$printlog = array('start_point'=>$startpoint);
-			$this->print_list->create($printlist, $printlog);
-			
+
+			// if ($table_selected === 'table') 
+			// {
+				$check_print_list = $this->print_list->get_order($order['id']);
+				if ($check_print_list == 0)
+					$this->print_list->create($printlist, $printlog);
+				else
+				{
+					$new_printlist = array('pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1));
+					$new_printlist['seller_msg_template_id'] = $msg_template;
+					$this->print_list->edit($new_printlist, $check_print_list['id']);
+				}
+			//}
+
+			$order = $this->orders->get_specific_order($order_ids[$i]);
 			switch ($dimension) {
 				case 1: $this->fpdflibrary->pdf1x1($pdf, $order); break;
 				case 2: $this->fpdflibrary->pdf1x2($pdf, $order); break;
@@ -83,16 +108,27 @@ class Order extends CI_Controller
 		$pdf->Output('form1.pdf','I');
 	}
 
-	public function ajax_list()
+	public function order_list($where = 'preprint')
     {
-        $list = $this->orders->get_orders("print_status = 'preprint'");
+    	switch ($where) {
+    		case 'preprint':
+    		case 'postprint':
+    			$query = "print_status = '{$where}'";
+    			break;
+    		case 'beforedelivery':
+    		case 'waitingforfeedback':
+    			$query = "delivery_status = '{$where}'";
+    			
+    			break;
+    	}
+        $list = $this->orders->get_orders($query);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $orders) {
 	        $no++;
 	        $row = array();
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
-	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
+	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="table_order_check form-group tick">';
 	        $row[] = substr($orders->sc_ordered_id, -7);
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->ordered_date));
 	        
@@ -123,13 +159,48 @@ class Order extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_all("print_status = 'preprint'"),
-            "recordsFiltered" => $this->orders->count_filtered("print_status = 'preprint'"),
+            "recordsTotal" => $this->orders->count_all($query),
+            "recordsFiltered" => $this->orders->count_filtered($query),
             "data" => $data,
         );
         //output to json format
        echo json_encode($output);
     }
 
-    
+    public function msg_list()
+    {
+        $list = $this->seller_msg->get_msg();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $msg) {
+	        $no++;
+	        $row = array();
+	        $row[] = '<input type="radio" name="msg_template" id="msg_template" value="'.$msg->id.'" class="form-group tick">';
+	        // $row[] = $msg->seller_msg;
+	        $row[] = '<span id="editmsgs'.$msg->id.'" data-type="textarea">'.$msg->seller_msg.'</span>';
+	        $row[] = '<button type="submit" id="editmsg" ref="'.$msg->id.'" class="btn btn-primary">수정</button><button type="submit" class="btn btn-default" style="background: #444444;color: #fff;">삭제</button>';
+	        $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->seller_msg->count_all(),
+            "recordsFiltered" => $this->seller_msg->count_filtered(),
+            "data" => $data,
+        );
+       echo json_encode($output);
+    }
+
+    public function template($action)
+    {
+    	$post = $this->input->post();
+    	switch ($action) {
+    		case 'edit':
+    			$seller_msg = array('seller_msg'=>$post['value']);
+				$this->seller_msg->edit($seller_msg, $post['pk']);
+    			break;
+    		default:
+    			break;
+    	}
+    }
 }
