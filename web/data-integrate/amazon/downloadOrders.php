@@ -15,6 +15,7 @@ listAmazonOrders('-2 days', 'Store');
 function storeAmazonOrder($orders, $marketPlaceId, $sellerId, $service, $siteid) {
     global $pm;
     foreach ($orders as $order) {
+
         $addedTime = date('Y-m-d h:m:i');
         $AmazonOrderId = addslashes($order->AmazonOrderId);
         $PurchaseDate = addslashes($order->PurchaseDate);
@@ -68,6 +69,8 @@ function storeAmazonOrder($orders, $marketPlaceId, $sellerId, $service, $siteid)
             $itemArray = getItem($AmazonOrderId, $sellerId, $service);
             $items = $itemArray->ListOrderItemsResult->OrderItems->OrderItem;
             foreach ($items as $item) {
+//                print_r($item);
+//                die;
                 $ASIN = addslashes($item->ASIN);
                 $SellerSKU = addslashes($item->SellerSKU);
                 $OrderItemId = addslashes($item->OrderItemId);
@@ -75,18 +78,27 @@ function storeAmazonOrder($orders, $marketPlaceId, $sellerId, $service, $siteid)
                 $QuantityOrdered = addslashes($item->QuantityOrdered);
                 $QuantityShipped = addslashes($item->QuantityShipped);
                 $ItemPrice = addslashes($item->ItemPrice->Amount);
+                $ItemPriceCurrencyCode = addslashes($item->ItemPrice->CurrencyCode);
                 $PromotionDiscount = addslashes($item->PromotionDiscount->Amount);
+                $PromotionDiscountCurrencyCode = addslashes($item->PromotionDiscount->CurrencyCode);
                 $ShippingPrice = addslashes($item->ShippingPrice->Amount);
+                $ShippingPriceCurrencyCode = addslashes($item->ShippingPrice->CurrencyCode);
                 $ItemTax = addslashes($item->ItemTax->Amount);
+                $ItemTaxCurrencyCode = addslashes($item->ItemTax->CurrencyCode);
                 $ShippingTax = addslashes($item->ShippingTax->Amount);
+                $ShippingTaxCurrencyCode = addslashes($item->ShippingTax->CurrencyCode);
                 $ShippingDiscount = addslashes($item->ShippingDiscount->Amount);
+                $ShippingDiscountCurrencyCode = addslashes($item->ShippingDiscount->CurrencyCode);
                 $ConditionId = addslashes($item->ConditionId);
                 $ConditionSubtypeId = addslashes($item->ConditionSubtypeId);
                 $item_detals = 'insert into `AmazonItemDetails`(`AmazonOrderDetailsId`,`ASIN`,`SellerSKU`,`OrderItemId`,`Title`,`QuantityOrdered`,`QuantityShipped`,'
-                        . '`ItemPrice`,`ShippingPrice`,`ItemTax`,`ShippingTax`,`ShippingDiscount`,`PromotionDiscount`,`ConditionId`,`ConditionSubtypeId`)'
+                        . '`ItemPrice`,`ItemPriceCurrencyCode`,`ShippingPrice`,`ShippingPriceCurrencyCode`,`ItemTax`,`ItemTaxCurrencyCode`,`ShippingTax`,`ShippingTaxCurrencyCode`,'
+                        . '`ShippingDiscount`,`ShippingDiscountCurrencyCode`,`PromotionDiscount`,`PromotionDiscountCurrencyCode`,`ConditionId`,`ConditionSubtypeId`)'
                         . ' values("' . $AmazonOrderDetailsId . '","' . $ASIN . '","' . $SellerSKU . '","' . $OrderItemId . '","' . $Title . '"'
-                        . ',"' . $QuantityOrdered . '","' . $QuantityShipped . '","' . $ItemPrice . '","' . $PromotionDiscount . '","' . $ShippingPrice . '"'
-                        . ',"' . $ItemTax . '","' . $ShippingTax . '","' . $ShippingDiscount . '","' . $ConditionId . '","' . $ConditionSubtypeId . '")';
+                        . ',"' . $QuantityOrdered . '","' . $QuantityShipped . '","' . $ItemPrice . '","' . $ItemPriceCurrencyCode . '","' . $PromotionDiscount . '",'
+                        . '"' . $PromotionDiscountCurrencyCode . '","' . $ShippingPrice . '","' . $ShippingPriceCurrencyCode . '","' . $ItemTax . '",'
+                        . '"' . $ItemTaxCurrencyCode . '","' . $ShippingTax . '","' . $ShippingTaxCurrencyCode . '","' . $ShippingDiscount . '",'
+                        . '"' . $ShippingDiscountCurrencyCode . '","' . $ConditionId . '","' . $ConditionSubtypeId . '")';
                 $pm->executeQuery($item_detals);
             }
         }
