@@ -84,12 +84,12 @@
 								<p style="font-weight: 700;" class="text-center">로그인 후 이용하세요</p>
 													
 											</div>
-							
+							<?php echo $this->session->flashdata('msg'); ?>
 								<div class="col-md-6" style="border-right: 1px solid #ccc;margin-bottom: 30px;">
 									<?php $attributes = array("class"=> "form-horizontal", "name" => "loginform", "id"=>"form", "style" => "width: 95%");
 			echo form_open("login/index", $attributes);?>
 												 	
-												 	<?php echo $this->session->flashdata('msg'); ?>
+												 	
 
 													<div class="input-group" style="margin-bottom: 10px;">
 															<span class="input-group-addon"><img src="<?php echo base_url("assets2/img/user.png"); ?>" />&nbsp;&nbsp;&nbsp;이메일</span>

@@ -266,7 +266,7 @@
   				<h3></h3>
   				<ul  class="nav nav-pills nav-orders">
   					<li class="active">
-  						<a  href="#1b" data-toggle="tab">전체(<span id="total_order_count"><?php echo $total_orders; ?></span>)</a>
+  						<a  href="#1b" data-toggle="tab">전체(<span id="total_order_count_sub"><?php echo $total_orders; ?></span>)</a>
   					</li>
   					<li>
   						<a href="#2b" data-toggle="tab">결제완료(배송전)</a>
@@ -503,7 +503,7 @@
 							<div class="panel-heading" role="tab" id="headingOne">
 								<h4 class="panel-title">
 									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-										<span class="fa fa-caret-down" style="color: #286090"></span> 1. 배송 수단설정 <span style="color: #ef5227">(우체국, 소형포장)</span>
+										<span class="fa fa-caret-down" style="color: #286090"></span> 1. 배송 수단설정 <span style="color: #ef5227" id="ship_method_text">(우체국, 서장)</span>
 									</a>
 								</h4>
 							</div>
@@ -512,21 +512,23 @@
 									<h5>라벨출력을 위한 배송 수단을 선택하세요</h5>
 									<form class="form-inline"  style="">
 										<div class="form-group">
-											<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">배송수단  </label>
-											<select class="form-control" id="exampleInputName2" style="width: 150px">
-												<option class="option-1">우체국</option>
-												<option class="option-1">Fedex</option>
-												<option class="option-1">DHL</option>
+											<label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송수단  </label>
+											<select class="form-control" id="ship_method" style="width: 150px">
+												<option class="option-1" value="post_office">우체국</option>
+												<option class="option-1" value="fedex">Fedex</option>
+												<option class="option-1" value="dhl">DHL</option>
 
 
 											</select>
 											<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
 										</div>
 										<div class="form-group">
-											<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">배송유형   </label>
+											<label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송유형   </label>
 											<select class="form-control" id="delivery_type" style="width: 150px">
-												<option class="option-1">서장</option>
-												<option class="option-1">소형포장(CN22)</option>
+												<option class="option-1" value="document">서장</option>
+												<option class="option-1" value="cn22">소형포장(CN22)</option>
+												<option class="option-1" value="kpacket">K-Packet</option>
+												<option class="option-1" value="ems">EMS</option>
 																<!-- <option class="option-1">K-Packet</option>
 																<option class="option-1">EMS</option> -->
 															</select>
@@ -563,7 +565,7 @@
 															</tr>
 															<tr>
 																<td><label for="exampleInputName2" style=" margin: 0px">세관 신고서(CN22)  </label></td>
-																<td>	<input type="checkbox" class="form-group tick cn22tick"></td>
+																<td>	<input type="checkbox" class="form-group tick cn22tick" disabled></td>
 															</tr>
 															<tr>
 																<td><label for="exampleInputName2" style=" margin: 0px">판매자 로고  </label>
@@ -742,7 +744,7 @@
 																</table>
 															</div>
 														</div>
-														<h5><span style="cursor:pointer;" id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;"> 1열 2행 </span>		<button type="submit" class="btn btn-primary" style="">문구 입력하기</button></h5>
+														<h5><span style="cursor:pointer;" id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;" id="cols_rows_info"> 0열 0행 </span>		<button type="submit" id="pageSize_pop" class="btn btn-primary" style="">시작위치수정</button></h5>
 														<!-- <p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p> -->
 													</div>
 												</div>
@@ -863,7 +865,7 @@
 									</table>
 									<br>
 									<div class="form-group " style="width: 50%; margin: 0px auto;">
-										<button class="btn btn-lg btn-default" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
+										<button class="btn btn-lg btn-default" id="phrase_cancel" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
 										<button class="btn btn-lg btn-primary" data-dismiss="modal">입력하기</button>
 										<div class="clearfix"></div>
 									</div>
@@ -923,23 +925,24 @@
 										</div>
 										<div class="form-group" style="width: 25%">
 											<label for="exampleInputEmail2">열 :</label>
-											<input type="text" class="form-control" id="" placeholder="1" style="width:38%">
+											<input type="text" readonly class="form-control" id="cols_info" placeholder="0" style="width:38%">
 										</div>
 
 										<div class="form-group" style="width: 25%">
 											<label for="exampleInputEmail2">행 :</label>
-											<input type="text" class="form-control" id="" placeholder="1" style="width:38%">
+											<input type="text" readonly class="form-control" id="rows_info" placeholder="0" style="width:38%">
 										</div>
 									</form>
 								</div>
 								<div class="modal-body">
-									<div style="padding: 10px;border: 1px solid #ccc;margin-bottom: 10px">
+									<div id="startpoint_tables" style="padding: 10px;border: 1px solid #ccc;margin-bottom: 10px">
 										<!-- 1x1 -->
 										<table class="table table-bordered" id="onebyone_pop" style="display: ">
 											<tr>
 												<td class="onebyone">
-													<input type="radio" name="startpoint1" value="1" checked class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
+													<input type="radio" name="startpoint1" value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
 												</tr>
+										</table>
 										<!-- 1x2 -->
 										<table class="table table-bordered" id="onebytwo_pop" style="display: none">
 											<tr>
@@ -995,7 +998,7 @@
 																								margin: 0px 10px 0px 10px;
 																								"> 3</td>
 																								<td class="threebyseven" style="">
-																									<input type="radio" name="1xstartpoint4" value="10"  class="form-group tick" style="
+																									<input type="radio" name="startpoint4" value="10"  class="form-group tick" style="
 																									margin: 0px 10px 0px 10px;
 																									"> 10</td>
 																									<td class="threebyseven" style="">
@@ -1210,190 +1213,78 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     
     <script>
+    	var table, table_msg, table_delivery, table_feedback;
+		var cols_rows_info = $('#cols_rows_info');
+		var cols_info = $('#cols_info');
+		var rows_info = $('#rows_info');
 
     	$('.collapse_tbl').click(function(){
     		$('.tbl_border').addClass("border-bottom");
     	});
-
-    	$('body').on('click', '.cn22from', function() {
-    		if ($(this).is(":checked")) $('.cn22frombox').css({'background-color':'#21b4f9'});
-    		else $('.cn22frombox').css({'background-color':'#eee'});
-
-    		checkDimensionToSelect();
-    	});
-    	$('body').on('click', '.cn22to', function() {
-    		if ($(this).is(":checked")) $('.cn22tobox').css({'background-color':'#21b4f9'});
-    		else $('.cn22tobox').css({'background-color':'#eee'});
-
-    		checkDimensionToSelect();
-    	});
-    	$('body').on('click', '.cn22tick', function() {
-    		if ($(this).is(":checked")) $('.cn22box').css({'background-color':'#21b4f9'});
-    		else $('.cn22box').css({'background-color':'#eee'});
-
-    		checkDimensionToSelect();
-    	});
-    	$('body').on('click', '.cn22logo', function() {
-    		if ($(this).is(":checked")) $('.cn22logobox').css({'background-color':'#21b4f9'});
-    		else $('.cn22logobox').css({'background-color':'#eee'});
-    	});
-    	$('body').on('click', '.cn22phrase', function() {
-    		if ($(this).is(":checked")) {
-    			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
-    			$('#phrase_pop').click();
-    		}
-    		else $('.cn22phrasebox').css({'background-color':'#eee'});
-    	});
-		////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////
-		$('body').on('click', '.cn22frombox', function() {
-			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
-				$(this).css({'background-color':'#eee'});
-				$('.cn22from').prop("checked", false);
-			} 	
-			else
-			{
-				$(this).css({'background-color':'#21b4f9'});
-				$('.cn22from').prop('checked', true);
-			} 
-			checkDimensionToSelect();
-		});
-		$('body').on('click', '.cn22tobox', function() {
-			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
-				$(this).css({'background-color':'#eee'});
-				$('.cn22to').prop("checked", false);
-			} 	
-			else
-			{
-				$(this).css({'background-color':'#21b4f9'});
-				$('.cn22to').prop('checked', true);
-			} 
-			checkDimensionToSelect();
-		});
-		$('body').on('click', '.cn22box', function() {
-			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
-				$(this).css({'background-color':'#eee'});
-				$('.cn22tick').prop("checked", false);
-			} 	
-			else
-			{
-				$(this).css({'background-color':'#21b4f9'});
-				$('.cn22tick').prop('checked', true);
-			} 
-			checkDimensionToSelect();
-		});
-		$('body').on('click', '.cn22logobox', function() {
-			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
-				$(this).css({'background-color':'#eee'});
-				$('.cn22logo').prop("checked", false);
-			} 	
-			else
-			{
-				$(this).css({'background-color':'#21b4f9'});
-				$('.cn22logo').prop('checked', true);
-			} 
-		});
-		$('body').on('click', '.cn22phrasebox', function() {
-			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
-				$(this).css({'background-color':'#eee'});
-				$('.cn22phrase').prop("checked", false);
-			} 	
-			else
-			{
-				$(this).css({'background-color':'#21b4f9'});
-				$('.cn22phrase').prop('checked', true);
-				$('#phrase_pop').click();
-			} 
-		});
-
+		
 		$('#delivery_type').on('change', function() {
-			if ($(this).val() == "서장") $('.info_1_section').show();
-			else $('.info_1_section').hide();
+			var deliverytype = $(this).val();
+			var shipmethodtext = $('#ship_method_text');
+			var shipmethod_selected = $("#ship_method option:selected").text();
+			var deliverytype_selected = $("#delivery_type option:selected").text();
+			shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
+
+			$('.cn22tick').attr("disabled", true).attr("checked", false);
+			$('.cn22box').css({'background-color':'#eee'});
+			switch(deliverytype)
+			{
+				case 'document':
+					$('.info_1_section').show();
+					break;
+				case 'cn22':
+					$('.cn22tick').attr("disabled", false);
+					break;
+				default:
+					$('.info_1_section').hide();
+					if ($('.cn22tick').is(":checked")) {
+						$('.cn22box').click();
+					}
+				break;
+			}
 		});
 
-		function checkDimensionToSelect()
-		{
-			var cn22from_check = $('.cn22from').is(":checked");
-			var cn22to_check = $('.cn22to').is(":checked");
-			var cn22tick_check = $('.cn22tick').is(":checked");
-			
-			if (cn22from_check && cn22to_check && !cn22tick_check)
-			{	
-				$('#print_label_dimensions option:nth-child(4), #print_label_dimensions_popup option:nth-child(4)').attr('selected', 'selected');
-				$('#print_label_dimensions option:nth-child(1),print_label_dimensions_popup option:nth-child(1)').attr('selected', false);
-
-				for (i=0;i<=3;i++) $('#print_label_dimensions option:nth-child('+i+'),#print_label_dimensions_popup option:nth-child('+i+')').prop('disabled', true);
-				for (i=4;i<=6;i++) $('#print_label_dimensions option:nth-child('+i+'), #print_label_dimensions_popup option:nth-child('+i+')').prop('disabled', false);
-			}
-
-			if (cn22tick_check && cn22from_check ||
-				cn22tick_check && cn22to_check || 
-				cn22tick_check && cn22from_check && cn22from_check)
+		$('#ship_method').on('change', function() {
+			var shipmethod = $(this).val();
+			var shipmethodtext = $('#ship_method_text');
+			var shipmethod_selected = $("#ship_method option:selected").text();
+			var deliverytype_selected = $("#delivery_type option:selected").text();
+			shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
+			switch(shipmethod)
 			{
-				$('#print_label_dimensions option:nth-child(1), #print_label_dimensions_popup option:nth-child(1)').attr('selected', 'selected');
-				$('#print_label_dimensions option:nth-child(4), #print_label_dimensions_popup option:nth-child(4)').attr('selected', false);
-
-				for (i=0;i<=3;i++) $('#print_label_dimensions option:nth-child('+i+'), #print_label_dimensions_popup option:nth-child('+i+')').prop('disabled', false);
-				for (i=4;i<=6;i++) $('#print_label_dimensions option:nth-child('+i+'), #print_label_dimensions_popup option:nth-child('+i+')').prop('disabled', true);
-			}
-			displaySize($('#print_label_dimensions'));
-		}
-
-		function displaySize(id)
-		{
-			var sizes = id.val();
-			switch (sizes)
-			{
-				case '1' :
-				$('#onebyone, #onebyone_pop').show();
-				$('#onebytwo, #twobytwo, #threebyseven, #threebyeight, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').hide();
-
-				$('#size_text').html('(폼텍, 1x1)');
+				case 'fedex':
+				case 'dhl':
+					$("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").hide();
 				break;
-
-				case '2' :
-				$('#onebytwo, #onebytwo_pop').show();
-				$('#onebyone, #twobytwo, #threebyseven, #threebyeight, #onebyone_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').hide();
-
-				$('#size_text').html('(폼텍, 1x2)');
-				break;
-
-				case '3' :
-				$('#twobytwo, #twobytwo_pop').show();
-				$('#onebyone, #onebytwo, #threebyseven, #threebyeight, #onebyone_pop, #onebytwo_pop, #threebyseven_pop, #threebyeight_pop').hide();
-
-				$('#size_text').html('(폼텍, 2x2)');
-				break;
-
-				case '4' :
-				$('#threebyseven, #threebyseven_pop').show();
-				$('#onebyone, #onebytwo, #twobytwo, #threebyeight, #onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyeight_pop').hide();
-
-				$('#size_text').html('(폼텍, 3x7)');
-				break;
-
-				case '5' :
-				$('#threebyeight, #threebyeight_pop').show();
-				$('#onebyone, #onebytwo, #twobytwo, #threebyseven, #onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop').hide();
-
-				$('#size_text').html('(폼텍, 3x8)');
+				case 'post_office':
+					$("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").show();
 				break;
 			}
-		}
+		});
 
 		$('body').on('change','#print_label_dimensions, #print_label_dimensions_popup', function() {
 			var id = $(this);
 			displaySize(id);
-
 			var sizeid = id.val();
 
 			$('#print_label_dimensions_popup').val(sizeid);
 			$('#print_label_dimensions').val(sizeid);
+
+			$(cols_rows_info).text('0열 0행');
+			rows_info.val(0);
+			cols_info.val(0);
+			$('#startpoint_tables').find('table').each(function() {
+				if ($(this).css('display') !== 'none')
+					$(this).find('td :radio:checked').click();
+			});
 		});
 
 		$('body').on('click','#refreshorders', function() {
-			$('#table, ##table_delivery, #table_feedback').DataTable().ajax.reload();
+			$('#table, #table_delivery, #table_feedback').DataTable().ajax.reload();
 		});
 
 		$('body').on('click','#phrase_pop', function() {
@@ -1406,7 +1297,6 @@
 			return false;
 		});
 
-		var table, table_msg, table_delivery, table_feedback;
 
 		var selected_tab = table;
 		$('.nav-orders').on('shown.bs.tab', function (e) {
@@ -1445,9 +1335,10 @@
 			getallCheckOrders();
 		});
 
+		var orderItems;
 		function getallCheckOrders()
-		{
-			var orderItems = 0;
+		{	
+			orderItems = 0;
 			var orderItemsValue = '';
 			if (selected_tab == undefined) selected_tab = table;
 
@@ -1481,13 +1372,40 @@
 			//});
 		});
 
-		var msg_template = '';
+		var msg_template = 0;
 		$('body').on('change','#msg_template', function() {
 			msg_template = $(this).val();
 			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
 			$('.cn22phrase').prop("checked", true);
 		});
 
+		$('body').on('click','#phrase_cancel', function() {
+			msg_template = 0;
+			$('#table_msg').find('input').removeAttr('checked');
+			$('.cn22phrase').prop("checked", false);
+		    $('.cn22phrasebox').css({'background-color':'#eee'});
+		});	
+
+		$("#myModalPhrase").on("hidden.bs.modal", function () {
+		    // console.log (msg_template);
+		    var is_msg_selected = $('#table_msg').find('input').is(':checked');
+		    if (is_msg_selected == false)
+		    {
+		    	$('.cn22phrase').prop("checked", false);
+		    	$('.cn22phrasebox').css({'background-color':'#eee'});
+		    }
+		});	
+
+		// row horizontal - col vertical
+		$('#onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').find('tr').click(function() {
+			rows_info.val(($(this).index()+1)); //row
+		}).find('td').click(function() {
+			cols_info.val(($(this).index()+1)); //col
+			$(this).find('input').prop('checked', true);
+			setTimeout(function(){ 
+				$(cols_rows_info).text(cols_info.val()+'열 ' + rows_info.val() + '행');
+			}, 100);
+		});
 
 		$('.generatepdf').on('click', function() {
 			var orderids = $('#orderids').val();
@@ -1500,31 +1418,40 @@
 			var table_selected = selected_tab.context[0].nTable.id;
 			//return null;
 
+			var from_check = $('.cn22from').is(':checked')==true?1:0;
+			var to_check = $('.cn22to').is(':checked')==true?1:0;
+			var cn22_check = $('.cn22tick').is(':checked')==true?1:0;
+			var additonal_info = msg_template + '-' + from_check + '-' + to_check + '-' + cn22_check;
+
 			if (orderids == "") 
 			{
 				alert ('Please select order(s) to continue');
 				return null;
 			}
+
 			$.ajax({
 				url  : '<?php echo base_url('/order/process'); ?>',
-				data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + msg_template,
+				data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + additonal_info,
 				type : 'POST',
 				dataType: 'JSON',
 				success : function(data) {
 					window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
-					setTimeout(function(){ 
-						$('#table').DataTable().ajax.reload();
-						var total_order_count = $('#total_order_count').html();
-
-					}, 2000);
-					
+					setTimeout(function() {
+						if (table_selected == 'table')
+						{
+							$('#table').DataTable().ajax.reload();
+							var total_order_count = $('#total_order_count').html();
+							var new_total_order_count = (total_order_count-orderItems);
+							$('#total_order_count, #total_order_count_sub').html(new_total_order_count);
+							$('.info_order_list').html('주문 0개가 선택되었습니다');	
+						}
+					}, 1000);
 				}
 			});
 		});
 
 		$(document).ready(function() {
-			checkDimensionToSelect();
-		    //datatables
+			//checkDimensionToSelect();
 		    table = $('#table').DataTable({ 
 		    	// "dom": '<"top"i>rt<"bottom"flp><"clear">',
 		    	"sDom": '<t><"#info"lip><"#export"B>',
@@ -1549,7 +1476,7 @@
 		        },
 		        // "order": [],
 		        //Set column definition initialisation properties.
-		        "columnDefs": [{ 
+		        "columnDefs": [{
 		            "targets": [ 0,1,2,3,4,5,6 ], //first column / numbering column
 		            "orderable": false, //set not orderable
 		        }],
@@ -1635,6 +1562,150 @@
 
 		    $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
 		});
+
+		$('body').on('click', '.cn22from', function() {
+    		if ($(this).is(":checked")) $('.cn22frombox').css({'background-color':'#21b4f9'});
+    		else $('.cn22frombox').css({'background-color':'#eee'});
+
+    		//checkDimensionToSelect();
+    	});
+    	$('body').on('click', '.cn22to', function() {
+    		if ($(this).is(":checked")) $('.cn22tobox').css({'background-color':'#21b4f9'});
+    		else $('.cn22tobox').css({'background-color':'#eee'});
+
+    		//checkDimensionToSelect();
+    	});
+    	$('body').on('click', '.cn22tick', function() {
+
+    		if ($(this).is(":checked")) $('.cn22box').css({'background-color':'#21b4f9'});
+    		else $('.cn22box').css({'background-color':'#eee'});
+
+    		//checkDimensionToSelect();
+    	});
+    	$('body').on('click', '.cn22logo', function() {
+    		if ($(this).is(":checked")) $('.cn22logobox').css({'background-color':'#21b4f9'});
+    		else $('.cn22logobox').css({'background-color':'#eee'});
+    	});
+    	$('body').on('click', '.cn22phrase', function() {
+    		if ($(this).is(":checked")) {
+    			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
+    			$('#phrase_pop').click();
+    		}
+    		else 
+    		{
+				$('.cn22phrasebox').css({'background-color':'#eee'});
+				msg_template = 0;
+				$('#table_msg').find('input').removeAttr('checked');
+    		}
+    	});
+		////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		$('body').on('click', '.cn22frombox', function() {
+			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
+				$(this).css({'background-color':'#eee'});
+				$('.cn22from').prop("checked", false);
+			} 	
+			else
+			{
+				$(this).css({'background-color':'#21b4f9'});
+				$('.cn22from').prop('checked', true);
+			} 
+			//checkDimensionToSelect();
+		});
+		$('body').on('click', '.cn22tobox', function() {
+			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
+				$(this).css({'background-color':'#eee'});
+				$('.cn22to').prop("checked", false);
+			} 	
+			else
+			{
+				$(this).css({'background-color':'#21b4f9'});
+				$('.cn22to').prop('checked', true);
+			} 
+			//checkDimensionToSelect();
+		});
+		$('body').on('click', '.cn22box', function() {
+
+			if ($('.cn22tick').is(":disabled")) return false;
+			else
+			{
+				if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
+					$(this).css({'background-color':'#eee'});
+					$('.cn22tick').prop("checked", false);
+				} 	
+				else
+				{
+					$(this).css({'background-color':'#21b4f9'});
+					$('.cn22tick').prop('checked', true);
+				} 
+			}
+
+			
+			//checkDimensionToSelect();
+		});
+		$('body').on('click', '.cn22logobox', function() {
+			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
+				$(this).css({'background-color':'#eee'});
+				$('.cn22logo').prop("checked", false);
+			} 	
+			else
+			{
+				$(this).css({'background-color':'#21b4f9'});
+				$('.cn22logo').prop('checked', true);
+			} 
+		});
+		$('body').on('click', '.cn22phrasebox', function() {
+			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
+				$(this).css({'background-color':'#eee'});
+				$('.cn22phrase').prop("checked", false);
+				msg_template = 0;
+				$('#table_msg').find('input').removeAttr('checked');
+			} 	
+			else
+			{
+				$(this).css({'background-color':'#21b4f9'});
+				$('.cn22phrase').prop('checked', true);
+				$('#phrase_pop').click();
+			} 
+		});
+		function displaySize(id)
+		{
+			var sizes = id.val();
+			$('#onebyone, #onebytwo, #twobytwo, #threebyseven, #threebyeight, #onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').hide();
+
+			//$('#startpoint_tables').find('table').each(function() {
+			//	console.log ($(this).attr('style'));
+			//});
+
+			switch (sizes)
+			{
+				case '1' :
+				$('#onebyone, #onebyone_pop').show();
+				$('#size_text').html('(폼텍, 1x1)');
+				break;
+
+				case '2' :
+				$('#onebytwo, #onebytwo_pop').show();
+				$('#size_text').html('(폼텍, 1x2)');
+				break;
+
+				case '3' :
+				$('#twobytwo, #twobytwo_pop').show();
+				$('#size_text').html('(폼텍, 2x2)');
+				break;
+
+				case '4' :
+				$('#threebyseven, #threebyseven_pop').show();
+				$('#size_text').html('(폼텍, 3x7)');
+				break;
+
+				case '5' :
+				$('#threebyeight, #threebyeight_pop').show();
+				$('#size_text').html('(폼텍, 3x8)');
+				break;
+			}
+		}
 	</script>
 	<script>
 		var originalLeave = $.fn.popover.Constructor.prototype.leave;

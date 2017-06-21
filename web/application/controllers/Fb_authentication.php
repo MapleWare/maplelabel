@@ -36,7 +36,16 @@ class Fb_Authentication extends CI_Controller
             //join_way 0-idpw, 1-socialnetwork
             //sn_site = 0-facebook, 1-google, 2-kakao, 3-naver
             //sn_id = $userProfile['id']
-            // print_r($userData);
+            // print_r($userData);  
+
+
+            $email_exist = $this->user->check_email($userData['sn_email']);
+            if ($email_exist != 0)
+            {
+                $this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Oops! Email associated with your Facebook account is already registered, please try another account.</div>');
+                redirect('login');
+            }
+
 
             // Insert or update user data
             $socialRecord = $this->fb->checkUser($userData);
@@ -60,6 +69,8 @@ class Fb_Authentication extends CI_Controller
             	//echo 'not exist';
 
             	$users = array();
+                $email_trim = explode("@", $userData['sn_email']);
+                $users['username'] = 'fbuser-'.$email_trim[0];
             	$users['email'] = $userData['sn_email'];
             	$users['join_way'] = 'socialnetwork';
             	$users['created'] = date("Y-m-d H:i:s");
@@ -70,7 +81,7 @@ class Fb_Authentication extends CI_Controller
             		$fbuser['ol_user_id'] = $insertUser['id'];
             		$this->fb->update($fbuser, $socialRecord['id']);
 
-            		$sess_data = array('login' => TRUE, 'uname' => 'fbuser', 'uid' => $socialRecord['id']);
+            		$sess_data = array('login' => TRUE, 'uname' => 'fbuser', 'uid' => $insertUser['id']);
 					$this->session->set_userdata($sess_data);
 					
 

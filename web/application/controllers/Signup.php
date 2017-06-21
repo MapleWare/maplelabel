@@ -13,7 +13,7 @@ class Signup extends CI_Controller
 	function index()
 	{
 		// set form validation rules
-		$this->form_validation->set_rules('username', 'User Name', 'trim|required|alpha|min_length[3]|max_length[30]');
+		// $this->form_validation->set_rules('username', 'User Name', 'trim|required|alpha|min_length[3]|max_length[30]');
 		// $this->form_validation->set_rules('lname', 'Last Name', 'trim|required|alpha|min_length[3]|max_length[30]|xss_clean');
 		$this->form_validation->set_rules('email', 'Email ID', 'trim|required|valid_email|is_unique[ol_user.email]');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|matches[cpassword]');
@@ -28,17 +28,24 @@ class Signup extends CI_Controller
 		else
 		{
 			//insert user details into db
+			$email_trim = explode("@", $this->input->post('email'));
 			$data = array(
-				'username' => $this->input->post('username'),
+				//'username' => $this->input->post('username'),
+				'username' => $email_trim[0],
 				// 'lname' => $this->input->post('lname'),
 				'email' => $this->input->post('email'),
 				'pwd' => md5($this->input->post('password'))
 			);
 			
-			if ($this->user_model->insert_user($data))
+			$record = $this->user_model->insert_user($data);
+			if ($record['success'] == TRUE)
 			{
 				$this->session->set_flashdata('msg','<div class="alert alert-success text-center">You are Successfully Registered! Please login to access your Profile!</div>');
-				redirect('signup/index');
+				//redirect('signup/index');
+
+				$sess_data = array('login' => TRUE, 'uname' => $email_trim[0], 'uid' => $record['id']);
+				$this->session->set_userdata($sess_data);
+				redirect('profile/index');
 			}
 			else
 			{

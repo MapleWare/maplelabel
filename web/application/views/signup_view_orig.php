@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>User Login Form</title>
-	<link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>">
+	<title>User Signup Form</title>
+	<link href="<?php echo base_url("assets/css/bootstrap.css"); ?>" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <nav class="navbar navbar-default" role="navigation">
@@ -16,7 +15,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="<?php echo base_url(); ?>index.php/home">LOGIN</a>
+			<a class="navbar-brand" href="<?php echo base_url(); ?>index.php/home"> SIGN UP </a>
 		</div>
 		<div class="collapse navbar-collapse" id="navbar1">
 			<ul class="nav navbar-nav navbar-right">
@@ -31,34 +30,54 @@
 		</div>
 	</div>
 </nav>
-<br/>
 <div class="container">
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4 well">
-		<?php $attributes = array("name" => "loginform");
-			echo form_open("login/index", $attributes);?>
-			<legend>Login</legend>
+			<?php $attributes = array("name" => "signupform");
+			echo form_open("signup/index", $attributes);?>
+			<legend>Signup</legend>
+			
 			<div class="form-group">
-				<label for="name">Email-ID</label>
-				<input class="form-control" name="email" placeholder="Enter Email-ID" type="text" value="<?php echo set_value('email'); ?>" />
+				<label for="name">User Name</label>
+				<input class="form-control" name="username" placeholder="Your User Name" type="text" value="<?php echo set_value('username'); ?>" />
+				<span class="text-danger"><?php echo form_error('username'); ?></span>
+			</div>			
+		<!-- 
+			<div class="form-group">
+				<label for="name">Last Name</label>
+				<input class="form-control" name="lname" placeholder="Last Name" type="text" value="<?php #echo set_value('lname'); ?>" />
+				<span class="text-danger"><?php #echo form_error('lname'); ?></span>
+			</div> -->
+		
+			<div class="form-group">
+				<label for="email">Email ID</label>
+				<input class="form-control" name="email" placeholder="Email-ID" type="text" value="<?php echo set_value('email'); ?>" />
 				<span class="text-danger"><?php echo form_error('email'); ?></span>
 			</div>
+
 			<div class="form-group">
-				<label for="name">Password</label>
-				<input class="form-control" name="password" placeholder="Password" type="password" value="<?php echo set_value('password'); ?>" />
+				<label for="subject">Password</label>
+				<input class="form-control" name="password" placeholder="Password" type="password" />
 				<span class="text-danger"><?php echo form_error('password'); ?></span>
 			</div>
+
 			<div class="form-group">
-				<button name="submit" type="submit" class="btn btn-info">Login</button>
+				<label for="subject">Confirm Password</label>
+				<input class="form-control" name="cpassword" placeholder="Confirm Password" type="password" />
+				<span class="text-danger"><?php echo form_error('cpassword'); ?></span>
+			</div>
+
+			<div class="form-group">
+				<button name="submit" type="submit" class="btn btn-info">Signup</button>
 				<button name="cancel" type="reset" class="btn btn-info">Cancel</button>
 			</div>
-		<?php echo form_close(); ?>
-		<?php echo $this->session->flashdata('msg'); ?>
+			<?php echo form_close(); ?>
+			<?php echo $this->session->flashdata('msg'); ?>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4 text-center">	
-		New User? <a href="<?php echo base_url(); ?>index.php/signup">Sign Up Here</a>
+		Already Registered? <a href="<?php echo base_url(); ?>index.php/login">Login Here</a>
 		</div>
 	</div>
 </div>

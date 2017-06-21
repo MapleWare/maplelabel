@@ -6,6 +6,15 @@ class User_model extends CI_Model
     {
         parent::__construct();
     }
+
+    function check_email($email)
+	{
+		$this->db->where('email', $email);
+        $query = $this->db->get('ol_user');
+		if ($query->num_rows()>0)
+			return $query->row_array();
+		return 0;
+	}
 	
 	function get_user($email, $pwd)
 	{
@@ -36,4 +45,4 @@ class User_model extends CI_Model
 
 		return $record;
 	}
-}?>
+}

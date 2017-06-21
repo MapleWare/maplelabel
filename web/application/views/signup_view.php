@@ -90,22 +90,28 @@
                 </div>
               <div class="col-md-2"></div>
               <div class="col-md-8 col-xs-12">
-                <form name="form" id="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+                <?php $attributes = array("name" => "signupform", "id"=>"form", "class"=>"form-horizontal");
+        echo form_open("signup/index", $attributes);?>
+
+                  <?php echo $this->session->flashdata('msg'); ?>
                    
                     <div class="input-group">
                         <span class="input-group-addon"><img src="<?php echo base_url("assets2/img/emil-icon.png"); ?>"  style="    margin-left: -35px;"/>&nbsp;&nbsp;&nbsp;이메일</span>
-                        <input id="user" type="text" class="form-control" name="user" value="" placeholder="실제 사용 Email로 가입하여 주세요" style="border-left: 0">                                        
+                        <input id="user" type="text" class="form-control" name="email" value="<?php echo set_value('email'); ?>" placeholder="실제 사용 Email로 가입하여 주세요" style="border-left: 0">                                        
                     </div>
+                    <span class="text-danger"><?php echo form_error('email'); ?></span>
 
                     <div class="input-group">
                         <span class="input-group-addon"><img src="<?php echo base_url("assets2/img/lock-icon.png"); ?>" style="    margin-left: -35px;" />&nbsp;&nbsp;&nbsp;비밀번호</span>
                         <input id="password" type="password" class="form-control" name="password" placeholder="사용자 이름을 입력하세요" style="border-left: 0">
                     </div>                                                                  
+                    <span class="text-danger"><?php echo form_error('password'); ?></span>
 
                     <div class="input-group">
                         <span class="input-group-addon"><img src="<?php echo base_url("assets2/img/lock-icon.png"); ?>" />&nbsp;&nbsp;&nbsp;비밀번호 재확인</span>
-                        <input id="password" type="password" class="form-control" name="password" placeholder="Password를 재입력하여 주세요" style="border-left: 0">
+                        <input id="password" type="password" class="form-control" name="cpassword" placeholder="Password를 재입력하여 주세요" style="border-left: 0">
                     </div>
+                    <span class="text-danger"><?php echo form_error('cpassword'); ?></span>
                     
                     <div class="form-group">
                         <!-- Button -->
@@ -133,9 +139,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="<?php echo base_url("assets2/js/jquery.js"); ?>"><\/script>')</script>
+    <script src="<?php echo base_url("assets2/js/bootstrap.min.js"); ?>"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   </body>
 </html>

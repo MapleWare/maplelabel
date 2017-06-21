@@ -41,7 +41,12 @@ class Order extends CI_Controller
 		$decoded_ids = decode($ids);
 		
 		$order_ids = explode(",", $decoded_ids);
-		$msg_template = $order_ids[(count($order_ids)-1)];
+		$additonal_info = $order_ids[(count($order_ids)-1)];
+		$info = explode("-", $additonal_info);
+		$msg_template = $info[0];
+		$from_toggle = $info[1];
+		$to_toggle = $info[2];
+		$cn22_toggle = $info[3];
 		array_pop($order_ids);
 		$table_selected = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
@@ -50,15 +55,8 @@ class Order extends CI_Controller
 		$dimension = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
 
-		// print_r($order_ids);
-		// echo $msg_template . '<br>';
-		// echo $table_selected . '<br>';
-		// echo $startpoint . '<br>';
-		// echo $dimension . '<br>';
-
 		$orientation = 'L';
 		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
-
 
 		//print_r($decoded_ids);
 		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
@@ -96,12 +94,16 @@ class Order extends CI_Controller
 			//}
 
 			$order = $this->orders->get_specific_order($order_ids[$i]);
+			$options = array('startpoint' => $startpoint,
+							 'from' => $from_toggle,
+							 'to' => $to_toggle,
+							 'cn22' => $cn22_toggle);
 			switch ($dimension) {
-				case 1: $this->fpdflibrary->pdf1x1($pdf, $order); break;
-				case 2: $this->fpdflibrary->pdf1x2($pdf, $order); break;
-				case 3: $this->fpdflibrary->pdf2x2($pdf, $order); break;
-				case 4: $this->fpdflibrary->pdf3x7($pdf, $order, $startpoint); break;
-				case 5: $this->fpdflibrary->pdf3x8($pdf, $order, $startpoint); break;
+				case 1: $this->fpdflibrary->pdf1x1($pdf, $order, $options); break;
+				case 2: $this->fpdflibrary->pdf1x2($pdf, $order, $options); break;
+				case 3: $this->fpdflibrary->pdf2x2($pdf, $order, $options); break;
+				case 4: $this->fpdflibrary->pdf3x7($pdf, $order, $options); break;
+				case 5: $this->fpdflibrary->pdf3x8($pdf, $order, $options); break;
 				default: break;
 			}
 		}
