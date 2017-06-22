@@ -7,7 +7,7 @@
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<link rel="icon" href="../../favicon.ico">
+	<link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
 
 	<title>Orders - OnLabels</title>
 
@@ -185,12 +185,13 @@
       	#info {
       		float: right;
       		margin-top: 20px;
+      		font-size: 12px;
       	}
 
       	#table_length, 
       	#table_delivery_length, 
       	#table_feedback_length {
-      		margin-top: 10px;
+      		margin-top: 8px;
       		position: absolute;
       		margin-left: -180px;
       	}
@@ -219,6 +220,16 @@
 
       	table.dataTable {
       		width:100% !important;
+      	}
+
+      	table.dataTable td:nth-child(7) {
+      		width: 125px;
+      	}
+      	table.dataTable td:nth-child(4) {
+      		width: 55px;
+      	}
+      	table.dataTable {
+			font-size: 12px;
       	}
       </style>
 
@@ -307,7 +318,7 @@
   									<table class="table" id="table" >
   										<thead>
   											<tr>
-  												<th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+  												<th width="10px"><input id="order-select-all" type="checkbox" class="form-group tick"></th>
   												<th>일련번호</th>
   												<th>주문일자</th>
   												<th>판매채널</th>
@@ -1283,10 +1294,6 @@
 			});
 		});
 
-		$('body').on('click','#refreshorders', function() {
-			$('#table, #table_delivery, #table_feedback').DataTable().ajax.reload();
-		});
-
 		$('body').on('click','#phrase_pop', function() {
 			$('#myModalPhrase').modal('show');
 			return false;
@@ -1297,43 +1304,6 @@
 			return false;
 		});
 
-
-		var selected_tab = table;
-		$('.nav-orders').on('shown.bs.tab', function (e) {
-			var target = $(e.target).attr("href");
-			switch(target)
-			{
-				case '#2b' : selected_tab = table_delivery; break;
-				case '#3b' : selected_tab = table_feedback; break;
-				default : selected_tab = table; break;
-			}
-			$('#order-select-all').prop('checked', false);
-			$('body').find('input:checkbox[class^="table_order_check"]').prop('checked', false);
-			$('.info_order_list').html('주문 0개가 선택되었습니다');
-		});
-
-		$('body').on('click','#order-select-all', function(){
-			var rows = selected_tab.rows({ 'search': 'applied' }).nodes();
-			//$('input[type="checkbox"]', rows).prop('checked', this.checked);
-			$('input:checkbox[class^="table_order_check"]', rows).prop('checked', this.checked);
-			getallCheckOrders();
-		});
-
-		// Handle click on checkbox to set state of "Select all" control
-		//$('#table tbody').on('change', 'input[type="checkbox"]', function(){
-		$('table').on('change', 'input:checkbox[class^="table_order_check"]', function(){
-			// If checkbox is not checked
-				if (!this.checked){
-					var el = $('#order-select-all').get(0);
-					// If "Select all" control is checked and has 'indeterminate' property
-					if(el && el.checked && ('indeterminate' in el)){
-					// Set visual state of "Select all" control
-					// as 'indeterminate'
-					el.indeterminate = true;
-				}
-			}
-			getallCheckOrders();
-		});
 
 		var orderItems;
 		function getallCheckOrders()
@@ -1459,7 +1429,7 @@
 		    	buttons: [
 		    	'excel'
 		    	],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
 		        "processing": true, //Feature control the processing indicator.
 		       	"serverSide": true, //Feature control DataTables' servermside processing mode.
 		        "order": [], //Initial no order.
@@ -1485,7 +1455,7 @@
 		    table_delivery = $('#table_delivery').DataTable({ 
 		    	"sDom": '<t><"#info"lip><"#export"B>',
 		    	buttons: ['excel'],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
 		        "processing": true, 
 		       	"serverSide": true, 
 		        "order": [],
@@ -1507,7 +1477,7 @@
 		    table_feedback = $('#table_feedback').DataTable({ 
 		    	"sDom": '<t><"#info"lip><"#export"B>',
 		    	buttons: ['excel'],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
 		        "processing": true, 
 		       	"serverSide": true, 
 		        "order": [],
@@ -1561,6 +1531,77 @@
 			});
 
 		    $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
+		});
+
+
+		var selected_tab = table;
+		$('.nav-orders').on('shown.bs.tab', function (e) {
+			var target = $(e.target).attr("href");
+			switch(target)
+			{
+				case '#2b' : selected_tab = table_delivery; break;
+				case '#3b' : selected_tab = table_feedback; break;
+				default : selected_tab = table; break;
+			}
+			$('#table, #table_delivery, #table_feedback').hide().fadeIn('slow');
+			$('#order-select-all').prop('checked', false);
+			$('body').find('input:checkbox[class^="table_order_check"]').prop('checked', false);
+			$('.info_order_list').html('주문 0개가 선택되었습니다');
+		});
+
+		$('body').on('click','#order-select-all', function(){
+			if (selected_tab == null) selected_tab = table;
+			var rows = selected_tab.rows({ 'search': 'applied' }).nodes();
+			//$('input[type="checkbox"]', rows).prop('checked', this.checked);
+			$('input:checkbox[class^="table_order_check"]', rows).prop('checked', this.checked);
+			getallCheckOrders();
+		});
+
+		// Handle click on checkbox to set state of "Select all" control
+		//$('#table tbody').on('change', 'input[type="checkbox"]', function(){
+		$('table').on('change', 'input:checkbox[class^="table_order_check"]', function(){
+			// If checkbox is not checked
+				if (!this.checked){
+					var el = $('#order-select-all').get(0);
+					// If "Select all" control is checked and has 'indeterminate' property
+					if(el && el.checked && ('indeterminate' in el)){
+					// Set visual state of "Select all" control
+					// as 'indeterminate'
+					el.indeterminate = true;
+				}
+			}
+			getallCheckOrders();
+		});
+
+		$('body').on('click','#refreshorders', function() {
+
+			var $elem = $('#refreshorders');
+		    $({deg: 0}).animate({deg: 1080}, {
+		        duration: 5000,
+		        step: function(now) {
+		            $elem.css({
+		                transform: 'rotate(' + now + 'deg)'
+		            });
+		        }
+		    });
+
+			$.ajax({
+				url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
+				type : 'GET',
+				success : function(data) {
+					//console.log (data);
+
+					var total_order_count = $('#total_order_count').html();
+					var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+					$('#total_order_count, #total_order_count_sub').html(new_total_order_count);
+
+					$('#table, #table_delivery, #table_feedback').fadeOut('fast').fadeIn('slow');
+
+					table.draw();
+					table_delivery.draw();
+					table_feedback.draw();
+				}
+			});
 		});
 
 		$('body').on('click', '.cn22from', function() {

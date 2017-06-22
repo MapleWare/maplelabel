@@ -7,7 +7,8 @@ class Login extends CI_Controller
 		$this->load->helper(array('form','url','html'));
 		$this->load->library(array('session', 'form_validation','facebook'));
 		$this->load->database();
-		$this->load->model('user_model');
+		$this->load->model('user_model','user');
+		$this->load->model('saleschannel_model', 'saleschannel');
 	}
     public function index()
     {
@@ -28,14 +29,17 @@ class Login extends CI_Controller
 		else
 		{
 			// check for user credentials
-			$uresult = $this->user_model->get_user($email, $password);
+			$uresult = $this->user->get_user($email, $password);
 			if (count($uresult) > 0)
 			{
 				// set session
 				$sess_data = array('login' => TRUE, 'uname' => $uresult[0]->username, 'uid' => $uresult[0]->id);
 				$this->session->set_userdata($sess_data);
 				// redirect("profile/index");
-				redirect("saleschannel/index");
+				$user_channel = $this->saleschannel->get_user_channel($uresult[0]->id);
+				
+				if (empty($user_channel['user_token'])) redirect("saleschannel/index");
+				else redirect("dashboard/index");
 			}
 			else
 			{

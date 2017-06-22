@@ -127,6 +127,7 @@ class Order_model extends CI_Model
 	    				   printlist.is_ship_to,
 	    				   printlist.is_cn22,
 	    				   printlist.pdf_file,
+	    				   printlist.is_print_comment,
 	    				   printlog.start_point');
         $this->db->from($this->table);
         $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
@@ -140,7 +141,7 @@ class Order_model extends CI_Model
 
 		$this->db->where('ord.ol_user_id', 1);
 		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
-		if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and '".$dates['to_date']."'";
+		if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
 		$this->db->where($where);
 
 		if ($custom_where != '') $this->db->where($custom_where);

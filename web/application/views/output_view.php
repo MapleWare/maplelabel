@@ -7,7 +7,7 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
+  <link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
 
   <title>Output - OnLabels</title>
 
@@ -181,12 +181,16 @@
         #info {
           float: right;
           margin-top: 20px;
+          font-size: 12px;
         }
 
         #table_length {
-          margin-top: 10px;
+          margin-top: 8px;
           position: absolute;
           margin-left: -180px;
+        }
+        table.dataTable {
+          font-size: 12px;
         }
       </style>
 
@@ -211,11 +215,11 @@
             <ul class="nav navbar-nav">
 
               <li><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-              <li><a href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
+              <li><a href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
               <li><a class="active" href="<?php echo base_url(); ?>output/index">출력관리</a></li>
               <li><a href="#">제품관리</a></li>
 
-              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" style="padding: 12px;width: 50px;"/></li>
+              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
@@ -524,19 +528,55 @@
 
         $('body').on('click','#search_date', function() {
           table.draw();
+          $('#table').fadeOut('fast').fadeIn('slow');
           return false;
         });
 
-
       });
 
-      function parseDateValue(rawDate) {
-        var dateArray= rawDate.split("/");
-        var parsedDate= dateArray[2] + dateArray[0] + dateArray[1];
-        return parsedDate;
-      }
+      $('body').on('change','#reprocess', function() {
+        var orderids = $(this).val();
+        var dimensions = $('#dimension'+orderids).attr('ref');
+        var additonal_info = $('#infos'+orderids).attr('ref');
+        var selected_tab = table;
+        var table_selected = selected_tab.context[0].nTable.id;
+        var startpoint = 0;
+        $.ajax({
+          url  : '<?php echo base_url('/order/process'); ?>',
+          data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + additonal_info,
+          type : 'POST',
+          dataType: 'JSON',
+          success : function(data) {
+            window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
 
+            setTimeout(function() {
+              table.draw();
+            }, 500);
+          }
+        });
+      });
 
+      $('body').on('click','#refreshorders', function() {
+        var $elem = $('#refreshorders');
+        $({deg: 0}).animate({deg: 1080}, {
+            duration: 5000,
+            step: function(now) {
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)'
+                });
+            }
+        });
+        $.ajax({
+          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
+          type : 'GET',
+          success : function(data) {
+            //console.log (data);
+            var total_order_count = $('#total_order_count').html();
+            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+            $('#total_order_count').html(new_total_order_count);
+          }
+        });
+      });
 
       $('#order-select-all').on('click', function(){
         var rows = table.rows({ 'search': 'applied' }).nodes();

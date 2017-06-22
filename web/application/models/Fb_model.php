@@ -4,16 +4,19 @@ class Fb_model extends CI_Model{
 		$this->tableName = 'ol_social_network';
 		$this->primaryKey = 'id';
 	}
-	public function checkUser($data = array()){
-		$this->db->select('id,ol_user_id');
+	public function checkUser($data = array())
+	{
+		$this->db->select('ol_social_network.id, ol_user_id, username');
 		$this->db->from($this->tableName);
 		$this->db->where(array('sn_site'=>$data['sn_site'],'sn_id'=>$data['sn_id']));
+		$this->db->join('ol_user', 'ol_user.id = ol_social_network.ol_user_id', 'left');
 		$prevQuery = $this->db->get();
 		$prevCheck = $prevQuery->num_rows();
 
 		$returnData = array();
 		
-		if($prevCheck > 0){
+		if ($prevCheck > 0) 
+		{
 			$prevResult = $prevQuery->row_array();
 
 			//$data['modified'] = date("Y-m-d H:i:s");
@@ -23,7 +26,10 @@ class Fb_model extends CI_Model{
 			$returnData['sn_id'] = $data['sn_id'];
 			$returnData['id'] = $prevResult['id'];
 			$returnData['ol_user_id'] = $prevResult['ol_user_id'];
-		}else{
+			$returnData['username'] = $prevResult['username'];
+		}
+		else
+		{
 			$data['created'] = date("Y-m-d H:i:s");
 			//$data['modified'] = date("Y-m-d H:i:s");
 			$insert = $this->db->insert($this->tableName,$data);

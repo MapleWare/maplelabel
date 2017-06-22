@@ -4,8 +4,8 @@ class Order extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->helper(array('url','html'));
-		$this->load->library('session');
+		$this->load->helper(array('url','html','ebay'));
+		$this->load->library(array('session','fpdflibrary'));
 		$this->load->database();
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
@@ -19,6 +19,15 @@ class Order extends CI_Controller
 	{
 		if ($this->session->userdata('uid') !== null)
 		{
+			// $RuName = "Davinci_Tech-DavinciT-DevDAV-qvqch";
+			// $siteID = 0;
+			// get_ebay_session($siteID,,$RuName);
+			// $ebay_session = $this->session->userdata('ebay_session');
+			// $data['ebay_link'] = 'https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName='.$RuName.'&SessID='.$ebay_session;
+
+			if ($this->session->userdata('ebay_session') !== NULL) 
+				save_user_token(0,'');
+
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
@@ -37,9 +46,7 @@ class Order extends CI_Controller
 
 	public function generate($ids) 
 	{	
-		$this->load->library('fpdflibrary');
 		$decoded_ids = decode($ids);
-		
 		$order_ids = explode(",", $decoded_ids);
 		$additonal_info = $order_ids[(count($order_ids)-1)];
 		$info = explode("-", $additonal_info);
@@ -55,59 +62,62 @@ class Order extends CI_Controller
 		$dimension = $order_ids[(count($order_ids)-1)];
 		array_pop($order_ids);
 
-		$orientation = 'L';
-		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
+		$is_print_comment = 0;
+		if ($msg_template>0) $is_print_comment = 1;
 
-		//print_r($decoded_ids);
-		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
 		for ($i=0; $i<count($order_ids); $i++)
 		{
 			$order = $this->orders->get_specific_order($order_ids[$i]);
-			// update order from preprint to postprint sales order table
 			$this->orders->edit(array('print_status'=>'postprint'),$order_ids[$i]);
-			// insert to print list talbe
-			$is_cn22 = 0;
-			if ($dimension<3) $is_cn22 = 1;
 			$print_list_maxid = ($this->print_list->getmaxid()+1);
 			$printlist = array('id'=>$print_list_maxid,
 							   'pdf_file'=>$dimension,
 							   'ol_user_id'=>$this->session->userdata('uid'),
 							   'sales_order_id'=>$order['id'],
 							   'pdf_down_cnt'=>1,
-							   'is_ship_from_print'=>1,
-							   'is_ship_to'=>1,
-							   'is_cn22'=>$is_cn22);
-			$printlist['seller_msg_template_id'] = $msg_template;
+							   'is_ship_from_print'=>$from_toggle,
+							   'is_ship_to'=>$to_toggle,
+							   'is_cn22'=>$cn22_toggle,
+							   'seller_msg_template_id'=>$msg_template,
+							   'is_print_comment'=>$is_print_comment);
 			$printlog = array('start_point'=>$startpoint);
-
-			// if ($table_selected === 'table') 
-			// {
-				$check_print_list = $this->print_list->get_order($order['id']);
-				if ($check_print_list == 0)
-					$this->print_list->create($printlist, $printlog);
-				else
-				{
-					$new_printlist = array('pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1));
-					$new_printlist['seller_msg_template_id'] = $msg_template;
-					$this->print_list->edit($new_printlist, $check_print_list['id']);
-				}
-			//}
-
-			$order = $this->orders->get_specific_order($order_ids[$i]);
-			$options = array('startpoint' => $startpoint,
-							 'from' => $from_toggle,
-							 'to' => $to_toggle,
-							 'cn22' => $cn22_toggle);
-			switch ($dimension) {
-				case 1: $this->fpdflibrary->pdf1x1($pdf, $order, $options); break;
-				case 2: $this->fpdflibrary->pdf1x2($pdf, $order, $options); break;
-				case 3: $this->fpdflibrary->pdf2x2($pdf, $order, $options); break;
-				case 4: $this->fpdflibrary->pdf3x7($pdf, $order, $options); break;
-				case 5: $this->fpdflibrary->pdf3x8($pdf, $order, $options); break;
-				default: break;
+			$check_print_list = $this->print_list->get_order($order['id']);
+			if ($check_print_list == 0)
+				$this->print_list->create($printlist, $printlog);
+			else
+			{
+				$new_printlist = array('pdf_file'=>$dimension,
+									   'pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1),
+									   'is_ship_from_print'=>$from_toggle,
+							   		   'is_ship_to'=>$to_toggle,
+							           'is_cn22'=>$cn22_toggle,
+							           'seller_msg_template_id'=>$msg_template,
+							           'is_print_comment'=>$is_print_comment);
+				$this->print_list->edit($new_printlist, $check_print_list['id']);
 			}
 		}
-		$pdf->Output('form1.pdf','I');
+		$options = array('startpoint' => $startpoint,
+						 'from' => $from_toggle,
+						 'to' => $to_toggle,
+						 'cn22' => $cn22_toggle);
+		$this->checkpdfuse($order_ids, $options, $dimension);
+	}
+
+	function checkpdfuse($orders = array(), $options = array(), $dimension)
+	{
+		$orientation = 'L';
+		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
+		
+		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
+
+		switch ($dimension) {
+			case 1: $this->fpdflibrary->pdf1x1($pdf, $orders, $options); break;
+			case 2: $this->fpdflibrary->pdf1x2($pdf, $orders, $options); break;
+			case 3: $this->fpdflibrary->pdf2x2($pdf, $orders, $options); break;
+			case 4: $this->fpdflibrary->pdf3xn($pdf, $orders, $options, 7); break;
+			case 5: $this->fpdflibrary->pdf3xn($pdf, $orders, $options, 8); break;
+		}
+		$pdf->Output('onlables.pdf','I');
 	}
 
 	public function order_list($where = 'preprint')
@@ -131,7 +141,7 @@ class Order extends CI_Controller
 	        $row = array();
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="table_order_check form-group tick">';
-	        $row[] = substr($orders->sc_ordered_id, -7);
+	        $row[] = '<b>'.$orders->sc_ordered_id.'</b>';
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->ordered_date));
 	        
 	        $row[] = $orders->sc_market;
@@ -150,10 +160,12 @@ class Order extends CI_Controller
 					 '.$orders->seller_country.'<br/>
 				</div>';
 	        
+	        $style_print = 'style="opacity:0.5"';
+	        if ($orders->print_status == 'postprint') $style_print = 'style="opacity:1"'; 
 	        $row[] = $orders->order_user_name."<br>"."피드백 : ".$orders->feedback_score."점 주문수 : ".$orders->cnt."회";
-	        $row[] = '<span><a href=""><img src="'.base_url("assets2/img/icon-1.png").'"></a></span>
-					  <span><a href=""><img src="'.base_url("assets2/img/icon-2.png").'"></a></span>
-					  <span><a href=""><img src="'.base_url("assets2/img/icon-3.png").'"></a></span>';
+	        $row[] = '<span><img '.$style_print.' src="'.base_url("assets2/img/icon-1.png").'"></span>
+					  <span><img src="'.base_url("assets2/img/icon-3.png").'"></span>
+					  <span><img src="'.base_url("assets2/img/icon-4.png").'"></span>';
 
 	        $data[] = $row;
 	        //$_POST['draw']='';

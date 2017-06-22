@@ -7,7 +7,7 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
+  <link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
 
   <title>Sales Channel - Onlabels</title>
 
@@ -205,9 +205,9 @@
       $(".dropdown dt a span").html(text);
       $(".dropdown dd ul").hide();
 
-                //window.location.href = '<?php echo base_url('profile/index'); ?>';
-
-                window.open('<?php echo $ebay_link;?>');
+                var left = (screen.width/2)-(400/2);
+                var top = (screen.height/2)-(400/2);
+                window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=400,height=400');
                 $(".channelbutton").show();
                 //$("#result").html("Selected value is: " + getSelectedValue("sample"));
               });

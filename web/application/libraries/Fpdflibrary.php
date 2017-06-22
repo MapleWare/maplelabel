@@ -395,21 +395,35 @@ endif;
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
         $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
 
-        switch ($options['startpoint']) 
-        {
-            case 2:
-                $this->createAirMail2Form(146, $pdf, $order, $options);
-                if ($options['cn22']>0) $this->createCustomsDeclaration2Form(146, $pdf, $order);
-                break;
-            default:
-                $this->createAirMail2Form(0, $pdf, $order, $options);
-                $this->createAirMail2Form(146, $pdf, $order, $options);
-                if ($options['cn22']>0) {
-                    $this->createCustomsDeclaration2Form(0, $pdf, $order);
-                    $this->createCustomsDeclaration2Form(146, $pdf, $order);
-                }
-                break;
-        }
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        
+        $toadd = 0;
+        $index = 0;
+        for ($i=1; $i<=count($order); $i++) :
+            if ($options['startpoint'] <= $i) :
+                $this->createAirMail2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
+                if ($options['cn22']>0) $this->createCustomsDeclaration2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]));
+                $index++;
+            endif; 
+            $toadd+=146;
+        endfor;
+
+        // switch ($options['startpoint']) 
+        // {
+        //     case 2:
+        //         $this->createAirMail2Form(146, $pdf, $order, $options);
+        //         if ($options['cn22']>0) $this->createCustomsDeclaration2Form(146, $pdf, $order);
+        //         break;
+        //     default:
+        //         $this->createAirMail2Form(0, $pdf, $order, $options);
+        //         $this->createAirMail2Form(146, $pdf, $order, $options);
+        //         if ($options['cn22']>0) {
+        //             $this->createCustomsDeclaration2Form(0, $pdf, $order);
+        //             $this->createCustomsDeclaration2Form(146, $pdf, $order);
+        //         }
+        //         break;
+        // }
     }
 
     function pdf2x2($pdf, $order, $options)
@@ -419,80 +433,119 @@ endif;
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
         $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
 
-        switch ($options['startpoint']) 
-        {
-            case 2:
-                $this->createAirMail3Form(8, 105, $pdf, $order, $options);
-                $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-                $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-                if ($options['cn22']>0) {
-                    $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-                }
-                break;
-            case 3:
-                $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-                $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-                if ($options['cn22']>0) {
-                    $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-                }
-                break;
-            case 4:
-                $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-                if ($options['cn22']>0) $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-                break;
-            default:
-                $this->createAirMail3Form(8, 4, $pdf, $order, $options);
-                $this->createAirMail3Form(8, 105, $pdf, $order, $options);
-                $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-                $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-                if ($options['cn22']>0)
-                {
-                    $this->createCustomsDeclaration3Form(8, 4, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-                    $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-                }
-                break;
-        }
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        
+        $toaddx = 8;
+        $toaddy = 4;
+        $index = 0;
+
+        for ($i=1; $i<=count($order); $i++) :
+            if ($options['startpoint'] <= $i) :
+                $this->createAirMail3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
+                if ($options['cn22']>0) $this->createCustomsDeclaration3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]));
+                $index++;
+            endif; 
+            if ($i>1) $toaddx+=140;
+            $toaddy+=101;
+            if ($i>1) $toaddy=4;
+            if ($i>2) :
+                $toaddx=148;
+                $toaddy+=101;
+            endif;
+        endfor;
+
+        // switch ($options['startpoint']) 
+        // {
+        //     case 2:
+        //         $this->createAirMail3Form(8, 105, $pdf, $order, $options);
+        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
+        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
+        //         if ($options['cn22']>0) {
+        //             $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
+        //         }
+        //         break;
+        //     case 3:
+        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
+        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
+        //         if ($options['cn22']>0) {
+        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
+        //         }
+        //         break;
+        //     case 4:
+        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
+        //         if ($options['cn22']>0) $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
+        //         break;
+        //     default:
+        //         $this->createAirMail3Form(8, 4, $pdf, $order, $options);
+        //         $this->createAirMail3Form(8, 105, $pdf, $order, $options);
+        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
+        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
+        //         if ($options['cn22']>0)
+        //         {
+        //             $this->createCustomsDeclaration3Form(8, 4, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
+        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
+        //         }
+        //         break;
+        // }
     }
 
-    function pdf3x7($pdf, $order, $options)
+    function pdf3xn($pdf, $orders, $options, $col = 7)
     {
         $pdf->AddPage();
         $pdf->SetAutoPageBreak(false);
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
         $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
 
-        $count=0;
-        for ($x=3; $x<150; $x+=67.3)
-        {  
-            for ($y=10; $y<250; $y+=39.4)
-            {   
-                $count++;
-                $this->createBoxForm($x, $y, 66, 38.1, $pdf, $order, $count, $options);
-            }
-        }
-    }
-
-    function pdf3x8($pdf, $order, $options)
-    {
-        $pdf->AddPage();
-        $pdf->SetAutoPageBreak(false);
-        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
-        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
-
-        $count=0;
-        for ($x=3; $x<150; $x+=67.3)
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        
+        $array_order = array();
+        $merge_orders = array();
+        for ($i=0; $i<count($orders); $i++)
         {
-            for ($y=6; $y<280; $y+=35.3)
-            {
+            $array_order[$i] = $ci->orders->get_specific_order($orders[$i]);
+
+            $merge_orders[] = 
+                    array ('FROM',
+                           $array_order[$i]['seller_company_name'],
+                           $array_order[$i]['seller_street1'].' '.$array_order[$i]['seller_street2'],
+                           $array_order[$i]['seller_city'].' '.$array_order[$i]['seller_stateorprovice'],
+                           $array_order[$i]['seller_country'],
+                           $array_order[$i]['seller_phone_no']);
+
+            $merge_orders[] = 
+                    array ('TO',
+                           $array_order[$i]['name'],
+                           $array_order[$i]['street1'].' '.$array_order[$i]['street2'],
+                           $array_order[$i]['city_name'].' '.$array_order[$i]['stateorprovince'],
+                           $array_order[$i]['country_name'],
+                           $array_order[$i]['shipto_phone_no']);
+        }
+        
+        switch ($col) {
+            case 7: $y_1 = 10; $y_2 = 250; $y_3 = 39.4; $height = 38.1; break;
+            case 8: $y_1 = 6; $y_2 = 280; $y_3 = 35.3; $height = 34; break;
+        }
+
+        $count=0;
+        $index=0;
+        for ($x=3; $x<150; $x+=67.3) :
+            for ($y=$y_1; $y<$y_2; $y+=$y_3) :
                 $count++;
-                $this->createBoxForm($x, $y, 66, 34, $pdf, $order, $count, $options);
-            }
-        }   
+
+                if ($options['startpoint'] <= $count) :
+                    if (isset($merge_orders[$index]))
+                        $this->createBoxForm($x, $y, 66, $height, $pdf, $merge_orders[$index], $count, $options);
+                    $index++;
+                endif;
+            endfor;
+        endfor;
     }
 
     function createAirMail2Form($xToAdd = 0, $pdf, $order, $options)
@@ -1119,71 +1172,55 @@ endif;
         $pdf->MultiCell(61,2,'Date and senders signature(8)',0,'L');
     }
 
-    private $index = 1;
     function createBoxForm($xToAdd = 0, $yToAdd = 0, $sizex, $sizey, $pdf, $order, $count=0, $options=array())
     {   
-        //echo $count . "<br>";
-        //print_r($options);
-        $startpoint = $options['startpoint'];
-        $tofrom = 'TO';
-        $info = array ($order['seller_company_name'],
-                       $order['seller_street1'].' '.$order['seller_street2'],
-                       $order['seller_city'].' '.$order['seller_stateorprovice'],
-                       $order['seller_country'],
-                       $order['seller_phone_no']);
-
-        if ($this->index % 2 == 0) {
-            $tofrom = 'FROM';
-            $info = array ($order['name'],
-                           $order['street1'].' '.$order['street2'],
-                           $order['city_name'].' '.$order['stateorprovince'],
-                           $order['country_name'],
-                           $order['shipto_phone_no']);
-        }
-
         $yleft = 6; $yright = 1; $yline = 5.4;
         if ($sizey == 34) { $yleft = 5; $yright = 0.1; $yline = 4; }
-        
-        if (($startpoint-1)<$count)
-        {
-            $pdf->SetDrawColor(0);
-            $pdf->SetLineWidth(0.1);
-            $pdf->SetFillColor(255);
-            $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'DF');
 
-            $pdf->SetXY(3+$xToAdd,$yleft+$yToAdd);
-            $pdf->SetFont('NanumBarunGothicBold','',12);
-            $pdf->Cell(18,5,$tofrom,0,1,'L');
+        for ($i=1;$i<count($order);$i++) :
 
-            for ($i=0; $i<count($info);$i++)
+            if ($i==1) :
+                if ($options['from']<1 && $order[0] == 'FROM' ||
+                    $options['to']<1 && $order[0] == 'TO') :
+
+                else :
+                    $pdf->SetDrawColor(0);
+                    $pdf->SetLineWidth(0.1);
+                    $pdf->SetFillColor(255);
+                    $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'DF');
+
+                    $pdf->SetXY(3+$xToAdd,$yleft+$yToAdd);
+                    $pdf->SetFont('NanumBarunGothicBold','',12);
+                    $pdf->Cell(18,5,$order[0],0,1,'L');
+                endif;
+            endif;
+
+            $yplus = 6;
+            $sizey = 3;
+            $fontsize = 8.5;
+            if ($i==2)
             {
-                $pdf->SetXY(21+$xToAdd,$yright+$yToAdd+=6);
-                $pdf->SetFont('NanumBarunGothic','',8.5);
-                $pdf->MultiCell(46,3,$info[$i],0,'L');
+                $cnt_char = strlen($order[$i]);
+                if ($cnt_char>25)
+                {
+                    $sizey = 2.2;
+                    $yplus = 4.9;
+                    $fontsize = 6.8;
+                }
+            }
+
+            if ($options['from']<1 && $order[0] == 'FROM' || 
+                $options['to']<1 && $order[0] == 'TO') :
+
+            else:
+                $pdf->SetXY(21+$xToAdd,$yright+$yToAdd+=$yplus);
+                $pdf->SetFont('NanumBarunGothic','',$fontsize);
+                $pdf->MultiCell(46,$sizey,$order[$i],0,'L');
                 $pdf->SetDash(1.8,2.5);
                 $pdf->Line(4+$xToAdd, $yline+$yToAdd, 66+$xToAdd, $yline+$yToAdd);
                 $pdf->SetDash();
-            }
-            if ($options['from']<1 && $this->index % 2 == 0)
-            {   
-                $pdf->SetFillColor(255);
-                $pdf->Rect(1.5+$xToAdd, $yToAdd-29, 67, 41, 'F');
-            
-            }
-            if ($options['to']<1 && $this->index % 2 != 0)
-            {
-                $pdf->SetFillColor(255);
-                $pdf->Rect(1.5+$xToAdd, $yToAdd-29, 67, 41, 'F');
-            }
-
-            if ($options['from']<1 && $options['to']<1)
-            {
-                $pdf->SetFillColor(255);
-                $pdf->Rect(1.5+$xToAdd, $yToAdd-29, 67, 41, 'F');
-            }
-        }    
-        
-        $this->index++;
+            endif;
+        endfor;
     }
 
     function RoundedRect($x, $y, $w, $h, $r, $style = '')

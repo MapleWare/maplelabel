@@ -7,7 +7,7 @@
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<link rel="icon" href="../../favicon.ico">
+	<link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
 
 	<title>Home - onLabels</title>
 
@@ -116,11 +116,11 @@
   					<ul class="nav navbar-nav">
   						
   						<li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-  						<li><a href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
-  						<li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
-  						<li><a href="#">제품관리</a></li>
-  						
-  						<li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" style="padding: 12px;width: 50px;"/></li>
+  						<li><a href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
+              <li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
+              <li><a href="#">제품관리</a></li>
+
+              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
   					</ul>
   					<ul class="nav navbar-nav navbar-right">
   						<li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
@@ -328,5 +328,28 @@
     
     <script src="<?php echo base_url("assets2/js/jquery.js"); ?>"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script>
+    $('body').on('click','#refreshorders', function() {
+        var $elem = $('#refreshorders');
+        $({deg: 0}).animate({deg: 1080}, {
+            duration: 5000,
+            step: function(now) {
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)'
+                });
+            }
+        });
+        $.ajax({
+          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
+          type : 'GET',
+          success : function(data) {
+            //console.log (data);
+            var total_order_count = $('#total_order_count').html();
+            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+            $('#total_order_count').html(new_total_order_count);
+          }
+        });
+      });
+    </script>
 </body>
 </html>

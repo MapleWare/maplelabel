@@ -7,7 +7,7 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
+  <link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
 
   <title>Dashboard - Onlabels</title>
 
@@ -199,11 +199,11 @@
             <ul class="nav navbar-nav">
               
               <li><a class="active" href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-              <li><a href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
+              <li><a href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
               <li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
               <li><a href="#">제품관리</a></li>
-              
-              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" style="padding: 12px;width: 50px;"/></li>
+
+              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
@@ -218,8 +218,8 @@
         <div class="row">
           <div class="col-md-10" style="padding: 20px 0px">
             <div class="alert alert-success" role="alert">
-              <strong>회원 등급 : Free Member (업그레이드)</strong>
-              <p class="pull-right">최종 연동 일자 : 2017.3.27 12.30 PM</p>
+              <strong>회원 등급 : Free Member <a href="<?php echo base_url('upgrade/index'); ?>">(업그레이드)</a></strong>
+              <p class="pull-right">최종 연동 일자 : <?php echo date("Y.m.d h:i A"); ?></p>
               
             </div>
           </div>
@@ -232,9 +232,9 @@
                 <h3 class="panel-title"><img src="<?php echo base_url("assets2/img/new.png"); ?>"/>  신규주문 현황</h3>
               </div>
               <div class="panel-body">
-                <strong>총 주문 수 : 00 문 </strong>
+                <strong>총 주문 수 : <?php echo sprintf('%02d', $total_orders); ?> 문 </strong>
                 <ul>
-                  <li>- eBay 주문 :00 문 </li>
+                  <li>- eBay 주문 :<?php echo sprintf('%02d', $total_orders); ?> 문 </li>
                   <li>- Amazon 주문 :00 문 </li>
                   <li>- Esty 주문 :00 문 </li>
                 </ul>
@@ -387,6 +387,27 @@
         $('.tbl_border').addClass("border-bottom");
       });
 
+      $('body').on('click','#refreshorders', function() {
+        var $elem = $('#refreshorders');
+        $({deg: 0}).animate({deg: 1080}, {
+            duration: 5000,
+            step: function(now) {
+                $elem.css({
+                    transform: 'rotate(' + now + 'deg)'
+                });
+            }
+        });
+        $.ajax({
+          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
+          type : 'GET',
+          success : function(data) {
+            //console.log (data);
+            var total_order_count = $('#total_order_count').html();
+            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+            $('#total_order_count').html(new_total_order_count);
+          }
+        });
+      });
     </script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   </body>

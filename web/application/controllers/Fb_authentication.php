@@ -41,11 +41,7 @@ class Fb_Authentication extends CI_Controller
 
             $email_exist = $this->user->check_email($userData['sn_email']);
             if ($email_exist != 0)
-            {
-                $this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Oops! Email associated with your Facebook account is already registered, please try another account.</div>');
-                redirect('login');
-            }
-
+                redirect($this->facebook->logout_url(true));
 
             // Insert or update user data
             $socialRecord = $this->fb->checkUser($userData);
@@ -59,7 +55,7 @@ class Fb_Authentication extends CI_Controller
 				//echo 'exist';   
 				//$data['userData'] = $userData;
 				//$this->session->set_userdata('userData',$userData);
-				$sess_data = array('login' => TRUE, 'uname' => 'fbuser', 'uid' => $socialRecord['ol_user_id']);
+				$sess_data = array('login' => TRUE, 'uname' => $socialRecord['username'], 'uid' => $socialRecord['ol_user_id']);
 				$this->session->set_userdata($sess_data);
             }
             else
@@ -81,7 +77,7 @@ class Fb_Authentication extends CI_Controller
             		$fbuser['ol_user_id'] = $insertUser['id'];
             		$this->fb->update($fbuser, $socialRecord['id']);
 
-            		$sess_data = array('login' => TRUE, 'uname' => 'fbuser', 'uid' => $insertUser['id']);
+            		$sess_data = array('login' => TRUE, 'uname' => $users['username'], 'uid' => $insertUser['id']);
 					$this->session->set_userdata($sess_data);
 					
 
@@ -123,12 +119,15 @@ class Fb_Authentication extends CI_Controller
         redirect("profile/index");
     }
 
-	public function logout() {
+	public function logout($showinfo = FALSE) {
 		// Remove local Facebook session
 		$this->facebook->destroy_session();
 		// Remove user data from session
 		$this->session->unset_userdata('userData');
 		// Redirect to login page
+
+        if ($showinfo) $this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Oops! Email associated with your Facebook account is already registed, please try another account!</div>');
+
         redirect('/login');
     }
 }

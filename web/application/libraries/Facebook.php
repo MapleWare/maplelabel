@@ -139,15 +139,18 @@ Class Facebook
      *
      * @return string
      */
-    public function logout_url(){
+    public function logout_url($showinfo){
         // Login type must be web, else return empty string
         if($this->config->item('facebook_login_type') != 'web'){
             return '';
         }
         // Get logout url
+        $url = $this->config->item('facebook_logout_redirect_url'); 
+        if ($showinfo) $url = $this->config->item('facebook_logout_redirect_url_showinfo');
+
         return $this->helper->getLogoutUrl(
             $this->get_access_token(),
-            base_url() . $this->config->item('facebook_logout_redirect_url')
+            base_url() . $url
         );
     }
     

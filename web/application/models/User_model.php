@@ -10,6 +10,7 @@ class User_model extends CI_Model
     function check_email($email)
 	{
 		$this->db->where('email', $email);
+		$this->db->where('join_way', 'idpw');
         $query = $this->db->get('ol_user');
 		if ($query->num_rows()>0)
 			return $query->row_array();
