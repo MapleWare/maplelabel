@@ -16,7 +16,7 @@ class Fpdflibrary extends tFPDF {
         parent::__construct($orientation, $unit, $size);
     }
 
-    function pdf1x1($pdf, $order, $options)
+    function pdf1x1($pdf, $orders, $options)
     {
         $pdf->AddPage(); 
         $pdf->SetAutoPageBreak(false);   
@@ -25,6 +25,10 @@ class Fpdflibrary extends tFPDF {
         $pdf->SetLineWidth(0.2);
         $pdf->SetFillColor(255);
         $pdf->RoundedRect(8, 8, 132, 190, 0, 'DF'); // 
+
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        $order = $ci->orders->get_specific_order($orders[0]);
     
         // lines
         $pdf->SetLineWidth(0.7);
@@ -398,15 +402,24 @@ endif;
         $ci=&get_instance();
         $ci->load->model('order_model','order');
         
+        $merge_orders = array();
+        for ($i=0; $i<count($order); $i++) :
+            $merge_orders[] = $ci->orders->get_specific_order($order[$i]);
+        endfor;
+
+        $index=0;
         $toadd = 0;
-        $index = 0;
-        for ($i=1; $i<=count($order); $i++) :
-            if ($options['startpoint'] <= $i) :
-                $this->createAirMail2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
-                if ($options['cn22']>0) $this->createCustomsDeclaration2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]));
-                $index++;
-            endif; 
-            $toadd+=146;
+        $count=0;
+        for ($i=1;$i<=2;$i++) :
+            $count++;
+            if ($options['startpoint'] <= $count) :
+                if (isset($merge_orders[$index])) :
+                    $this->createAirMail2Form($toadd, $pdf, $merge_orders[$index], $options);
+                    if ($options['cn22']>0) $this->createCustomsDeclaration2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]));
+                    $index++;
+                endif;
+            endif;
+            $toadd+=146; 
         endfor;
 
         // switch ($options['startpoint']) 
@@ -435,16 +448,25 @@ endif;
 
         $ci=&get_instance();
         $ci->load->model('order_model','order');
+
+        $merge_orders = array();
+        for ($i=0; $i<count($order); $i++) :
+            $merge_orders[] = $ci->orders->get_specific_order($order[$i]);
+        endfor;
         
         $toaddx = 8;
         $toaddy = 4;
         $index = 0;
+        $count = 0;
 
-        for ($i=1; $i<=count($order); $i++) :
-            if ($options['startpoint'] <= $i) :
-                $this->createAirMail3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
-                if ($options['cn22']>0) $this->createCustomsDeclaration3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]));
-                $index++;
+        for ($i=1;$i<=4;$i++) :
+            $count++;
+            if ($options['startpoint'] <= $count) :
+                if (isset($merge_orders[$index])) :
+                    $this->createAirMail3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
+                    if ($options['cn22']>0) $this->createCustomsDeclaration3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]));
+                    $index++;
+                endif;
             endif; 
             if ($i>1) $toaddx+=140;
             $toaddy+=101;
