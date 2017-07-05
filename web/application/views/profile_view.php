@@ -1,153 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<meta name="description" content="">
-	<meta name="author" content="">
-	<link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
+<style>
+  h4{margin: 30px 0px;}
+  .main { padding:0; }
+  .page-header { margin: 12px 0 20px; }
 
-	<title>Profile - OnLabels</title>
+  .form-control { 
+    background-color : #e3e3e3;
+    border : 1px solid #e3e3e3;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .form-horizontal .control-label {
+    text-align: left;
+  }
 
-	<!-- Bootstrap core CSS -->
-	<link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
-	
-	<link href="<?php echo base_url("assets2/css/dashboard.css"); ?>" rel="stylesheet">
-
-	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-
-	<!-- Custom styles for this template -->
-	<link href="<?php echo base_url("assets2/css/style.css"); ?>" rel="stylesheet">
-	
-	<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-
-	<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-      <style>
-      	html,
-      	body {
-      		height: 100%;
-      	}
-      	
-      	.carousel,
-      	.item,
-      	.active {
-      		height: 100%;
-      	}
-      	
-      	.carousel-inner {
-      		height: 100%;
-      	}
-      	
-      	/* Background images are set within the HTML using inline CSS, not here */
-      	
-      	.fill {
-      		width: 100%;
-      		height: 100%;
-      		background-position: center;
-      		-webkit-background-size: cover;
-      		-moz-background-size: cover;
-      		background-size: cover;
-      		-o-background-size: cover;
-      	}
-      	.img-center {
-      		margin: 0 auto;
-      	}
-      	.caption {
-      		position: absolute;
-      		top: 23%;
-      		color: #ffffff;
-      		padding: 0 45px 0px 90px;
-      		width: 100%;
-      	}
-      	ul{
-      		-webkit-padding-start: 20px;
-      		margin-bottom: 100px;
-      	}
-      	footer {
-      		margin: 0px 0 0 0;
-      	}
-      	.footer{
-      		color: #fff;
-      		background: #29363c;
-      		padding: 20px 0px 40px 0px;
-      	}
-      	.footer ul{
-      		margin-bottom: 0px;
-      		padding: 10px;
-      		list-style: none;
-      	}
-      	
-      	.footer a{
-      		padding: 3px;
-      		color: #f7f7f7;
-      	}
-      	.footer-bottom{
-      		background: #222222;
-      		color: #a3a0a0;
-      		padding: 20px 0px 10px 0px;
-      	}
-      	.sidebar img{
-      		margin-right: 15px;
-      	}
-      	.nav-pills{
-      		border-bottom: 1px solid #ccc;
-      		
-      	}
-      	.main{   margin-left: 45px;}
-      	h4{margin: 30px 0px;}
-      </style>
-  </head>
-
-  <body>
-
-  	<nav class="navbar navbar-inverse navbar-fixed-top">
-  		<div class="container-fluid">
-  			<div class="navbar-header">
-  				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-  					<span class="sr-only">Toggle navigation</span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  				</button>
-  				<a class="navbar-brand" href="<?php echo base_url(); ?>">
-  					<img src="<?php echo base_url("assets2/img/logo_white.png"); ?>" />
-  				</a>
-  			</div>
-  			<div id="navbar" class="collapse navbar-collapse">
-  				<ul class="nav navbar-nav">
-  					
-  					<li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-  					<li><a href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
-              <li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
-              <li><a href="#">제품관리</a></li>
-
-              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
-  				</ul>
-  				<ul class="nav navbar-nav navbar-right">
-  					<li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
-  					<li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li>
-  					<li class=""><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
-  				</ul>
-  			</div><!--/.nav-collapse -->
-  		</div>
-  	</nav>
-
+  .text-danger-company {
+    color: #a94442;
+    font-size: 11px;
+  }
+  .text-danger-company p {
+    margin: 0;
+  }
+  .dropdown-toggle,
+  .btn-default:hover,
+  .btn-default:focus {
+    background-color : #e3e3e3;
+    border : 1px solid #e3e3e3;
+    border-radius: 0;
+    width: 100%;
+    text-align: left;
+  }
+  #basic ul {
+    width: 100%;
+    font-size: 12px;
+  }
+  #basic button {
+    font-size: 12px;
+  }
+</style>
+<link href="<?php echo base_url("assets2/css/flags.css"); ?>" rel="stylesheet">
   	<div class="container-fluid">
   		<div class="row">
   			<div class="col-sm-3 col-md-2 sidebar">
-  				<div style="border-left: 5px solid #346896;padding-left: 5px;">
-            <h3 class="">OnLabels 설정</h3>
-            <h5> 회원등급 : Free Member</h5>
-          </div>
+  				<h5 class="page-header">
+            <div style="border-left:5px solid #337ab7; padding-left:10px;"><?php echo $uemail; ?></br></br>회원등급 : Free Member</div>
+          </h5>
   				<ul class="nav nav-sidebar">
   					<li class="active"><a href=""><img src="<?php echo base_url("assets2/img/user_profile.png"); ?>" /> 프로파일</a></li>
   					<li><a href="<?php echo base_url('sellers/index');?>"><img src="<?php echo base_url("assets2/img/setting.png"); ?>" /> 셀러설정</a></li>
@@ -159,109 +55,191 @@
   			<div class="col-sm-9 col-md-9 main">
   				<h3></h3>
   				<ul  class="nav nav-pills">
-  					<li class="active">
+  					<li>
   						<a  href="#1b" data-toggle="tab">회원정보</a>
   					</li>
   					<li>
   						<a href="#2b" data-toggle="tab">비밀번호</a>
   					</li>
+            <li>
+              <a href="#3b" data-toggle="tab">주소</a>
+            </li>
   					
   				</ul>
-  				<div class="tab-content clearfix">
-  					<div class="tab-pane active" id="1b">
-  						<div class="col-md-2">
-  							<h4>이름</h4>
-  							<h4>회사명</h4>
-  							<h4>이메일</h4>
-  							<h4	>전화번호</h4>
-  						</div>
-  						<div class="col-md-10">
-  							<h4 style="font-weight: 200"><?php echo $uname; ?></h4>
-  							<h4 style="font-weight: 200"> - </h4>
-  							<h4 style="font-weight: 200"><?php echo $uemail; ?></h4>
-  							<h4 style="font-weight: 200"> - </h4>
-  							<button type="submit" href="#" class=" btn btn-primary pull-right" style="">
-  								정보수정
-  							</button>
-  						</div>
-  					</div>
-  					<div class="tab-pane" id="2b">
-  						<h3></h3>
-  					</div>
-  					
-  				</div>
+
+          <div class="tab-content clearfix">
+            <div class="tab-pane" id="1b">
+              <div class="col-md-2">
+                <h4 style="padding:2px 10px 5px 10px;">이름</h4>
+                <h4 style="padding:2px 10px 5px 10px;">회사명</h4>
+                <h4 style="padding:2px 10px 5px 10px;">이메일</h4>
+                <h4 style="padding:2px 10px 5px 10px;">전화번호</h4>
+              </div>
+              <div class="col-md-10">
+              <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:20px 0px 0px 0px;"><?php echo $uname; ?></h4>
+                <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;"> - </h4>
+                <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;"><?php echo $uemail; ?></h4>
+                <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px;margin:15px 0px 20px 0px;"> - </h4>
+                <button type="submit" href="#" class=" btn btn-primary pull-right" style="">
+                  업데이트
+                </button>
+                <button type="submit" href="#" class=" btn btn-primary pull-right" style="margin-right:10px; background-color:#3c3a3a;">
+                  &nbsp&nbsp&nbsp 취소 &nbsp&nbsp
+                </button>
+              </div>
+            </div>
+            <div class="tab-pane" id="2b">
+                <div class="col-md-2">
+                  <h4 style="padding:2px 0px 5px 0px;">현재비밀번호 </h4>
+                  <h4 style="padding:2px 0px 5px 0px;">신규비밀번호</h4>
+                  <h4 style="padding:2px 0px 5px 0px; margin-right:-20px;">비밀번호재입력</h4>
+                </div>
+                <div class="col-md-10">
+                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:20px 0px 0px 0px;">현재비밀번호를 입력하세요</h4>
+                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;">대소문자 및 특수 문자를 포함한 8자리 이상으로 입력하세요 </h4>
+                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 20px 0px;">새로운 비밀번호를 다시 입력하세요</h4>
+                  <button type="submit" href="#" class=" btn btn-primary pull-right" style="">
+                    업데이트
+                  </button>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="3b">
+            <br>
+              <div class="col-md-10">
+                <?php echo $this->session->flashdata('msg-company'); ?>
+                <?php 
+                if ($this->session->userdata('company_success')) :
+                  echo '<div class="msg-company alert alert-success text-center">Company details has been updated</div>';
+                endif;
+                ?>
+                <?php $attributes = array("class"=> "form-horizontal", "name" => "companyform", "id"=>"form");
+          echo form_open("profile/index", $attributes);?>
+                  <div class="form-group">
+                      <label for="inputEmail" class="control-label col-xs-2">회사 이름</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->companyname; ?>" name="companyname" class="form-control" id="inputEmail" placeholder="회사 이름">
+                          <span class="text-danger-company"><?php echo form_error('companyname'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">이름</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->first_name; ?>" name="first_name" class="form-control" id="inputPassword" placeholder="이름">
+                          <span class="text-danger-company"><?php echo form_error('first_name'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">성</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->last_name; ?>" name="last_name" class="form-control" id="inputPassword" placeholder="성">
+                          <span class="text-danger-company"><?php echo form_error('last_name'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">거리 1</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->street1; ?>" name="street1" class="form-control" id="inputPassword" placeholder="거리 1">
+                          <span class="text-danger-company"><?php echo form_error('street1'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">거리 2</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->street2; ?>" name="street2" class="form-control" id="inputPassword" placeholder="거리 2">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">시티</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->city; ?>" name="city" class="form-control" id="inputPassword" placeholder="시티">
+                          <span class="text-danger-company"><?php echo form_error('city'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">지방</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->stateorprovice; ?>" name="province" class="form-control" id="inputPassword" placeholder="지방">
+                          <span class="text-danger-company"><?php echo form_error('province'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="inputPassword" class="control-label col-xs-2">국가</label>
+                      <div class="col-xs-8">
+                          <!-- <input type="text" value="<?php echo $user[0]->country; ?>" name="country" class="form-control" id="inputPassword" placeholder="국가"> -->
+                          <div id="basic" data-input-name="country" data-selected-country="<?php echo $user[0]->country=='South Korea'?'KR':'';?>"></div>
+                          <span class="text-danger-company"><?php echo form_error('country'); ?></span>
+                      </div>
+                      
+                  </div>
+                  <div class="form-group">
+                      <label for="" class="control-label col-xs-2">우편 번호</label>
+                      <div class="col-xs-8">
+                          <input type="text" value="<?php echo $user[0]->postal_code; ?>" name="postal_code" class="form-control" id="inputPassword" placeholder="우편 번호">
+                          <span class="text-danger-company"><?php echo form_error('postal_code'); ?></span>
+                      </div>
+                  </div>
+
+                  
+                  
+                  <div class="form-group">
+                      <div class="col-xs-offset-2 col-xs-12">
+                          <button type="submit" class="btn btn-primary" name="company_update" style="float:right;">업데이트</button>
+                      </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
   			</div>
   		</div><!-- /.container -->
   		
   	</div>
-  	<footer>
-  		<div class="footer" id="footer">
-  			<div class="container">
-  				<div class="row">
-  					<div class="col-lg-3  col-md-3 col-xs-6">
-  						<h3> Site Link</h3>
-  						<ul>
-  							
-  							<li> <a href="#"> Privacy Policy </a> </li>
-  							<li> <a href="#"> Terms of Service </a> </li>
-  							<li> <a href="#"> Blog </a> </li>
-  							<li> <a href="#"> Tour </a> </li>
-  							<li> <a href="#"> Pricing & Signup </a> </li>
-  						</ul>
-  					</div>
-  					<div class="col-lg-3  col-md-3  col-xs-6">
-  						<h3> Support</h3>
-  						<ul>
-  							
-  							<li> <a href="#"> FAQ </a> </li>
-  							<li> <a href="#"> Request a Feature </a> </li>
-  							<li> <a href="#"> Report a Bug </a> </li>
-  							<li> <a href="#"> Contact Us </a> </li>
-  						</ul>
-  					</div>
-  					<div class="col-lg-3  col-md-3 col-xs-6">
-  						<h3> New on the Blog </h3>
-  						<ul>
-  							<li> <a href="#"> Using mail merge for packing slips</a> </li>
-  							<li> <a href="#"> The end of eBook delivery </a> </li>
-  							<li> <a href="#"> Alter Customer Address </a> </li>
-  							<li> <a href="#"> Powerful new email features </a> </li>
-  							<li> <a href="#"> The new list view in Scrobbld </a> </li>
-  						</ul>
-  					</div>
-  					<div class="col-lg-3  col-md-3 col-sm-4 col-xs-6">
-  						<h3> Community</h3>
-  						<ul>
-  							<li> <a href="#"> Forums / Features </a> </li>
-  							<li> <a href="#"> Questions </a> </li>
-  							<li> <a href="#"> LScrobbld Blog </a> </li>
-  							<li> <a href="#"> Twitter </a> </li>
-  							<li> <a href="#"> Facebook </a> </li>
-  						</ul>
-  					</div>
-  				</div>
-  				<!--/.row--> 
-  			</div>
-  			<!--/.container--> 
-  		</div>
-  		<!--/.footer-->
-  		
-  		<div class="footer-bottom">
-  			<div class="container">
-  				<p class="pull-right">  iLABs Technology © 2015~2017 All rights reserved. </p>
-  				
-  			</div>
-  		</div>
-  		<!--/.footer-bottom--> 
-  	</footer>
+  	
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="<?php echo base_url("assets2/js/jquery.js"); ?>"><\/script>')</script>
     <script src="<?php echo base_url("assets2/js/bootstrap.min.js"); ?>"></script>
+    <script src="<?php echo base_url("assets2/js/jquery.flagstrap.min.js"); ?>"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script>
+    $(document).ready(function() {
+      $('#basic').flagStrap();
+      var iscompany_error = false;
+      $('body').find('.text-danger-company').each(function(){
+        if ($(this).html() != "") {
+          iscompany_error = true;
+          return false;
+        }
+      });
+
+      //console.log ($('body').find('.msg-company').html());
+
+       <?php if ($this->session->userdata('company_success')) : 
+          $this->session->unset_userdata('company_success'); ?>
+          iscompany_error = true;
+        <?php endif; ?>
+      if (iscompany_error) {
+
+        $('.nav-pills li:nth-child(1), #1b').removeClass('active');
+        $('.nav-pills li:nth-child(3), #3b').addClass('active');
+
+        //$('#1b').fadeOut('fast');
+        //$('#3b').fadeIn('slow');
+        // setTimeout(function(){
+        //   $('.text-danger-company').fadeOut('slow').html("");
+        // }, 2000)
+      }
+      else
+      { 
+        $('.nav-pills li:nth-child(3), #3b').removeClass('active');
+        $('.nav-pills li:nth-child(1), #1b').addClass('active');
+      }
+    });
+
     $('body').on('click','#refreshorders', function() {
         var $elem = $('#refreshorders');
         $({deg: 0}).animate({deg: 1080}, {

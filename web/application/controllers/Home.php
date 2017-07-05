@@ -12,7 +12,11 @@ class Home extends CI_Controller
 	function index()
 	{
 		$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+		
+		$data['title'] = 'Home'; 
+		$this->load->view('header', $data);
 		$this->load->view('home_view', $data);
+		$this->load->view('footer');
 	}
 	
 	function logout()

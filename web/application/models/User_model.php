@@ -28,8 +28,10 @@ class User_model extends CI_Model
 	// get user
 	function get_user_by_id($id)
 	{
-		$this->db->where('id', $id);
+		$this->db->where('ol_user.id', $id);
+		$this->db->join('ol_company', 'ol_company.ol_user_id = ol_user.id', 'left');
         $query = $this->db->get('ol_user');
+
 		return $query->result();
 	}
 	

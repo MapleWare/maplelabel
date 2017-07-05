@@ -19,7 +19,11 @@ class Upgrade extends CI_Controller
 			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			$this->load->view('upgrade_view', $data);	
+
+			$data['title'] = 'Upgrade';
+			$this->load->view('header', $data);
+			$this->load->view('upgrade_view', $data);
+			$this->load->view('footer');
 		}
 		else redirect(base_url());
 	}

@@ -16,380 +16,50 @@ class Fpdflibrary extends tFPDF {
         parent::__construct($orientation, $unit, $size);
     }
 
-    function pdf1x1($pdf, $orders, $options)
+    function pdf1x1($pdf, $order, $options)
     {
-        $pdf->AddPage(); 
-        $pdf->SetAutoPageBreak(false);   
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
         $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
-        $pdf->SetLineWidth(0.2);
-        $pdf->SetFillColor(255);
-        $pdf->RoundedRect(8, 8, 132, 190, 0, 'DF'); // 
 
         $ci=&get_instance();
         $ci->load->model('order_model','order');
-        $order = $ci->orders->get_specific_order($orders[0]);
-    
-        // lines
-        $pdf->SetLineWidth(0.7);
-        $pdf->Line(13,13.5,13,19.5); // header line
 
-        $pdf->SetDrawColor(169,169,169);
-        $pdf->SetLineWidth(0.4);
-        $pdf->Line(13,27,135,27); // top
-        $pdf->Line(13,27,13,193); // left
-        $pdf->Line(135,27,135,193); // right
-        $pdf->Line(13,193,135,193); // bottom
+        $y=0;
+        for ($i=0; $i<count($order); $i++) :
+            if ($i % 2 == 0) : 
+                $x = 0;
+                if ($i>1 && $options['cn22']==0) : $pdf->AddPage(); endif;
 
+                // for cn22 only
+                if ($options['from']==0 && $options['to']==0 && $options['cn22']>0) :
+                    $x=-149;
+                    if ($i>1) : $pdf->AddPage(); endif;
+                endif;
+            else:
+                $x = 149;
+                if ($options['cn22']>0 && ($options['from']>0 || $options['to']>0)) $x=0;
 
-        $pdf->Line(38,27,38,42); // first row
-        $pdf->Line(112,27,112,42); 
-        $pdf->Line(13,42,135,42); 
+                // for cn22 only
+                if ($options['from']==0 && $options['to']==0 && $options['cn22']>0) :
+                    $x=0;
+                endif;
+            endif;
 
-        $pdf->Line(13,72,135,72); // second row
+            // echo 'x=='.$x .'<br>';
 
-        $pdf->Line(13,84,135,84); // third row
-        $pdf->Line(38,72,38,84);
-        $pdf->Line(70,72,70,84);
-        $pdf->Line(95,72,95,84); 
-
-        $pdf->Line(13,96,135,96); // fourth row
-        $pdf->Line(38,84,38,96);
-
-        $pdf->Line(38,96,38,111); // repeat first row
-        $pdf->Line(112,96,112,111); 
-        $pdf->Line(13,111,135,111); 
-
-        $pdf->Line(13,141,135,141); // second row
-
-        $pdf->Line(13,153,135,153); // third row
-        $pdf->Line(38,141,38,153);
-        $pdf->Line(70,141,70,153);
-        $pdf->Line(95,141,95,153); 
-
-        $pdf->Line(13,165,135,165); // fourth row
-        $pdf->Line(38,153,38,165);
-
-
-        $pdf->SetDrawColor(0);
-        $pdf->SetLineWidth(0.2);
-        $pdf->SetXY(13,14);
-        $pdf->SetFont('Arial','B',20);
-        $pdf->Cell(79,6,' AIR MAIL Small Packet',0,0,'L');
-
-        $pdf->SetXY(13,32);
-        $pdf->SetFont('Arial','B',18);
-        $pdf->Cell(25,5,'FROM',0,1,'C');
-
-        $pdf->SetXY(13,101);
-        $pdf->SetFont('Arial','B',18);
-        $pdf->Cell(25,5,'TO',0,1,'C');
-
-        // custom text
-        $nameYvalue = 2;
-        if (strlen($order['seller_company_name']) > 25) $nameYvalue = 10;
-        $pdf->SetXY(39,30+$nameYvalue);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->MultiCell(72,5,$order['seller_company_name'],0,'C');
-
-        $pdf->SetXY(112,32);
-        $pdf->SetFont('Arial','B',16);
-
-        $seller_country_code = 'KR';
-        if (strtolower($order['seller_country']) !== 'south korea')
-            $seller_country_code = $order['seller_country'];
-        $pdf->Cell(23,5,$seller_country_code,0,1,'C');
-
-        $pdf->SetXY(16,45);
-        $pdf->SetFont('Arial','',16);
-
-if (!empty($order['seller_street2'])) :
-        $pdf->MultiCell(116,8,$order['seller_street1'].'
-'.$order['seller_street2'].'
-'.$order['seller_city'].' '.$order['seller_stateorprovice'],0,'L');
-else :
-            $pdf->MultiCell(116,8,$order['seller_street1'].'
-'.$order['seller_city'].' '.$order['seller_stateorprovice'],0,'L');
-endif;
-        //$pdf->Cell(118,5,'Maplestore',1,1,'L');
-
-        $pdf->SetXY(13,76);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'Post Code',0,1,'C');
-
-        $pdf->SetXY(38,76);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(32,5,$order['seller_postal_code'],0,1,'C');
-
-        $pdf->SetXY(70,76);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'Country',0,1,'C');
-
-        $pdf->SetXY(95,76);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,5,$order['seller_country'],0,1,'C');
-
-        $pdf->SetXY(13,88);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'TEL',0,1,'C');
-
-        $pdf->SetXY(41,88);
-        $pdf->Cell(91,4,$order['seller_phone_no'],0,1,'L');
-
-        // second
-        $nameYvalue = 2;
-        if (strlen($order['name']) > 25) $nameYvalue = 0;
-        $pdf->SetXY(39,99+$nameYvalue);
-        $pdf->SetFont('Arial','B',16);
-        //$pdf->Cell(57,5,$order['name'],0,1,'C');
-        $pdf->MultiCell(72,5,$order['name'],0,'C');
-
-        $pdf->SetXY(112,101);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(23,5,$order['country_code'],0,1,'C');
-
-
-        $pdf->SetXY(16,114);
-        $pdf->SetFont('Arial','',16);
-
-if (!empty($order['street2'])) :
-        $pdf->MultiCell(116,8,$order['street1'].'
-'.$order['street2'].'
-'.$order['city_name'].' '.$order['stateorprovince'],0,'L');
-else :
-            $pdf->MultiCell(116,8,$order['street1'].'
-'.$order['city_name'].' '.$order['stateorprovince'],0,'L');
-endif;
-        $pdf->SetXY(13,145);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'Post Code',0,1,'C');
-
-        $pdf->SetXY(38,145);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(32,5,$order['postal_code'],0,1,'C');
-
-        $pdf->SetXY(70,145);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'Country',0,1,'C');
-
-        $pdf->SetXY(95,145);
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,5,$order['country_name'],0,1,'C');
-
-        $pdf->SetXY(13,157);
-        $pdf->SetFont('Arial','',14);
-        $pdf->Cell(25,4,'TEL',0,1,'C');
-
-        $pdf->SetXY(41,157);
-        $pdf->Cell(91,4,$order['shipto_phone_no'],0,1,'L');
-
-        $pdf->SetFont('NanumBarunGothicBold','',12);
-        $pdf->SetXY(16.5,170);
-        $pdf->MultiCell(115,5,$order['seller_msg'],0,'C');
-    
-        ////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////
-
-        if ($options['cn22']>0)
-        {
-            //reset 
-            $pdf->SetLineWidth(0.2);
-            $pdf->SetFillColor(255);
-            $pdf->RoundedRect(157, 8, 132, 190, 0, 'DF');
-
-            // vertical line
-            $pdf->SetLineWidth(0.7);
-            $pdf->Line(162,13.5,162,24.5);
-
-            $pdf->SetXY(162,13);
-            $pdf->SetFont('Arial','B',20);
-            $pdf->Cell(37,6,' CUSTOMS',0,0,'L');
-            $pdf->SetXY(162,19.5);
-            $pdf->Cell(53,6,' DECLARATION',0,0,'L');
-
-            $pdf->SetXY(162,26);
-            $pdf->SetFont('NanumBarunGothic','',16);
-            $pdf->Cell(27,6,' 세관신고서',0,0,'L');
-
-            $pdf->SetXY(192,13);
-            $pdf->SetFont('Arial','B',35);
-            $pdf->Cell(96,12,'CN22 ',0,1,'R');
-
-            // vertical line
-            $pdf->Line(162,38,162,40.5);
-
-            $pdf->SetXY(162,37.5);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->Cell(39,4,' May be opened officialy',0,1,'L');
-            $pdf->SetXY(162,42);
-            $pdf->Cell(38,4,' 공개적으로 개봉될 수 있음',0,0,'L');
-
-            // table
-            $pdf->SetDrawColor(169,169,169);
-            $pdf->SetLineWidth(0.4);
-            $pdf->Line(162,49,284,49); // top
-            $pdf->Line(162,49,162,193); // left
-            $pdf->Line(162,193,284,193); // bottom
-            $pdf->Line(284,49,284,193); // right
-
-            $pdf->Line(162,64,284,64); // 1st row
-            $pdf->Line(236,49,236,56); // 1st row vertical line
-            $pdf->Line(162,78,284,78); // 2nd row 
-            $pdf->Line(162,93,284,93); // 3rd row
-
-            $pdf->Line(236,78,236,148); // 3rd row vertical line A
-            $pdf->Line(260,78,260,148); // 3rd row vertical line B
-
-            $pdf->Line(162,108,284,108); // 4th row
-            $pdf->Line(162,131,284,131); // 5th row
-            $pdf->Line(162,148,284,148); // 6th row
-            //$pdf->Line(161,183,283,183); // 7th row
-
-
-            $pdf->SetDrawColor(0);
-            $pdf->SetLineWidth(0.2);
-
-            $pdf->SetXY(163,49);
-            $pdf->SetFont('Arial','B',12);
-            $pdf->Cell(45,7,'Designated operator',0,0,'L');
-            $pdf->SetXY(237,50.5);
-            $pdf->SetFont('Arial','B',10);
-            $pdf->MultiCell(27,4,'Important! See instructions on the back',0,'L');
-
-            // table 2nd line
-            $pdf->SetDrawColor(169,169,169);
-            $pdf->SetTextColor(68,68,68);
-            $pdf->SetXY(169,66);
-            $pdf->SetFont('NanumBarunGothicBold','',10);
-            $pdf->Cell(17,5,'Gift(선물)',0,0,'L');
-            // checkbox
-            $pdf->Line(164,65.5,169,65.5); // top
-            $pdf->Line(164,70.5,169,70.5); // bottom
-            $pdf->Line(164,65.5,164,70.5); // left
-            $pdf->Line(169,65.5,169,70.5); // right
-
-            $pdf->SetXY(169,72);
-            $pdf->Cell(29,5,'Documents(서류)',0,0,'L');
-            // checkbox
-            $pdf->Line(164,71.5,169,71.5); // top
-            $pdf->Line(164,76.5,169,76.5); // bottom
-            $pdf->Line(164,71.5,164,76.5); // left
-            $pdf->Line(169,71.5,169,76.5); // right
-
-            $pdf->SetXY(226,66);
-            $pdf->Cell(49,5,'Commercial Sample(상업샘플)',0,0,'L');
-            // checkbox
-            $pdf->Line(221,65.5,226,65.5); // top
-            $pdf->Line(221,70.5,226,70.5); // bottom
-            $pdf->Line(221,65.5,221,70.5); // left
-            $pdf->Line(226,65.5,226,70.5); // right
-
-            $pdf->SetXY(226,72);
-            $pdf->Cell(20,5,'Other(기타)',0,0,'L');
-            // checkbox
-            $pdf->Line(221,71.5,226,71.5); // top
-            $pdf->Line(221,76.5,226,76.5); // bottom
-            $pdf->Line(221,71.5,221,76.5); // left
-            $pdf->Line(226,71.5,226,76.5); // right
-
-            // table 3rd line
-            $pdf->SetXY(163,79);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(72,4,'Quantity and detailed description of contents(1)',0,'L');
-            $pdf->SetXY(163,87);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->Cell(72,4.5,'내용증명, 수량 등 자세한 설명',0,0,'L');
-
-            // text for quantiy
-            $pdf->SetFont('NanumBarunGothicBold','',9);
-            $pdf->SetXY(164,95);
-            $pdf->MultiCell(70,11,$order['cnt'].'x '.$order['order_title'],0,'L');
-
-            $pdf->SetXY(238,79);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(20,4,'Weight    (in kg)(2)',0,'C');
-            $pdf->SetXY(238,87.5);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->Cell(20,3,'무게',0,0,'C');
-
-            // text for weight
-            $pdf->SetFont('NanumBarunGothicBold','',9);
-            $pdf->SetXY(238,95);
-            $pdf->MultiCell(20,11,$order['item_weight'].' '.$order['item_weight_unit'],0,'C');
-
-            $pdf->SetXY(262,79);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(20,4,'Value (3)',0,'C');
-            $pdf->SetXY(262,83.5);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->Cell(20,3,'가격',0,0,'C');
-            // table 4th line 
+            if ($options['from']>0 || $options['to']>0) :
+                $this->createAirMail1Form($x, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+            endif;
             
-            // text for price
-            $pdf->SetFont('NanumBarunGothicBold','',9);
-            $pdf->SetXY(262,95);
-            $pdf->MultiCell(20,11,$order['item_price'].' '.$order['item_price_currency'],0,'C');
-
-            // table 5th line
-            $pdf->SetXY(163,109);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(72,4,'For commercial items only if know, HS tarif number(4) and country of origin of goods(5)',0,'L');
-            $pdf->SetXY(163,121);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->MultiCell(72,4,'상업물품인 경우 원산지 및 HS코드(상품분류번호) 기입 ',0,'L');
-
-            $pdf->SetXY(238,109);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(20,4,'Total Weight (in kg)(6)',0,'C');
-            $pdf->SetXY(238,121.5);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->Cell(20,3,'총무게',0,0,'C');
-
-            // text for total weight
-            $pdf->SetFont('NanumBarunGothicBold','',9);
-            $pdf->SetXY(238,133);
-            $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_weight']),2).' '.$order['item_weight_unit'],0,'C');
-
-            $pdf->SetXY(262,109);
-            $pdf->SetFont('NanumBarunGothic','',10);
-            $pdf->MultiCell(20,4,'Total Value (7)',0,'C');
-            $pdf->SetXY(262,117.5);
-            $pdf->SetFont('NanumBarunGothic','',9);
-            $pdf->Cell(20,3,'총가격',0,0,'C');
-
-            // text for total price
-            $pdf->SetFont('NanumBarunGothicBold','',9);
-            $pdf->SetXY(262,133);
-            $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_price']),2).' '.$order['item_price_currency'],0,'C');
-
-            // table 6th line
-            $pdf->SetXY(163,149);
-            $pdf->SetFont('NanumBarunGothic','',11);
-            $pdf->MultiCell(120,4.2,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
-            $pdf->SetXY(163,172);
-            $pdf->MultiCell(120,4.5,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나 위험물품을 포함하지 않음을 증명합니다',0,'L');
-            $pdf->SetXY(163,184.5);
-            $pdf->SetTextColor(0);
-            $pdf->SetFont('Arial','B',17);
-            $pdf->MultiCell(120,5,'Date and senders signature(8)',0,'L');
-        }
-
-        if ($options['from']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(12, 26, 124, 69.7, 'F');    
-        }
-        if ($options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(12, 96.3, 124, 98, 'F');
-        }
-
-        if ($options['from']<1 && $options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(7, 7, 134, 192, 'F');
-        }
+            if ($options['cn22']>0) :
+                $this->createCustomsDeclaration1Form($x, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+                if ($options['from']>0 || $options['to']>0) :
+                    if ($i<(count($order)-1)) $pdf->AddPage();
+                endif;
+            endif;
+        endfor;
     }
 
     function pdf1x2($pdf, $order, $options)
@@ -407,36 +77,50 @@ endif;
             $merge_orders[] = $ci->orders->get_specific_order($order[$i]);
         endfor;
 
-        $index=0;
-        $toadd = 0;
-        $count=0;
-        for ($i=1;$i<=2;$i++) :
-            $count++;
-            if ($options['startpoint'] <= $count) :
-                if (isset($merge_orders[$index])) :
-                    $this->createAirMail2Form($toadd, $pdf, $merge_orders[$index], $options);
-                    if ($options['cn22']>0) $this->createCustomsDeclaration2Form($toadd, $pdf, $ci->orders->get_specific_order($order[$index]));
-                    $index++;
-                endif;
-            endif;
-            $toadd+=146; 
-        endfor;
+        $cnt_even=0;
+        $x=0;
+        if ($options['startpoint']>1):
+            $empty_orders = array('id'=>0);
+            array_unshift($merge_orders, $empty_orders);
+        endif;
 
-        // switch ($options['startpoint']) 
-        // {
-        //     case 2:
-        //         $this->createAirMail2Form(146, $pdf, $order, $options);
-        //         if ($options['cn22']>0) $this->createCustomsDeclaration2Form(146, $pdf, $order);
-        //         break;
-        //     default:
-        //         $this->createAirMail2Form(0, $pdf, $order, $options);
-        //         $this->createAirMail2Form(146, $pdf, $order, $options);
-        //         if ($options['cn22']>0) {
-        //             $this->createCustomsDeclaration2Form(0, $pdf, $order);
-        //             $this->createCustomsDeclaration2Form(146, $pdf, $order);
-        //         }
-        //         break;
-        // }
+        for ($i=0; $i<count($merge_orders); $i++) :
+            if ($i % 2 == 0) : 
+                $y = 0;
+                if ($cnt_even==1 && $options['cn22']==0) :
+                    $x+=99;
+                elseif ($cnt_even==1 && ($options['cn22']>0 && ($options['from']>0 || $options['to']>0))) :
+                    $pdf->AddPage();
+                endif;
+                
+                if ($cnt_even>0 && $cnt_even % 2 == 0):
+                    $pdf->AddPage();
+                    $x=0;
+                endif; 
+                $cnt_even++;
+
+                // for cn22 only
+                if ($options['from']==0 && $options['to']==0 && $options['cn22']>0) :
+                    if ($i%4==0) : 
+                        $x=-99;
+                    else :
+                        $x=0;
+                    endif; 
+                endif;
+            else:
+                $y+=146;
+            endif;
+
+            // echo 'x=='.$x .'y=='.$y .'<br>';
+
+            if ($options['from']>0 || $options['to']>0) :
+                $this->createAirMail2Form($x, $y, $pdf, $merge_orders[$i], $options);
+            endif; 
+
+            if ($options['cn22']>0) :
+                $this->createCustomsDeclaration2Form($x, $y, $pdf, $merge_orders[$i]);
+            endif;
+        endfor;
     }
 
     function pdf2x2($pdf, $order, $options)
@@ -454,67 +138,80 @@ endif;
             $merge_orders[] = $ci->orders->get_specific_order($order[$i]);
         endfor;
         
-        $toaddx = 8;
-        $toaddy = 4;
-        $index = 0;
-        $count = 0;
+        $x = 8;
+        $y = 4;
+        
+        $cnt_even=0;
+        if ($options['startpoint']>1):
+            switch ($options['startpoint']) {
+                case 2: array_unshift($merge_orders, array('id' => 0)); break;
+                case 3: 
+                    if (($options['from']>0 || $options['to']>0) && $options['cn22']>0) :
+                        array_unshift($merge_orders, array('id' => 0), array('id' => 0)); 
+                    else :
+                        array_unshift($merge_orders, array('id' => 0), array('id' => 0), array('id' => 0), array('id' => 0)); 
+                    endif;
+                break;
+                case 4: 
+                    if (($options['from']>0 || $options['to']>0) && $options['cn22']>0) :
+                        array_unshift($merge_orders, array('id' => 0), array('id' => 0), array('id' => 0)); 
+                    else :
+                        array_unshift($merge_orders, array('id' => 0), array('id' => 0), array('id' => 0), array('id' => 0), array('id' => 0));
+                    endif;
+                break;
+            }
+        endif;
 
-        for ($i=1;$i<=4;$i++) :
-            $count++;
-            if ($options['startpoint'] <= $count) :
-                if (isset($merge_orders[$index])) :
-                    $this->createAirMail3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]), $options);
-                    if ($options['cn22']>0) $this->createCustomsDeclaration3Form($toaddx, $toaddy, $pdf, $ci->orders->get_specific_order($order[$index]));
-                    $index++;
+        for ($i=0; $i<count($merge_orders); $i++) :
+            if ($i % 2 == 0) : 
+
+                if ($i>0 && $options['cn22']==0) :
+                    $x+=70;
+                    $y=4;
+                    if ($i%8==0) :
+                        $pdf->AddPage();
+                        $x=8;
+                        $y=4;
+                    endif;
+                endif; 
+
+                if ($i>0 && $options['cn22']>0 && ($options['from']>0 || $options['to']>0)) :
+                    $x+=140;
+                    $y=4;
+                    if ($i%4==0) :
+                        $pdf->AddPage();
+                        $x=8;
+                        $y=4;
+                    endif;
                 endif;
+
+                // for cn22 only
+                if ($options['from']==0 && $options['to']==0 && $options['cn22']>0) :
+                    $x-=70;
+                    if ($i>0 && $i%2==0) :
+                        $x+=140;
+                        $y=4;
+                        if ($i%8==0) :
+                            $pdf->AddPage();
+                            $x=-62;
+                            $y=4;
+                        endif;
+                    endif;
+                endif;
+            else:
+                $y+=101;
+            endif;
+
+            // echo 'x=='.$x .'y=='.$y .'<br>';
+
+            if ($options['from']>0 || $options['to']>0) :
+                $this->createAirMail3Form($x, $y, $pdf, $merge_orders[$i], $options);
             endif; 
-            if ($i>1) $toaddx+=140;
-            $toaddy+=101;
-            if ($i>1) $toaddy=4;
-            if ($i>2) :
-                $toaddx=148;
-                $toaddy+=101;
+            
+            if ($options['cn22']>0) :
+                $this->createCustomsDeclaration3Form($x, $y, $pdf, $merge_orders[$i]);
             endif;
         endfor;
-
-        // switch ($options['startpoint']) 
-        // {
-        //     case 2:
-        //         $this->createAirMail3Form(8, 105, $pdf, $order, $options);
-        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-        //         if ($options['cn22']>0) {
-        //             $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-        //         }
-        //         break;
-        //     case 3:
-        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-        //         if ($options['cn22']>0) {
-        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-        //         }
-        //         break;
-        //     case 4:
-        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-        //         if ($options['cn22']>0) $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-        //         break;
-        //     default:
-        //         $this->createAirMail3Form(8, 4, $pdf, $order, $options);
-        //         $this->createAirMail3Form(8, 105, $pdf, $order, $options);
-        //         $this->createAirMail3Form(148, 4, $pdf, $order, $options);
-        //         $this->createAirMail3Form(148, 105, $pdf, $order, $options);
-        //         if ($options['cn22']>0)
-        //         {
-        //             $this->createCustomsDeclaration3Form(8, 4, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(8, 105, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(148, 4, $pdf, $order);
-        //             $this->createCustomsDeclaration3Form(148, 105, $pdf, $order);
-        //         }
-        //         break;
-        // }
     }
 
     function pdf3xn($pdf, $orders, $options, $col = 7)
@@ -570,68 +267,228 @@ endif;
         endfor;
     }
 
-    function createAirMail2Form($xToAdd = 0, $pdf, $order, $options)
+    function createAirMail1Form($ValueToAdd = 0, $pdf, $order, $options)
     {
-        $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
         $pdf->SetFillColor(255);
-        $pdf->RoundedRect(8, 8+$xToAdd, 95, 135, 0, 'DF'); // 
+        $pdf->RoundedRect(8+$ValueToAdd, 8, 132, 190, 0, 'DF'); // 
         // lines
-        $pdf->SetLineWidth(0.5);
-        $pdf->Line(12,11+$xToAdd,12,15+$xToAdd); // header line
+        $pdf->SetLineWidth(0.7);
+        $pdf->Line(13+$ValueToAdd,13.5,13+$ValueToAdd,19.5); // header line
+
         $pdf->SetDrawColor(169,169,169);
         $pdf->SetLineWidth(0.4);
-        $pdf->Line(12,20+$xToAdd,99,20+$xToAdd); // top
-        $pdf->Line(12,20+$xToAdd,12,141+$xToAdd); // left
-        $pdf->Line(99,20+$xToAdd,99,141+$xToAdd); // right
-        $pdf->Line(12,141+$xToAdd,99,141+$xToAdd); // bottom
-        $pdf->Line(12,31+$xToAdd,99,31+$xToAdd); // first row
-        $pdf->Line(30,20+$xToAdd,30,31+$xToAdd); 
-        $pdf->Line(85,20+$xToAdd,85,31+$xToAdd); 
-        $pdf->Line(12,53+$xToAdd,99,53+$xToAdd); // second row
-        $pdf->Line(12,62+$xToAdd,99,62+$xToAdd); // third row
-        $pdf->Line(30,53+$xToAdd,30,62+$xToAdd);
-        $pdf->Line(53,53+$xToAdd,53,62+$xToAdd);
-        $pdf->Line(70,53+$xToAdd,70,62+$xToAdd); 
-        $pdf->Line(12,71+$xToAdd,99,71+$xToAdd); // fourth row
-        $pdf->Line(30,62+$xToAdd,30,71+$xToAdd);
-        $pdf->Line(12,82+$xToAdd,99,82+$xToAdd); // repeat first row
-        $pdf->Line(30,71+$xToAdd,30,82+$xToAdd); 
-        $pdf->Line(85,71+$xToAdd,85,82+$xToAdd);
-        $pdf->Line(12,104+$xToAdd,99,104+$xToAdd); // second row
-        $pdf->Line(12,113+$xToAdd,99,113+$xToAdd); // third row
-        $pdf->Line(30,104+$xToAdd,30,113+$xToAdd);
-        $pdf->Line(53,104+$xToAdd,53,113+$xToAdd);
-        $pdf->Line(70,104+$xToAdd,70,113+$xToAdd); 
-        $pdf->Line(12,122+$xToAdd,99,122+$xToAdd); // fourth row
-        $pdf->Line(30,113+$xToAdd,30,122+$xToAdd);
+    
+        $fromNtoY = 0;
+        for ($i=0;$i<2;$i++) :
+            if ($i>0) $fromNtoY+=69;
+
+            $pdf->Line(13+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,27+$fromNtoY); // top
+            $pdf->Line(13+$ValueToAdd,27+$fromNtoY,13+$ValueToAdd,96+$fromNtoY); // left
+            $pdf->Line(135+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // right
+            $pdf->Line(13+$ValueToAdd,96+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // bottom
+            $pdf->Line(38+$ValueToAdd,27+$fromNtoY,38+$ValueToAdd,42+$fromNtoY); // first row
+            $pdf->Line(112+$ValueToAdd,27+$fromNtoY,112+$ValueToAdd,42+$fromNtoY); 
+            $pdf->Line(13+$ValueToAdd,42+$fromNtoY,135+$ValueToAdd,42+$fromNtoY); 
+            $pdf->Line(13+$ValueToAdd,72+$fromNtoY,135+$ValueToAdd,72+$fromNtoY); // second row
+            $pdf->Line(13+$ValueToAdd,84+$fromNtoY,135+$ValueToAdd,84+$fromNtoY); // third row
+            $pdf->Line(38+$ValueToAdd,72+$fromNtoY,38+$ValueToAdd,84+$fromNtoY);
+            $pdf->Line(70+$ValueToAdd,72+$fromNtoY,70+$ValueToAdd,84+$fromNtoY);
+            $pdf->Line(95+$ValueToAdd,72+$fromNtoY,95+$ValueToAdd,84+$fromNtoY); 
+            $pdf->Line(38+$ValueToAdd,84+$fromNtoY,38+$ValueToAdd,96+$fromNtoY); 
+
+            if ($fromNtoY>68) :
+                $fromNtoY=96;
+                $pdf->Line(13+$ValueToAdd,27+$fromNtoY,13+$ValueToAdd,96+$fromNtoY); // left
+                $pdf->Line(135+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // right
+                $pdf->Line(13+$ValueToAdd,96+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // bottom
+            endif;
+        endfor;
 
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
-        $pdf->SetXY(13,11.5+$xToAdd);
+        $pdf->SetXY(13+$ValueToAdd,14);
+        $pdf->SetFont('Arial','B',20);
+        $pdf->Cell(79,6,' AIR MAIL Small Packet',0,0,'L');
+
+        $pdf->SetXY(13+$ValueToAdd,32);
+        $pdf->SetFont('Arial','B',18);
+        $pdf->Cell(25,5,'FROM',0,1,'C');
+
+        $pdf->SetXY(13+$ValueToAdd,101);
+        $pdf->SetFont('Arial','B',18);
+        $pdf->Cell(25,5,'TO',0,1,'C');
+
+        // custom text
+        $nameYvalue = 2;
+        if (strlen($order['seller_company_name']) > 25) $nameYvalue = 10;
+        $pdf->SetXY(39+$ValueToAdd,30+$nameYvalue);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->MultiCell(72,5,$order['seller_company_name'],0,'C');
+
+        $pdf->SetXY(112+$ValueToAdd,32);
+        $pdf->SetFont('Arial','B',16);
+
+        $seller_country_code = 'KR';
+        if (strtolower($order['seller_country']) !== 'south korea')
+            $seller_country_code = $order['seller_country'];
+        $pdf->Cell(23,5,$seller_country_code,0,1,'C');
+
+        $pdf->SetXY(16+$ValueToAdd,45);
+        $pdf->SetFont('Arial','',16);
+
+if (!empty($order['seller_street2'])) :
+        $pdf->MultiCell(116,8,$order['seller_street1'].'
+'.$order['seller_street2'].'
+'.$order['seller_city'].' '.$order['seller_stateorprovice'],0,'L');
+else :
+        $pdf->MultiCell(116,8,$order['seller_street1'].'
+'.$order['seller_city'].' '.$order['seller_stateorprovice'],0,'L');
+endif;
+        //$pdf->Cell(118,5,'Maplestore',1,1,'L');
+
+        $pdf->SetXY(13+$ValueToAdd,76);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'Post Code',0,1,'C');
+
+        $pdf->SetXY(38+$ValueToAdd,76);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(32,5,$order['seller_postal_code'],0,1,'C');
+
+        $pdf->SetXY(70+$ValueToAdd,76);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'Country',0,1,'C');
+
+        $pdf->SetXY(95+$ValueToAdd,76);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(40,5,$order['seller_country'],0,1,'C');
+
+        $pdf->SetXY(13+$ValueToAdd,88);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'TEL',0,1,'C');
+
+        $pdf->SetXY(41+$ValueToAdd,88);
+        $pdf->Cell(91,4,$order['seller_phone_no'],0,1,'L');
+
+        // second
+        $nameYvalue = 2;
+        if (strlen($order['name']) > 25) $nameYvalue = 0;
+        $pdf->SetXY(39+$ValueToAdd,99+$nameYvalue);
+        $pdf->SetFont('Arial','B',16);
+        //$pdf->Cell(57,5,$order['name'],0,1,'C');
+        $pdf->MultiCell(72,5,$order['name'],0,'C');
+
+        $pdf->SetXY(112+$ValueToAdd,101);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(23,5,$order['country_code'],0,1,'C');
+
+
+        $pdf->SetXY(16+$ValueToAdd,114);
+        $pdf->SetFont('Arial','',16);
+
+if (!empty($order['street2'])) :
+        $pdf->MultiCell(116,8,$order['street1'].'
+'.$order['street2'].'
+'.$order['city_name'].' '.$order['stateorprovince'],0,'L');
+else :
+            $pdf->MultiCell(116,8,$order['street1'].'
+'.$order['city_name'].' '.$order['stateorprovince'],0,'L');
+endif;
+        $pdf->SetXY(13+$ValueToAdd,145);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'Post Code',0,1,'C');
+
+        $pdf->SetXY(38+$ValueToAdd,145);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(32,5,$order['postal_code'],0,1,'C');
+
+        $pdf->SetXY(70+$ValueToAdd,145);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'Country',0,1,'C');
+
+        $pdf->SetXY(95+$ValueToAdd,145);
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(40,5,$order['country_name'],0,1,'C');
+
+        $pdf->SetXY(13+$ValueToAdd,157);
+        $pdf->SetFont('Arial','',14);
+        $pdf->Cell(25,4,'TEL',0,1,'C');
+
+        $pdf->SetXY(41+$ValueToAdd,157);
+        $pdf->Cell(91,4,$order['shipto_phone_no'],0,1,'L');
+
+        $pdf->SetFont('NanumBarunGothicBold','',12);
+        $pdf->SetXY(16.5+$ValueToAdd,170);
+        $pdf->MultiCell(115,5,$order['seller_msg'],0,'C');
+    }
+
+    function createAirMail2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order, $options)
+    {
+        if ($order['id']==0) return;
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetFillColor(255);
+        $pdf->RoundedRect(8+$xToAdd, 8+$yToAdd, 95, 135, 0, 'DF'); // 
+        // lines
+        $pdf->SetLineWidth(0.5);
+        $pdf->Line(12+$xToAdd,11+$yToAdd,12+$xToAdd,15+$yToAdd); // header line
+        $pdf->SetDrawColor(169,169,169);
+        $pdf->SetLineWidth(0.4);
+        
+        $fromNtoY = 0;
+        for ($i=0;$i<2;$i++) :
+            if ($i>0) $fromNtoY+=51;
+
+            $pdf->Line(12+$xToAdd,20+$yToAdd+$fromNtoY,99+$xToAdd,20+$yToAdd+$fromNtoY); // top
+            $pdf->Line(12+$xToAdd,20+$yToAdd+$fromNtoY,12+$xToAdd,71+$yToAdd+$fromNtoY); // left
+            $pdf->Line(99+$xToAdd,20+$yToAdd+$fromNtoY,99+$xToAdd,71+$yToAdd+$fromNtoY); // right
+            $pdf->Line(12+$xToAdd,71+$yToAdd+$fromNtoY,99+$xToAdd,71+$yToAdd+$fromNtoY); // bottom
+
+            $pdf->Line(12+$xToAdd,31+$yToAdd+$fromNtoY,99+$xToAdd,31+$yToAdd+$fromNtoY); // first row
+            $pdf->Line(30+$xToAdd,20+$yToAdd+$fromNtoY,30+$xToAdd,31+$yToAdd+$fromNtoY); 
+            $pdf->Line(85+$xToAdd,20+$yToAdd+$fromNtoY,85+$xToAdd,31+$yToAdd+$fromNtoY); 
+            $pdf->Line(12+$xToAdd,53+$yToAdd+$fromNtoY,99+$xToAdd,53+$yToAdd+$fromNtoY); // second row
+            $pdf->Line(12+$xToAdd,62+$yToAdd+$fromNtoY,99+$xToAdd,62+$yToAdd+$fromNtoY); // third row
+            $pdf->Line(30+$xToAdd,53+$yToAdd+$fromNtoY,30+$xToAdd,62+$yToAdd+$fromNtoY);
+            $pdf->Line(53+$xToAdd,53+$yToAdd+$fromNtoY,53+$xToAdd,62+$yToAdd+$fromNtoY);
+            $pdf->Line(70+$xToAdd,53+$yToAdd+$fromNtoY,70+$xToAdd,62+$yToAdd+$fromNtoY); 
+            $pdf->Line(30+$xToAdd,62+$yToAdd+$fromNtoY,30+$xToAdd,71+$yToAdd+$fromNtoY);
+
+            if ($fromNtoY>50) :
+                $fromNtoY=102;
+                $pdf->Line(12+$xToAdd,20+$yToAdd+$fromNtoY,12+$xToAdd,39+$yToAdd+$fromNtoY); // left
+                $pdf->Line(99+$xToAdd,20+$yToAdd+$fromNtoY,99+$xToAdd,39+$yToAdd+$fromNtoY); // right
+                $pdf->Line(12+$xToAdd,39+$yToAdd+$fromNtoY,99+$xToAdd,39+$yToAdd+$fromNtoY); // bottom
+            endif;
+        endfor;
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetXY(13+$xToAdd,11.5+$yToAdd);
         $pdf->SetFont('Arial','B',15);
         $pdf->Cell(60,4,'AIR MAIL Small Packet',0,0,'L');
-        $pdf->SetXY(12,23.5+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,23.5+$yToAdd);
         $pdf->SetFont('Arial','B',13);
         $pdf->Cell(18,4,'FROM',0,1,'C');
-        $pdf->SetXY(12,74.5+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,74.5+$yToAdd);
         $pdf->SetFont('Arial','B',13);
         $pdf->Cell(18,4,'TO',0,1,'C');
         // custom text
 
         $nameYvalue = 0;
         if (strlen($order['seller_company_name']) > 25) $nameYvalue = -2;
-        $pdf->SetXY(30,23.5+$xToAdd+$nameYvalue);
+        $pdf->SetXY(30+$xToAdd,23.5+$yToAdd+$nameYvalue);
         $pdf->SetFont('Arial','B',12);
         $pdf->MultiCell(55,4,$order['seller_company_name'],0,'C');
         
-        $pdf->SetXY(85,23.5+$xToAdd);
+        $pdf->SetXY(85+$xToAdd,23.5+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $seller_country_code = 'KR';
         if (strtolower($order['seller_country']) !== 'south korea')
             $seller_country_code = $order['seller_country'];
         $pdf->Cell(14,4,$seller_country_code,0,1,'C');
-        $pdf->SetXY(14,33+$xToAdd);
+        $pdf->SetXY(14+$xToAdd,33+$yToAdd);
         $pdf->SetFont('Arial','',11);
 
         if (!empty($order['seller_street2'])) :
@@ -643,35 +500,35 @@ endif;
 '.$order['seller_city'].' '.$order['seller_stateorprovice'],0,'L');
         endif;
 
-        $pdf->SetXY(12,56+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,56+$yToAdd);
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(18,3,'Post Code',0,1,'C');
-        $pdf->SetXY(30,56+$xToAdd);
+        $pdf->SetXY(30+$xToAdd,56+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(23,3,$order['seller_postal_code'],0,1,'C');
-        $pdf->SetXY(53,56+$xToAdd);
+        $pdf->SetXY(53+$xToAdd,56+$yToAdd);
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(17,3,'Country',0,1,'C');
-        $pdf->SetXY(70,56+$xToAdd);
+        $pdf->SetXY(70+$xToAdd,56+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(29,3,$order['seller_country'],0,1,'C');
-        $pdf->SetXY(12,65+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,65+$yToAdd);
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(18,3,'TEL',0,1,'C');
-        $pdf->SetXY(32,65+$xToAdd);
+        $pdf->SetXY(32+$xToAdd,65+$yToAdd);
         $pdf->Cell(65,3,$order['seller_phone_no'],0,1,'L');
         // second
 
         $nameYvalue = 0;
         if (strlen($order['name']) > 25) $nameYvalue = -2;
-        $pdf->SetXY(30,74.5+$xToAdd+$nameYvalue);
+        $pdf->SetXY(30+$xToAdd,74.5+$yToAdd+$nameYvalue);
         $pdf->SetFont('Arial','B',12);
         $pdf->MultiCell(55,4,$order['name'],0,'C');
 
-        $pdf->SetXY(85,74.5+$xToAdd);
+        $pdf->SetXY(85+$xToAdd,74.5+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(14,4,$order['country_code'],0,1,'C');
-        $pdf->SetXY(14,84+$xToAdd);
+        $pdf->SetXY(14+$xToAdd,84+$yToAdd);
         $pdf->SetFont('Arial','',11);
 
         if (!empty($order['street2'])) :
@@ -682,209 +539,50 @@ endif;
         $pdf->MultiCell(83,5,$order['street1'].'
 '.$order['city_name'].' '.$order['stateorprovince'],0,'L');
         endif;
-        $pdf->SetXY(12,107+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,107+$yToAdd);
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(18,3,'Post Code',0,1,'C');
-        $pdf->SetXY(30,107+$xToAdd);
+        $pdf->SetXY(30+$xToAdd,107+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(23,3,$order['postal_code'],0,1,'C');
-        $pdf->SetXY(53,107+$xToAdd);
+        $pdf->SetXY(53+$xToAdd,107+$yToAdd);
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(17,3,'Country',0,1,'C');
-        $pdf->SetXY(70,107+$xToAdd);
+        $pdf->SetXY(70+$xToAdd,107+$yToAdd);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(29,3,$order['country_name'],0,1,'C');
-        $pdf->SetXY(12,116+$xToAdd);
+        $pdf->SetXY(12+$xToAdd,116+$yToAdd);
         $pdf->SetFont('Arial','',11);
         $pdf->Cell(18,3,'TEL',0,1,'C');
-        $pdf->SetXY(32,116+$xToAdd);
+        $pdf->SetXY(32+$xToAdd,116+$yToAdd);
         $pdf->Cell(65,3,$order['shipto_phone_no'],0,1,'L');
 
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(14,126+$xToAdd);
+        $pdf->SetXY(14+$xToAdd,126+$yToAdd);
         $pdf->MultiCell(83,4,$order['seller_msg'],0,'C');
 
-        if ($options['from']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(11, 20+$xToAdd, 89, 50.8, 'F');
-        }
-        if ($options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(11, 71.3+$xToAdd, 89, 70, 'F');
-        }
-        if ($options['from']<1 && $options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(7, 7+$xToAdd, 97, 137, 'F');
-        }
-    }
-
-    function createCustomsDeclaration2Form($yToAdd = 0, $pdf, $order)
-    {
-        $pdf->SetDrawColor(0);
-        $pdf->SetLineWidth(0.2);
-        $pdf->SetFillColor(255);
-        $pdf->RoundedRect(107, 8+$yToAdd, 95, 135, 0, 'DF');
-        // vertical line
-        $pdf->SetLineWidth(0.5);
-        $pdf->Line(111,12+$yToAdd,111,20+$yToAdd);
-        $pdf->Line(111,29+$yToAdd,111,31+$yToAdd);
-        $pdf->SetLineWidth(0.2);
-        $pdf->SetXY(111.5,12+$yToAdd);
-        $pdf->SetFont('Arial','B',14);
-        $pdf->Cell(26,4,'CUSTOMS',0,0,'L');
-        $pdf->SetXY(111.5,16.5+$yToAdd);
-        $pdf->Cell(37,4,'DECLARATION',0,0,'L');
-        $pdf->SetXY(111,21+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',11);
-        $pdf->Cell(20,4,'세관신고서',0,0,'L');
-        $pdf->SetXY(111,12+$yToAdd);
-        $pdf->SetFont('Arial','B',25);
-        $pdf->Cell(88,7,'CN22',0,1,'R');
-        $pdf->SetXY(111,28.5+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->Cell(32,3,'May be opened officialy',0,1,'L');
-        $pdf->SetXY(111,32+$yToAdd);
-        $pdf->Cell(31,3,'공개적으로 개봉될 수 있음',0,0,'L');
-        // table
-        $pdf->SetDrawColor(169,169,169);
-        $pdf->SetLineWidth(0.4);
-        $pdf->Line(111,37+$yToAdd,198,37+$yToAdd); // top
-        $pdf->Line(111,37+$yToAdd,111,140+$yToAdd); // left
-        $pdf->Line(111,140+$yToAdd,198,140+$yToAdd); // bottom
-        $pdf->Line(198,37+$yToAdd,198,140+$yToAdd); // right
-        $pdf->Line(111,49+$yToAdd,198,49+$yToAdd); // 1st row
-        $pdf->Line(164,37+$yToAdd,164,43+$yToAdd); // 1st row vertical line
-        $pdf->Line(111,59+$yToAdd,198,59+$yToAdd); // 2nd row 
-        $pdf->Line(111,70+$yToAdd,198,70+$yToAdd); // 3rd row
-        $pdf->Line(164,59+$yToAdd,164,114+$yToAdd); // 3rd row vertical line A
-        $pdf->Line(181,59+$yToAdd,181,114+$yToAdd); // 3rd row vertical line B
-        $pdf->Line(111,85+$yToAdd,198,85+$yToAdd); // 4th row
-        $pdf->Line(111,102+$yToAdd,198,102+$yToAdd); // 5th row
-        $pdf->Line(111,114+$yToAdd,198,114+$yToAdd); // 6th row
-        $pdf->SetDrawColor(0);
-        $pdf->SetLineWidth(0.2);
-        $pdf->SetXY(111,38+$yToAdd);
-        $pdf->SetFont('Arial','B',9);
-        $pdf->Cell(33,3,'Designated operator',0,0,'L');
-        $pdf->SetXY(164.5,38+$yToAdd);
-        $pdf->SetFont('Arial','B',8);
-        $pdf->MultiCell(27,3,'Important! See instructions on the back',0,'L');
-        // table 2nd line
-        $pdf->SetDrawColor(169,169,169);
-        $pdf->SetTextColor(68,68,68);
-        $pdf->SetXY(116,50.5+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',8);
-        $pdf->Cell(14,3,'Gift(선물)',0,0,'L');
-        // // checkbox
-        $pdf->Line(113,50.5+$yToAdd,116,50.5+$yToAdd); // top
-        $pdf->Line(113,53.5+$yToAdd,116,53.5+$yToAdd); // bottom
-        $pdf->Line(113,50.5+$yToAdd,113,53.5+$yToAdd); // left
-        $pdf->Line(116,50.5+$yToAdd,116,53.5+$yToAdd); // right
-        $pdf->SetXY(116,54.5+$yToAdd);
-        $pdf->Cell(24,3,'Documents(서류)',0,0,'L');
-        // // checkbox
-        $pdf->Line(113,54.5+$yToAdd,116,54.5+$yToAdd); // top
-        $pdf->Line(113,57.5+$yToAdd,116,57.5+$yToAdd); // bottom
-        $pdf->Line(113,54.5+$yToAdd,113,57.5+$yToAdd); // left
-        $pdf->Line(116,54.5+$yToAdd,116,57.5+$yToAdd); // right
-        $pdf->SetXY(152,50.5+$yToAdd);
-        $pdf->Cell(40,3,'Commercial Sample(상업샘플)',0,0,'L');
-        // // checkbox
-        $pdf->Line(149,50.5+$yToAdd,152,50.5+$yToAdd); // top
-        $pdf->Line(149,53.5+$yToAdd,152,53.5+$yToAdd); // bottom
-        $pdf->Line(149,50.5+$yToAdd,149,53.5+$yToAdd); // left
-        $pdf->Line(152,50.5+$yToAdd,152,53.5+$yToAdd); // right
-        $pdf->SetXY(152,54.5+$yToAdd);
-        $pdf->Cell(17,3,'Other(기타)',0,0,'L');
-        // // checkbox
-        $pdf->Line(149,54.5+$yToAdd,152,54.5+$yToAdd); // top
-        $pdf->Line(149,57.5+$yToAdd,152,57.5+$yToAdd); // bottom
-        $pdf->Line(149,54.5+$yToAdd,149,57.5+$yToAdd); // left
-        $pdf->Line(152,54.5+$yToAdd,152,57.5+$yToAdd); // right
-        // table 3rd line
-        $pdf->SetXY(111.5,60+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(53,3,'Quantity and detailed description
-    of contents(1)',0,'L');
-
-        $pdf->SetXY(113,74+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',7);
-        $pdf->MultiCell(49,4,$order['cnt'].'x '.$order['order_title'],0,'L');
-
-        $pdf->SetXY(111.5,66.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->Cell(53,3,'내용증명, 수량 등 자세한 설명',0,0,'L');
-        $pdf->SetXY(164,60+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(17,3,'Weight    (in kg)(2)',0,'C');
-
-        $pdf->SetXY(165,74+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',7);
-        $pdf->MultiCell(15,3,$order['item_weight'].' '.$order['item_weight_unit'],0,'C');
-
-        $pdf->SetXY(164,66.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->Cell(17,3,'무게',0,0,'C');
-        $pdf->SetXY(181,60+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(17,3,'Value (3)',0,'C');
-        $pdf->SetXY(181,63.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->Cell(17,3,'가격',0,0,'C');
-
-        $pdf->SetXY(182,74+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',7);
-        $pdf->MultiCell(15,3,$order['item_price'].' '.$order['item_price_currency'],0,'C');
-
-        // table 5th line
-        $pdf->SetXY(111.5,86+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(53,3,'For commercial items only if know,
-    HS tarif number(4)
-    and country of origin of goods(5)',0,'L');
-        $pdf->SetXY(111.5,95.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->MultiCell(53,2.8,'상업물품인 경우 원산지 및 
-    HS코드(상품분류번호) 기입 ',0,'L');
-        $pdf->SetXY(164,86+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(17,3,'Total Weight (in kg)(6)',0,'C');
-        $pdf->SetXY(164,95.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->Cell(17,3,'총무게',0,0,'C');
-
-        $pdf->SetXY(165,105.5+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',7);
-        $pdf->MultiCell(15,3,number_format(($order['cnt'] * $order['item_weight']),2).' '.$order['item_weight_unit'],0,'C');
-
-        $pdf->SetXY(181,86+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',8);
-        $pdf->MultiCell(17,3,'Total Value (7)',0,'C');
-        $pdf->SetXY(181,92.3+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->Cell(17,3,'총가격',0,0,'C');
-
-        $pdf->SetXY(182,105.5+$yToAdd);
-        $pdf->SetFont('NanumBarunGothicBold','',7);
-        $pdf->MultiCell(15,3,number_format(($order['cnt'] * $order['item_price']),2).' '.$order['item_price_currency'],0,'C');
-
-        // table 6th line
-        $pdf->SetXY(111.5,115+$yToAdd);
-        $pdf->SetFont('NanumBarunGothic','',7);
-        $pdf->MultiCell(87,3,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
-        $pdf->SetXY(111.5,127.5+$yToAdd);
-        $pdf->MultiCell(86,3,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나위험물품을 포함하지 않음을 증명합니다',0,'L');
-        $pdf->SetXY(111.5,134+$yToAdd);
-        $pdf->SetTextColor(0);
-        $pdf->SetFont('Arial','B',9);
-        $pdf->MultiCell(87,5,'Date and senders signature(8)',0,'L');
+        // if ($options['from']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(11, 20+$yToAdd, 89, 50.8, 'F');
+        // }
+        // if ($options['to']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(11, 71.3+$yToAdd, 89, 70, 'F');
+        // }
+        // if ($options['from']<1 && $options['to']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(7, 7+$yToAdd, 97, 137, 'F');
+        // }
     }
 
     function createAirMail3Form($xToAdd = 0, $yToAdd = 0, $pdf, $order, $options)
     {
+        // print_r($order);
+        if ($order['id']==0) return;
+           
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.1);
         $pdf->SetFillColor(255);
@@ -1013,25 +711,374 @@ endif;
         $pdf->SetXY(6+$xToAdd,85+$yToAdd);
         $pdf->MultiCell(58,3,$order['seller_msg'],0,'C');
 
-        if ($options['from']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(3+$xToAdd, 10+$yToAdd, 64, 35.8, 'F');
-        }
-        if ($options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(3+$xToAdd, 46.2+$yToAdd, 64, 51, 'F');
-        }
-        if ($options['from']<1 && $options['to']<1)
-        {
-            $pdf->SetFillColor(255);
-            $pdf->Rect(1+$xToAdd, 1+$yToAdd, 68, 98, 'F');
-        }
+        // if ($options['from']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(3+$xToAdd, 10+$yToAdd, 64, 35.8, 'F');
+        // }
+        // if ($options['to']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(3+$xToAdd, 46.2+$yToAdd, 64, 51, 'F');
+        // }
+        // if ($options['from']<1 && $options['to']<1)
+        // {
+        //     $pdf->SetFillColor(255);
+        //     $pdf->Rect(1+$xToAdd, 1+$yToAdd, 68, 98, 'F');
+        // }
+    }
+
+    function createCustomsDeclaration1Form($ValueToAdd = 0, $pdf, $order)
+    {
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetFillColor(255);
+        $pdf->RoundedRect(157+$ValueToAdd, 8, 132, 190, 0, 'DF');
+
+        // vertical line
+        $pdf->SetLineWidth(0.7);
+        $pdf->Line(162+$ValueToAdd,13.5,162+$ValueToAdd,24.5);
+
+        $pdf->SetXY(162+$ValueToAdd,13);
+        $pdf->SetFont('Arial','B',20);
+        $pdf->Cell(37,6,' CUSTOMS',0,0,'L');
+        $pdf->SetXY(162+$ValueToAdd,19.5);
+        $pdf->Cell(53,6,' DECLARATION',0,0,'L');
+
+        $pdf->SetXY(162+$ValueToAdd,26);
+        $pdf->SetFont('NanumBarunGothic','',16);
+        $pdf->Cell(27,6,' 세관신고서',0,0,'L');
+
+        $pdf->SetXY(192+$ValueToAdd,13);
+        $pdf->SetFont('Arial','B',35);
+        $pdf->Cell(96,12,'CN22 ',0,1,'R');
+
+        // vertical line
+        $pdf->Line(162+$ValueToAdd,38,162+$ValueToAdd,40.5);
+
+        $pdf->SetXY(162+$ValueToAdd,37.5);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->Cell(39,4,' May be opened officialy',0,1,'L');
+        $pdf->SetXY(162+$ValueToAdd,42);
+        $pdf->Cell(38,4,' 공개적으로 개봉될 수 있음',0,0,'L');
+
+        // table
+        $pdf->SetDrawColor(169,169,169);
+        $pdf->SetLineWidth(0.4);
+        $pdf->Line(162+$ValueToAdd,49,284+$ValueToAdd,49); // top
+        $pdf->Line(162+$ValueToAdd,49,162+$ValueToAdd,193); // left
+        $pdf->Line(162+$ValueToAdd,193,284+$ValueToAdd,193); // bottom
+        $pdf->Line(284+$ValueToAdd,49,284+$ValueToAdd,193); // right
+
+        $pdf->Line(162+$ValueToAdd,64,284+$ValueToAdd,64); // 1st row
+        $pdf->Line(236+$ValueToAdd,49,236+$ValueToAdd,56); // 1st row vertical line
+        $pdf->Line(162+$ValueToAdd,78,284+$ValueToAdd,78); // 2nd row 
+        $pdf->Line(162+$ValueToAdd,93,284+$ValueToAdd,93); // 3rd row
+
+        $pdf->Line(236+$ValueToAdd,78,236+$ValueToAdd,148); // 3rd row vertical line A
+        $pdf->Line(260+$ValueToAdd,78,260+$ValueToAdd,148); // 3rd row vertical line B
+
+        $pdf->Line(162+$ValueToAdd,108,284+$ValueToAdd,108); // 4th row
+        $pdf->Line(162+$ValueToAdd,131,284+$ValueToAdd,131); // 5th row
+        $pdf->Line(162+$ValueToAdd,148,284+$ValueToAdd,148); // 6th row
+        //$pdf->Line(161,183,283,183); // 7th row
+
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.2);
+
+        $pdf->SetXY(163+$ValueToAdd,49);
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(45,7,'Designated operator',0,0,'L');
+        $pdf->SetXY(237+$ValueToAdd,50.5);
+        $pdf->SetFont('Arial','B',10);
+        $pdf->MultiCell(27,4,'Important! See instructions on the back',0,'L');
+
+        // table 2nd line
+        $pdf->SetDrawColor(169,169,169);
+        $pdf->SetTextColor(68,68,68);
+        $pdf->SetXY(169+$ValueToAdd,66);
+        $pdf->SetFont('NanumBarunGothicBold','',10);
+        $pdf->Cell(17,5,'Gift(선물)',0,0,'L');
+        // checkbox
+        $pdf->Line(164+$ValueToAdd,65.5,169+$ValueToAdd,65.5); // top
+        $pdf->Line(164+$ValueToAdd,70.5,169+$ValueToAdd,70.5); // bottom
+        $pdf->Line(164+$ValueToAdd,65.5,164+$ValueToAdd,70.5); // left
+        $pdf->Line(169+$ValueToAdd,65.5,169+$ValueToAdd,70.5); // right
+
+        $pdf->SetXY(169+$ValueToAdd,72);
+        $pdf->Cell(29,5,'Documents(서류)',0,0,'L');
+        // checkbox
+        $pdf->Line(164+$ValueToAdd,71.5,169+$ValueToAdd,71.5); // top
+        $pdf->Line(164+$ValueToAdd,76.5,169+$ValueToAdd,76.5); // bottom
+        $pdf->Line(164+$ValueToAdd,71.5,164+$ValueToAdd,76.5); // left
+        $pdf->Line(169+$ValueToAdd,71.5,169+$ValueToAdd,76.5); // right
+
+        $pdf->SetXY(226+$ValueToAdd,66);
+        $pdf->Cell(49,5,'Commercial Sample(상업샘플)',0,0,'L');
+        // checkbox
+        $pdf->Line(221+$ValueToAdd,65.5,226+$ValueToAdd,65.5); // top
+        $pdf->Line(221+$ValueToAdd,70.5,226+$ValueToAdd,70.5); // bottom
+        $pdf->Line(221+$ValueToAdd,65.5,221+$ValueToAdd,70.5); // left
+        $pdf->Line(226+$ValueToAdd,65.5,226+$ValueToAdd,70.5); // right
+
+        $pdf->SetXY(226+$ValueToAdd,72);
+        $pdf->Cell(20,5,'Other(기타)',0,0,'L');
+        // checkbox
+        $pdf->Line(221+$ValueToAdd,71.5,226+$ValueToAdd,71.5); // top
+        $pdf->Line(221+$ValueToAdd,76.5,226+$ValueToAdd,76.5); // bottom
+        $pdf->Line(221+$ValueToAdd,71.5,221+$ValueToAdd,76.5); // left
+        $pdf->Line(226+$ValueToAdd,71.5,226+$ValueToAdd,76.5); // right
+
+        // table 3rd line
+        $pdf->SetXY(163+$ValueToAdd,79);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(72,4,'Quantity and detailed description of contents(1)',0,'L');
+        $pdf->SetXY(163+$ValueToAdd,87);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->Cell(72,4.5,'내용증명, 수량 등 자세한 설명',0,0,'L');
+
+        // text for quantiy
+        $pdf->SetFont('NanumBarunGothicBold','',9);
+        $pdf->SetXY(164+$ValueToAdd,95);
+        $pdf->MultiCell(70,11,$order['cnt'].'x '.$order['order_title'],0,'L');
+
+        $pdf->SetXY(238+$ValueToAdd,79);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(20,4,'Weight    (in kg)(2)',0,'C');
+        $pdf->SetXY(238+$ValueToAdd,87.5);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->Cell(20,3,'무게',0,0,'C');
+
+        // text for weight
+        $pdf->SetFont('NanumBarunGothicBold','',9);
+        $pdf->SetXY(238+$ValueToAdd,95);
+        $pdf->MultiCell(20,11,$order['item_weight'].' '.$order['item_weight_unit'],0,'C');
+
+        $pdf->SetXY(262+$ValueToAdd,79);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(20,4,'Value (3)',0,'C');
+        $pdf->SetXY(262+$ValueToAdd,83.5);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->Cell(20,3,'가격',0,0,'C');
+        // table 4th line 
+        
+        // text for price
+        $pdf->SetFont('NanumBarunGothicBold','',9);
+        $pdf->SetXY(262+$ValueToAdd,95);
+        $pdf->MultiCell(20,11,$order['item_price'].' '.$order['item_price_currency'],0,'C');
+
+        // table 5th line
+        $pdf->SetXY(163+$ValueToAdd,109);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(72,4,'For commercial items only if know, HS tarif number(4) and country of origin of goods(5)',0,'L');
+        $pdf->SetXY(163+$ValueToAdd,121);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->MultiCell(72,4,'상업물품인 경우 원산지 및 HS코드(상품분류번호) 기입 ',0,'L');
+
+        $pdf->SetXY(238+$ValueToAdd,109);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(20,4,'Total Weight (in kg)(6)',0,'C');
+        $pdf->SetXY(238+$ValueToAdd,121.5);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->Cell(20,3,'총무게',0,0,'C');
+
+        // text for total weight
+        $pdf->SetFont('NanumBarunGothicBold','',9);
+        $pdf->SetXY(238+$ValueToAdd,133);
+        $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_weight']),2).' '.$order['item_weight_unit'],0,'C');
+
+        $pdf->SetXY(262+$ValueToAdd,109);
+        $pdf->SetFont('NanumBarunGothic','',10);
+        $pdf->MultiCell(20,4,'Total Value (7)',0,'C');
+        $pdf->SetXY(262+$ValueToAdd,117.5);
+        $pdf->SetFont('NanumBarunGothic','',9);
+        $pdf->Cell(20,3,'총가격',0,0,'C');
+
+        // text for total price
+        $pdf->SetFont('NanumBarunGothicBold','',9);
+        $pdf->SetXY(262+$ValueToAdd,133);
+        $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_price']),2).' '.$order['item_price_currency'],0,'C');
+
+        // table 6th line
+        $pdf->SetXY(163+$ValueToAdd,149);
+        $pdf->SetFont('NanumBarunGothic','',11);
+        $pdf->MultiCell(120,4.2,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
+        $pdf->SetXY(163+$ValueToAdd,172);
+        $pdf->MultiCell(120,4.5,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나 위험물품을 포함하지 않음을 증명합니다',0,'L');
+        $pdf->SetXY(163+$ValueToAdd,184.5);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial','B',17);
+        $pdf->MultiCell(120,5,'Date and senders signature(8)',0,'L');
+    }
+
+    function createCustomsDeclaration2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
+    {
+        if ($order['id']==0) return;
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetFillColor(255);
+        $pdf->RoundedRect(107+$xToAdd, 8+$yToAdd, 95, 135, 0, 'DF');
+        // vertical line
+        $pdf->SetLineWidth(0.5);
+        $pdf->Line(111+$xToAdd,12+$yToAdd,111+$xToAdd,20+$yToAdd);
+        $pdf->Line(111+$xToAdd,29+$yToAdd,111+$xToAdd,31+$yToAdd);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetXY(111.5+$xToAdd,12+$yToAdd);
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(26,4,'CUSTOMS',0,0,'L');
+        $pdf->SetXY(111.5+$xToAdd,16.5+$yToAdd);
+        $pdf->Cell(37,4,'DECLARATION',0,0,'L');
+        $pdf->SetXY(111+$xToAdd,21+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',11);
+        $pdf->Cell(20,4,'세관신고서',0,0,'L');
+        $pdf->SetXY(111+$xToAdd,12+$yToAdd);
+        $pdf->SetFont('Arial','B',25);
+        $pdf->Cell(88,7,'CN22',0,1,'R');
+        $pdf->SetXY(111+$xToAdd,28.5+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->Cell(32,3,'May be opened officialy',0,1,'L');
+        $pdf->SetXY(111+$xToAdd,32+$yToAdd);
+        $pdf->Cell(31,3,'공개적으로 개봉될 수 있음',0,0,'L');
+        // table
+        $pdf->SetDrawColor(169,169,169);
+        $pdf->SetLineWidth(0.4);
+        $pdf->Line(111+$xToAdd,37+$yToAdd,198+$xToAdd,37+$yToAdd); // top
+        $pdf->Line(111+$xToAdd,37+$yToAdd,111+$xToAdd,140+$yToAdd); // left
+        $pdf->Line(111+$xToAdd,140+$yToAdd,198+$xToAdd,140+$yToAdd); // bottom
+        $pdf->Line(198+$xToAdd,37+$yToAdd,198+$xToAdd,140+$yToAdd); // right
+        $pdf->Line(111+$xToAdd,49+$yToAdd,198+$xToAdd,49+$yToAdd); // 1st row
+        $pdf->Line(164+$xToAdd,37+$yToAdd,164+$xToAdd,43+$yToAdd); // 1st row vertical line
+        $pdf->Line(111+$xToAdd,59+$yToAdd,198+$xToAdd,59+$yToAdd); // 2nd row 
+        $pdf->Line(111+$xToAdd,70+$yToAdd,198+$xToAdd,70+$yToAdd); // 3rd row
+        $pdf->Line(164+$xToAdd,59+$yToAdd,164+$xToAdd,114+$yToAdd); // 3rd row vertical line A
+        $pdf->Line(181+$xToAdd,59+$yToAdd,181+$xToAdd,114+$yToAdd); // 3rd row vertical line B
+        $pdf->Line(111+$xToAdd,85+$yToAdd,198+$xToAdd,85+$yToAdd); // 4th row
+        $pdf->Line(111+$xToAdd,102+$yToAdd,198+$xToAdd,102+$yToAdd); // 5th row
+        $pdf->Line(111+$xToAdd,114+$yToAdd,198+$xToAdd,114+$yToAdd); // 6th row
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetXY(111+$xToAdd,38+$yToAdd);
+        $pdf->SetFont('Arial','B',9);
+        $pdf->Cell(33,3,'Designated operator',0,0,'L');
+        $pdf->SetXY(164.5+$xToAdd,38+$yToAdd);
+        $pdf->SetFont('Arial','B',8);
+        $pdf->MultiCell(27,3,'Important! See instructions on the back',0,'L');
+        // table 2nd line
+        $pdf->SetDrawColor(169,169,169);
+        $pdf->SetTextColor(68,68,68);
+        $pdf->SetXY(116+$xToAdd,50.5+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',8);
+        $pdf->Cell(14,3,'Gift(선물)',0,0,'L');
+        // // checkbox
+        $pdf->Line(113+$xToAdd,50.5+$yToAdd,116+$xToAdd,50.5+$yToAdd); // top
+        $pdf->Line(113+$xToAdd,53.5+$yToAdd,116+$xToAdd,53.5+$yToAdd); // bottom
+        $pdf->Line(113+$xToAdd,50.5+$yToAdd,113+$xToAdd,53.5+$yToAdd); // left
+        $pdf->Line(116+$xToAdd,50.5+$yToAdd,116+$xToAdd,53.5+$yToAdd); // right
+        $pdf->SetXY(116+$xToAdd,54.5+$yToAdd);
+        $pdf->Cell(24,3,'Documents(서류)',0,0,'L');
+        // // checkbox
+        $pdf->Line(113+$xToAdd,54.5+$yToAdd,116+$xToAdd,54.5+$yToAdd); // top
+        $pdf->Line(113+$xToAdd,57.5+$yToAdd,116+$xToAdd,57.5+$yToAdd); // bottom
+        $pdf->Line(113+$xToAdd,54.5+$yToAdd,113+$xToAdd,57.5+$yToAdd); // left
+        $pdf->Line(116+$xToAdd,54.5+$yToAdd,116+$xToAdd,57.5+$yToAdd); // right
+        $pdf->SetXY(152+$xToAdd,50.5+$yToAdd);
+        $pdf->Cell(40,3,'Commercial Sample(상업샘플)',0,0,'L');
+        // // checkbox
+        $pdf->Line(149+$xToAdd,50.5+$yToAdd,152+$xToAdd,50.5+$yToAdd); // top
+        $pdf->Line(149+$xToAdd,53.5+$yToAdd,152+$xToAdd,53.5+$yToAdd); // bottom
+        $pdf->Line(149+$xToAdd,50.5+$yToAdd,149+$xToAdd,53.5+$yToAdd); // left
+        $pdf->Line(152+$xToAdd,50.5+$yToAdd,152+$xToAdd,53.5+$yToAdd); // right
+        $pdf->SetXY(152+$xToAdd,54.5+$yToAdd);
+        $pdf->Cell(17,3,'Other(기타)',0,0,'L');
+        // // checkbox
+        $pdf->Line(149+$xToAdd,54.5+$yToAdd,152+$xToAdd,54.5+$yToAdd); // top
+        $pdf->Line(149+$xToAdd,57.5+$yToAdd,152+$xToAdd,57.5+$yToAdd); // bottom
+        $pdf->Line(149+$xToAdd,54.5+$yToAdd,149+$xToAdd,57.5+$yToAdd); // left
+        $pdf->Line(152+$xToAdd,54.5+$yToAdd,152+$xToAdd,57.5+$yToAdd); // right
+        // table 3rd line
+        $pdf->SetXY(111.5+$xToAdd,60+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(53,3,'Quantity and detailed description
+    of contents(1)',0,'L');
+
+        $pdf->SetXY(113+$xToAdd,74+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $pdf->MultiCell(49,4,$order['cnt'].'x '.$order['order_title'],0,'L');
+
+        $pdf->SetXY(111.5+$xToAdd,66.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->Cell(53,3,'내용증명, 수량 등 자세한 설명',0,0,'L');
+        $pdf->SetXY(164+$xToAdd,60+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(17,3,'Weight    (in kg)(2)',0,'C');
+
+        $pdf->SetXY(165+$xToAdd,74+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $pdf->MultiCell(15,3,$order['item_weight'].' '.$order['item_weight_unit'],0,'C');
+
+        $pdf->SetXY(164+$xToAdd,66.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->Cell(17,3,'무게',0,0,'C');
+        $pdf->SetXY(181+$xToAdd,60+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(17,3,'Value (3)',0,'C');
+        $pdf->SetXY(181+$xToAdd,63.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->Cell(17,3,'가격',0,0,'C');
+
+        $pdf->SetXY(182+$xToAdd,74+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $pdf->MultiCell(15,3,$order['item_price'].' '.$order['item_price_currency'],0,'C');
+
+        // table 5th line
+        $pdf->SetXY(111.5+$xToAdd,86+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(53,3,'For commercial items only if know,
+    HS tarif number(4)
+    and country of origin of goods(5)',0,'L');
+        $pdf->SetXY(111.5+$xToAdd,95.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->MultiCell(53,2.8,'상업물품인 경우 원산지 및 
+    HS코드(상품분류번호) 기입 ',0,'L');
+        $pdf->SetXY(164+$xToAdd,86+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(17,3,'Total Weight (in kg)(6)',0,'C');
+        $pdf->SetXY(164+$xToAdd,95.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->Cell(17,3,'총무게',0,0,'C');
+
+        $pdf->SetXY(165+$xToAdd,105.5+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $pdf->MultiCell(15,3,number_format(($order['cnt'] * $order['item_weight']),2).' '.$order['item_weight_unit'],0,'C');
+
+        $pdf->SetXY(181+$xToAdd,86+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',8);
+        $pdf->MultiCell(17,3,'Total Value (7)',0,'C');
+        $pdf->SetXY(181+$xToAdd,92.3+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->Cell(17,3,'총가격',0,0,'C');
+
+        $pdf->SetXY(182+$xToAdd,105.5+$yToAdd);
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $pdf->MultiCell(15,3,number_format(($order['cnt'] * $order['item_price']),2).' '.$order['item_price_currency'],0,'C');
+
+        // table 6th line
+        $pdf->SetXY(111.5+$xToAdd,115+$yToAdd);
+        $pdf->SetFont('NanumBarunGothic','',7);
+        $pdf->MultiCell(87,3,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
+        $pdf->SetXY(111.5+$xToAdd,127.5+$yToAdd);
+        $pdf->MultiCell(86,3,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나위험물품을 포함하지 않음을 증명합니다',0,'L');
+        $pdf->SetXY(111.5+$xToAdd,134+$yToAdd);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial','B',9);
+        $pdf->MultiCell(87,5,'Date and senders signature(8)',0,'L');
     }
 
     function createCustomsDeclaration3Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
     {
+        if ($order['id']==0) return;
+
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.1);
         $pdf->SetFillColor(255);
@@ -1209,7 +1256,7 @@ endif;
                     $pdf->SetDrawColor(0);
                     $pdf->SetLineWidth(0.1);
                     $pdf->SetFillColor(255);
-                    $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'DF');
+                    $pdf->RoundedRect(2+$xToAdd, 2+$yToAdd, $sizex, $sizey, 1, 'F');
 
                     $pdf->SetXY(3+$xToAdd,$yleft+$yToAdd);
                     $pdf->SetFont('NanumBarunGothicBold','',12);
@@ -1238,9 +1285,9 @@ endif;
                 $pdf->SetXY(21+$xToAdd,$yright+$yToAdd+=$yplus);
                 $pdf->SetFont('NanumBarunGothic','',$fontsize);
                 $pdf->MultiCell(46,$sizey,$order[$i],0,'L');
-                $pdf->SetDash(1.8,2.5);
-                $pdf->Line(4+$xToAdd, $yline+$yToAdd, 66+$xToAdd, $yline+$yToAdd);
-                $pdf->SetDash();
+                //$pdf->SetDash(1.8,2.5);
+                //$pdf->Line(4+$xToAdd, $yline+$yToAdd, 66+$xToAdd, $yline+$yToAdd);
+                //$pdf->SetDash();
             endif;
         endfor;
     }

@@ -1,333 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<meta name="description" content="">
-	<meta name="author" content="">
-	<link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
-
-	<title>Orders - OnLabels</title>
-
-	<!-- Bootstrap core CSS -->
-	<link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
-	
-	<link href="<?php echo base_url("assets2/css/dashboard.css"); ?>" rel="stylesheet">
-
-	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-
-	<!-- Custom styles for this template -->
-	<link href="<?php echo base_url("assets2/css/style.css"); ?>" rel="stylesheet">
-
-	<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-	<link href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">
-
-	<!-- <link href="<?php echo base_url("assets2/css/bootstrap-editable.css"); ?>" rel="stylesheet"> -->
-	<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-
-	<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-      <style>
-      	html,
-      	body {
-      		height: 100%;
-      	}
-
-      	.carousel,
-      	.item,
-      	.active {
-      		height: 100%;
-      	}
-
-      	.carousel-inner {
-      		height: 100%;
-      	}
-
-      	/* Background images are set within the HTML using inline CSS, not here */
-
-      	.fill {
-      		width: 100%;
-      		height: 100%;
-      		background-position: center;
-      		-webkit-background-size: cover;
-      		-moz-background-size: cover;
-      		background-size: cover;
-      		-o-background-size: cover;
-      	}
-      	.img-center {
-      		margin: 0 auto;
-      	}
-      	.caption {
-      		position: absolute;
-      		top: 23%;
-      		color: #ffffff;
-      		padding: 0 45px 0px 90px;
-      		width: 100%;
-      	}
-      	ul{
-      		-webkit-padding-start: 20px;
-      		margin-bottom: 100px;
-      	}
-      	footer {
-      		margin: 0px 0 0 0;
-      	}
-      	.footer{
-      		color: #fff;
-      		background: #29363c;
-      		padding: 20px 0px 40px 0px;
-      	}
-      	.footer ul{
-      		margin-bottom: 0px;
-      		padding: 10px;
-      		list-style: none;
-      	}
-
-      	.footer a{
-      		padding: 3px;
-      		color: #f7f7f7;
-      	}
-      	.footer-bottom{
-      		background: #222222;
-      		color: #a3a0a0;
-      		padding: 20px 0px 10px 0px;
-      	}
-      	.sidebar img{
-      		margin-right: 15px;
-      	}
-      	.nav-pills{
-      		border-bottom: 1px solid #ccc;
-
-      	}
-      	.main{   margin-left: 45px;}
-      	h4{margin: 30px 0px;}
+<style>
+  label {
+    margin: 0px 20px;
+  }
+</style>
+<div class="container-fluid">
+  <div class="row">
 
 
-      	input[type=checkbox] {
-      		display: inline-block;
-      		vertical-align: middle;
-      		cursor: pointer;
-      		background: #fff;
-      		border: 1px solid #888;
-      		padding: 1px;
-      		height: 20px;
-      		width: 20px;
-      	}
-      	.tbl_border, .out{
-      		border-bottom: 1px solid #ddd;
-      	}
+   <div class="col-sm-9 ">
+    <h3></h3>
+    <ul  class="nav nav-pills nav-orders">
+     <li class="active">
+      <a  href="#1b" data-toggle="tab">전체(<span id="total_order_count_sub"><?php echo $total_orders; ?></span>)</a>
+    </li>
+    <li>
+      <a href="#2b" data-toggle="tab">결제완료(배송전)</a>
+    </li>
 
-      	.border-bottom{
-      		border-bottom: 0px solid #ddd !important;
-      	}
-      	.collapse{
-      		border-top: 1px solid #ddd;
+    <li>
+      <a href="#3b" data-toggle="tab">피드백 대기</a>
+    </li>
 
-      	}
-      	.tbl_border .in{
-      		border-bottom: 0px solid #ddd !important;
-      	}
-      	.panel-heading{
-      		padding: 10px 10px;
-      	}
-      	.option-1{
-      		margin-left: 30px;
-      	}
-      	.option-2{
-      		margin-left: 40px;
-      	}
-      	.option-3{
-      		margin-left: 50px;
-      	}
-      	label {
-
-      		margin: 0px 20px;
-      	}
-      	.form-inline .form-group {
-      		margin-bottom: 5px;
-      	}
-      	.panel-body {
-      		padding-top: 0px; 
-
-      	}
-      	.spacer{
-      		border-spacing: 3px;
-      		border-collapse: inherit;
-      	}
-      	@media (min-width: 768px) {
-      		.modal-dialog {
-      			width: 450px;
-      			margin: 30px auto;
-      		}
-      	}
-
-      	table.dataTable thead th, table.dataTable thead td {
-      		padding: 10px;
-      	}
-
-      	.table-responsive {
-      		overflow-x: inherit;
-      	}
-
-      	#export {
-      		float: left;
-      		position: absolute;
-      		margin-top: 23px;
-      	}
-
-      	#info {
-      		float: right;
-      		margin-top: 20px;
-      		font-size: 12px;
-      	}
-
-      	#table_length, 
-      	#table_delivery_length, 
-      	#table_feedback_length {
-      		margin-top: 8px;
-      		position: absolute;
-      		margin-left: -180px;
-      	}
-
-      	#threebyseven td {
-      		padding: 0;
-      		line-height: 9px;
-      	}
-
-      	#threebyeight td {
-      		padding: 0;
-      		line-height: 8px;
-      	}
-
-      	#info_msg {
-      		display: none;
-      	}
-
-      	#myModalPhrase table td:nth-child(3) {
-      		width: 105px;
-      	}
-      	#myModalPhrase table td:nth-child(2),
-      	#myModalPhrase table td:nth-child(1) { 
-      		vertical-align: middle;
-      	}
-
-      	table.dataTable {
-      		width:100% !important;
-      	}
-
-      	table.dataTable td:nth-child(7) {
-      		width: 125px;
-      	}
-      	table.dataTable td:nth-child(4) {
-      		width: 55px;
-      	}
-      	table.dataTable {
-			font-size: 12px;
-      	}
-      </style>
-
-  </head>
-
-  <body>
-
-  	<nav class="navbar navbar-inverse navbar-fixed-top">
-  		<div class="container-fluid">
-  			<div class="navbar-header">
-  				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-  					<span class="sr-only">Toggle navigation</span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  				</button>
-  				<a class="navbar-brand" href="<?php echo base_url(); ?>">
-  					<img src="<?php echo base_url("assets2/img/logo_white.png"); ?>" />
-  				</a>
-  			</div>
-  			<div id="navbar" class="collapse navbar-collapse">
-  				<ul class="nav navbar-nav">
-
-  					<li><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-  					<li><a class="active" href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
-  					<li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
-  					<li><a href="#">제품관리</a></li>
-
-  					<li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
-  				</ul>
-  				<ul class="nav navbar-nav navbar-right">
-  					<li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
-  					<li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li>
-  					<li class=""><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
-  				</ul>
-  			</div><!--/.nav-collapse -->
-  		</div>
-  	</nav>
-
-  	<div class="container-fluid">
-  		<div class="row">
-
-
-  			<div class="col-sm-9 ">
-  				<h3></h3>
-  				<ul  class="nav nav-pills nav-orders">
-  					<li class="active">
-  						<a  href="#1b" data-toggle="tab">전체(<span id="total_order_count_sub"><?php echo $total_orders; ?></span>)</a>
-  					</li>
-  					<li>
-  						<a href="#2b" data-toggle="tab">결제완료(배송전)</a>
-  					</li>
-
-  					<li>
-  						<a href="#3b" data-toggle="tab">피드백 대기</a>
-  					</li>
-
-  				</ul>
-  				<div class="tab-content tab-content-orders clearfix">
-  					<div class="tab-pane active" id="1b">
-  						<div class="row" >
-  							<div class="col-md-12">
-  								<form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
-  									<div class="form-group">
-  										<label for="exampleInputName2">기간 </label>
-  										<select class="form-control" id="exampleInputName2" style="width: 80px;">
-  											<option class="option-11">15일 </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">판매채널 </label>
-  										<select class="form-control" id="salechannel"  style="width: 120px;">
-  											<option class="option-22">eBay </option>
-  											<option class="option-22">Amazon </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">피드백 대기 </label>
-  										<select class="form-control" id="exampleInputName2"  style="width: 150px;">
-  											<option class="option-33">최근 주문 </option>
-  										</select>
-  									</div>
-  									<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
-  								</form>
-  								<div class="table-responsive">
-  									<table class="table" id="table" >
-  										<thead>
-  											<tr>
-  												<th width="10px"><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-  												<th>일련번호</th>
-  												<th>주문일자</th>
-  												<th>판매채널</th>
-  												<th>주문내역</th>
-  												<th>주문자ID</th>
-  												<th>진행현황</th>
-  											</tr>
-  										</thead>
-  										<tbody>
+  </ul>
+  <div class="tab-content tab-content-orders clearfix">
+   <div class="tab-pane active" id="1b">
+    <div class="row" >
+     <div class="col-md-12">
+      <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
+       <div class="form-group">
+        <label for="exampleInputName2">기간 </label>
+        <select class="form-control" id="exampleInputName2" style="width: 80px;">
+         <option class="option-11" value="7">7일 </option>
+         <option class="option-11" value="15">15일 </option>
+         <option class="option-11" value="30">30일 </option>
+         <option class="option-11" value="60">60일 </option>
+         <option class="option-11" value="90">90일 </option>
+         <option class="option-11" value="">All </option>
+       </select>
+     </div>
+     <div class="form-group">
+      <label for="exampleInputEmail2">판매채널 </label>
+      <select class="form-control" id="salechannel"  style="width: 120px;">
+       <option class="option-22">eBay </option>
+       <option class="option-22">Amazon </option>
+       <option class="option-22">Etsy </option>
+     </select>
+   </div>
+   <div class="form-group">
+    <label for="exampleInputEmail2">정렬 순 </label>
+    <select class="form-control" id="exampleInputName2"  style="width: 150px;">
+     <option class="option-33">최신 주문 </option>
+     <option class="option-33">오래된 주문 </option>
+   </select>
+ </div>
+ <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+</form>
+<div class="table-responsive">
+ <table class="table" id="table" >
+  <thead>
+   <tr>
+    <th width="10px"><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+    <th>일련번호</th>
+    <th>주문일자</th>
+    <th>판매채널</th>
+    <th>주문내역</th>
+    <th>주문자ID</th>
+    <th>진행현황</th>
+  </tr>
+</thead>
+<tbody>
 
   											<!-- <tr>
   												<td><input type="checkbox" class="form-group tick"></td>
@@ -398,148 +139,162 @@
 
 				<div class="tab-pane" id="2b">
 					<div class="row">
-  							<div class="col-md-12">
-  								<form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
-  									<div class="form-group">
-  										<label for="exampleInputName2">기간 </label>
-  										<select class="form-control" id="exampleInputName2" style="width: 80px;">
-  											<option class="option-11">15일 </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">판매채널 </label>
-  										<select class="form-control" id="salechannel"  style="width: 120px;">
-  											<option class="option-22">eBay </option>
-  											<option class="option-22">Amazon </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">피드백 대기 </label>
-  										<select class="form-control" id="exampleInputName2"  style="width: 150px;">
-  											<option class="option-33">최근 주문 </option>
-  										</select>
-  									</div>
-  									<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
-  								</form>
-  								<div class="table-responsive">
-  									<table class="table" id="table_delivery">
-  										<thead>
-  											<tr>
-  												<th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-  												<th>일련번호</th>
-  												<th>주문일자</th>
-  												<th>판매채널</th>
-  												<th>주문내역</th>
-  												<th>주문자ID</th>
-  												<th>진행현황</th>
-  											</tr>
-  										</thead>
-  										<tbody>
-  										</tbody>
-  									</table>
-  								</div>
-  								<div class="col-md-6"  style="margin: 30px 0px;">
-  								</div>
-						</div>
-					</div>
-				</div>
+           <div class="col-md-12">
+            <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
+             <div class="form-group">
+              <label for="exampleInputName2">기간 </label>
+              <select class="form-control" id="exampleInputName2" style="width: 80px;">
+               <option class="option-11" value="7">7일 </option>
+               <option class="option-11" value="15">15일 </option>
+               <option class="option-11" value="30">30일 </option>
+               <option class="option-11" value="60">60일 </option>
+               <option class="option-11" value="90">90일 </option>
+               <option class="option-11" value="">All </option>
+             </select>
+           </div>
+           <div class="form-group">
+            <label for="exampleInputEmail2">판매채널 </label>
+            <select class="form-control" id="salechannel"  style="width: 120px;">
+             <option class="option-22">eBay </option>
+             <option class="option-22">Amazon </option>
+             <option class="option-22">Etsy </option>
+           </select>
+         </div>
+         <div class="form-group">
+          <label for="exampleInputEmail2">정렬 순 </label>
+          <select class="form-control" id="exampleInputName2"  style="width: 150px;">
+            <option class="option-33">최신 주문 </option>
+            <option class="option-33">오래된 주문 </option>
+         </select>
+       </div>
+       <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+     </form>
+     <div class="table-responsive">
+       <table class="table" id="table_delivery">
+        <thead>
+         <tr>
+          <th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+          <th>일련번호</th>
+          <th>주문일자</th>
+          <th>판매채널</th>
+          <th>주문내역</th>
+          <th>주문자ID</th>
+          <th>진행현황</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-6"  style="margin: 30px 0px;">
+  </div>
+</div>
+</div>
+</div>
 
-				<div class="tab-pane" id="3b">
-					<div class="row">
-  							<div class="col-md-12">
-  								<form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
-  									<div class="form-group">
-  										<label for="exampleInputName2">기간 </label>
-  										<select class="form-control" id="exampleInputName2" style="width: 80px;">
-  											<option class="option-11">15일 </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">판매채널 </label>
-  										<select class="form-control" id="salechannel"  style="width: 120px;">
-  											<option class="option-22">eBay </option>
-  											<option class="option-22">Amazon </option>
-  										</select>
-  									</div>
-  									<div class="form-group">
-  										<label for="exampleInputEmail2">피드백 대기 </label>
-  										<select class="form-control" id="exampleInputName2"  style="width: 150px;">
-  											<option class="option-33">최근 주문 </option>
-  										</select>
-  									</div>
-  									<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
-  								</form>
-  								<div class="table-responsive">
-  									<table class="table" id="table_feedback">
-  										<thead>
-  											<tr>
-  												<th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-  												<th>일련번호</th>
-  												<th>주문일자</th>
-  												<th>판매채널</th>
-  												<th>주문내역</th>
-  												<th>주문자ID</th>
-  												<th>진행현황</th>
-  											</tr>
-  										</thead>
-  										<tbody>
-  										</tbody>
-  									</table>
-  								</div>
-  								<div class="col-md-6"  style="margin: 30px 0px;">
-  								</div>
-						</div>
-					</div>
-				</div>
+<div class="tab-pane" id="3b">
+ <div class="row">
+   <div class="col-md-12">
+    <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
+     <div class="form-group">
+      <label for="exampleInputName2">기간 </label>
+      <select class="form-control" id="exampleInputName2" style="width: 80px;">
+       <option class="option-11" value="7">7일 </option>
+       <option class="option-11" value="15">15일 </option>
+       <option class="option-11" value="30">30일 </option>
+       <option class="option-11" value="60">60일 </option>
+       <option class="option-11" value="90">90일 </option>
+       <option class="option-11" value="">All </option>
+     </select>
+   </div>
+   <div class="form-group">
+    <label for="exampleInputEmail2">판매채널 </label>
+    <select class="form-control" id="salechannel"  style="width: 120px;">
+     <option class="option-22">eBay </option>
+     <option class="option-22">Amazon </option>
+     <option class="option-22">Etsy </option>
+   </select>
+ </div>
+ <div class="form-group">
+  <label for="exampleInputEmail2">정렬 순 </label>
+  <select class="form-control" id="exampleInputName2"  style="width: 150px;">
+   <option class="option-33">최신 주문 </option>
+   <option class="option-33">오래된 주문 </option>
+ </select>
+</div>
+<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+</form>
+<div class="table-responsive">
+ <table class="table" id="table_feedback">
+  <thead>
+   <tr>
+    <th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+    <th>일련번호</th>
+    <th>주문일자</th>
+    <th>판매채널</th>
+    <th>주문내역</th>
+    <th>주문자ID</th>
+    <th>진행현황</th>
+  </tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+<div class="col-md-6"  style="margin: 30px 0px;">
+</div>
+</div>
+</div>
+</div>
 
-			</div>
-		</div>
+</div>
+</div>
 
-		<div class="col-sm-3">
-			<h3></h3>
-			<ul  class="nav nav-pills">
-				<li class="active">
-					<a  href="#1b" data-toggle="tab">라벨 출력설정</a>
-				</li>
-
-
-			</ul>
-			<div class="tab-content clearfix">
-				<div class="tab-pane active" id="1b">
-					<div>
-						<h5 class="info_order_list" style="border: 1px solid;padding: 30px 20px;">주문 0개가 선택되었습니다</h5>
-					</div>
-					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="headingOne">
-								<h4 class="panel-title">
-									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-										<span class="fa fa-caret-down" style="color: #286090"></span> 1. 배송 수단설정 <span style="color: #ef5227" id="ship_method_text">(우체국, 서장)</span>
-									</a>
-								</h4>
-							</div>
-							<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-								<div class="panel-body">
-									<h5>라벨출력을 위한 배송 수단을 선택하세요</h5>
-									<form class="form-inline"  style="">
-										<div class="form-group">
-											<label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송수단  </label>
-											<select class="form-control" id="ship_method" style="width: 150px">
-												<option class="option-1" value="post_office">우체국</option>
-												<option class="option-1" value="fedex">Fedex</option>
-												<option class="option-1" value="dhl">DHL</option>
+<div class="col-sm-3">
+ <h3></h3>
+ <ul  class="nav nav-pills">
+  <li class="active">
+   <a  href="#1b" data-toggle="tab">라벨 출력설정</a>
+ </li>
 
 
-											</select>
-											<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
-										</div>
-										<div class="form-group">
-											<label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송유형   </label>
-											<select class="form-control" id="delivery_type" style="width: 150px">
-												<option class="option-1" value="document">서장</option>
-												<option class="option-1" value="cn22">소형포장(CN22)</option>
-												<option class="option-1" value="kpacket">K-Packet</option>
-												<option class="option-1" value="ems">EMS</option>
+</ul>
+<div class="tab-content clearfix">
+  <div class="tab-pane active" id="1b">
+   <div>
+    <h5 class="info_order_list" style="border: 1px solid;padding: 30px 20px; font-size: 16px;">주문 0개가 선택되었습니다</h5>
+  </div>
+  <div class="panel" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+     <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+       <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-controls="collapseOne">
+        <span class="fa fa-caret-down" style="color: #286090"></span> 1. 배송 수단설정 <span style="color: #ef5227" id="ship_method_text">(우체국, 서장)</span>
+      </a>
+    </h4>
+  </div>
+  <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+    <div class="panel-body">
+     <h5>라벨출력을 위한 배송 수단을 선택하세요</h5>
+     <form class="form-inline"  style="">
+      <div class="form-group">
+       <label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송수단  </label>
+       <select class="form-control" id="ship_method" style="width: 150px">
+        <option class="option-1" value="post_office">우체국</option>
+        <option class="option-1" value="fedex">Fedex</option>
+        <option class="option-1" value="dhl">DHL</option>
+
+
+      </select>
+      <img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
+    </div>
+    <div class="form-group">
+     <label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송유형   </label>
+     <select class="form-control" id="delivery_type" style="width: 150px">
+      <option class="option-1" value="document">서장</option>
+      <option class="option-1" value="cn22">소형포장(CN22)</option>
+      <option class="option-1" value="kpacket">K-Packet</option>
+      <option class="option-1" value="ems">EMS</option>
 																<!-- <option class="option-1">K-Packet</option>
 																<option class="option-1">EMS</option> -->
 															</select>
@@ -553,7 +308,7 @@
 										<div class="panel panel-default">
 											<div class="panel-heading" role="tab" id="headingTwo">
 												<h4 class="panel-title">
-													<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+													<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-controls="collapseTwo">
 														<span class="fa fa-caret-down" style="color: #286090"></span> 2. 라벨 출력설정
 													</a>
 												</h4>
@@ -581,12 +336,12 @@
 															<tr>
 																<td><label for="exampleInputName2" style=" margin: 0px">판매자 로고  </label>
 																	<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
-																	<td><input type="checkbox" class="form-group tick cn22logo" ></td>
+																	<td><input type="checkbox" class="form-group tick cn22logo" disabled></td>
 																</tr>
 																<tr>
 																	<td><label for="exampleInputName2" style=" margin: 0px">판매자 문구  </label>
 																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
-																		<td><input type="checkbox" class="form-group tick cn22phrase" ></td>
+																		<td><input type="checkbox" class="form-group tick cn22phrase" disabled></td>
 																	</tr>
 																</table>
 																<button type="submit" class="btn btn-primary" style="width: 95%" id="phrase_pop">문구 입력하기</button>
@@ -614,7 +369,7 @@
 											<div class="panel panel-default">
 												<div class="panel-heading" role="tab" id="headingThree">
 													<h4 class="panel-title">
-														<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+														<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-controls="collapseThree">
 															<span class="fa fa-caret-down" style="color: #286090"></span> 3. 라벨 템플릿 <span style="color: #ef5227" id="size_text">(폼텍, 1x1)</span>
 														</a>
 													</h4>
@@ -755,14 +510,14 @@
 																</table>
 															</div>
 														</div>
-														<h5><span style="cursor:pointer;" id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;" id="cols_rows_info"> 0열 0행 </span>		<button type="submit" id="pageSize_pop" class="btn btn-primary" style="">시작위치수정</button></h5>
+														<h5><span style="cursor:pointer; color:lightgray" id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;" id="cols_rows_info"> 1열 1행 </span>		<button type="submit" id="pageSize_pop_button" class="btn btn-gray" style="">시작위치수정</button></h5>
 														<!-- <p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p> -->
 													</div>
 												</div>
 											</div>
 
 											<div class="panel panel-default">
-												<button type="submit" class="btn btn-primary generatepdf" style="width: 100%">PRINT</button>
+												<button type="submit" class="btn btn-primary generatepdf" style="width: 100%">라벨출력</button>
 												<input type="hidden" id="orderids">
 											</div>
 										</div>
@@ -774,66 +529,7 @@
 						</div>
 
 					</div>
-					<footer>
-						<div class="footer" id="footer">
-							<div class="container">
-								<div class="row">
-									<div class="col-lg-3  col-md-3 col-xs-6">
-										<h3> Site Link</h3>
-										<ul>
-
-											<li> <a href="#"> Privacy Policy </a> </li>
-											<li> <a href="#"> Terms of Service </a> </li>
-											<li> <a href="#"> Blog </a> </li>
-											<li> <a href="#"> Tour </a> </li>
-											<li> <a href="#"> Pricing & Signup </a> </li>
-										</ul>
-									</div>
-									<div class="col-lg-3  col-md-3  col-xs-6">
-										<h3> Support</h3>
-										<ul>
-
-											<li> <a href="#"> FAQ </a> </li>
-											<li> <a href="#"> Request a Feature </a> </li>
-											<li> <a href="#"> Report a Bug </a> </li>
-											<li> <a href="#"> Contact Us </a> </li>
-										</ul>
-									</div>
-									<div class="col-lg-3  col-md-3 col-xs-6">
-										<h3> New on the Blog </h3>
-										<ul>
-											<li> <a href="#"> Using mail merge for packing slips</a> </li>
-											<li> <a href="#"> The end of eBook delivery </a> </li>
-											<li> <a href="#"> Alter Customer Address </a> </li>
-											<li> <a href="#"> Powerful new email features </a> </li>
-											<li> <a href="#"> The new list view in Scrobbld </a> </li>
-										</ul>
-									</div>
-									<div class="col-lg-3  col-md-3 col-sm-4 col-xs-6">
-										<h3> Community</h3>
-										<ul>
-											<li> <a href="#"> Forums / Features </a> </li>
-											<li> <a href="#"> Questions </a> </li>
-											<li> <a href="#"> LScrobbld Blog </a> </li>
-											<li> <a href="#"> Twitter </a> </li>
-											<li> <a href="#"> Facebook </a> </li>
-										</ul>
-									</div>
-								</div>
-								<!--/.row--> 
-							</div>
-							<!--/.container--> 
-						</div>
-						<!--/.footer-->
-
-						<div class="footer-bottom">
-							<div class="container">
-								<p class="pull-right">  iLABs Technology © 2015~2017 All rights reserved. </p>
-
-							</div>
-						</div>
-						<!--/.footer-bottom--> 
-					</footer>
+					<!-- footer here -->
 
 
 					<div class="modal fade in" id="myModalPhrase" style="display: none">
@@ -849,7 +545,7 @@
 
 											<input type="text" class="form-control" id="seller_msg_search" placeholder="최대 20자로 입력할 수 있습니다 " style="width: 100%">
 										</div>
-										<button type="submit" class="btn btn-default" style="background: #444444;color: #fff;padding-left: 20px; padding-right: 20px">등록</button>
+										<button type="submit" class="btn btn-default" id="seller_msg_button" style="background: #444444;color: #fff;padding-left: 20px; padding-right: 20px">등록</button>
 									</form>
 								</div>
 								<div class="modal-body">
@@ -951,257 +647,257 @@
 										<table class="table table-bordered" id="onebyone_pop" style="display: ">
 											<tr>
 												<td class="onebyone">
-													<input type="radio" name="startpoint1" value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
+													<input type="radio" name="startpoint1" disabled value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
 												</tr>
-										</table>
-										<!-- 1x2 -->
-										<table class="table table-bordered" id="onebytwo_pop" style="display: none">
-											<tr>
-												<td class="onebytwo">
-													<input type="radio" name="startpoint2" value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
-												</tr>
-												<tr>
-													<td class="onebytwo">
-														<input type="radio" name="startpoint2" value="2" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 2</td>
-													</tr>
-												</table>
-												<!-- 2x2 -->		
-												<table class="table table-bordered" id="twobytwo_pop" style="display: none">
-													<tr>
-														<td class="twobytwo" style="">
-															<input type="radio" name="startpoint3" value="1" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 1</td>
-															<td class="twobytwo" style=""><input type="radio" name="startpoint3" value="3" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 3</td>
-														</tr>
-														<tr>
-															<td class="twobytwo" style="">
-																<input type="radio" name="startpoint3" value="2" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 2</td>
-																<td class="twobytwo" style="">
-																	<input type="radio" name="startpoint3" value="4" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 4</td>
-																</tr>
-															</table>
-															<!-- 3x7 -->		
-															<table class="table table-bordered" id="threebyseven_pop" style="display: none">
-																<tr>
-																	<td class="threebyseven" style="">
-																		<input type="radio" name="startpoint4" value="1"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 1</td>
-																		<td class="threebyseven" style="">
-																			<input type="radio" name="startpoint4" value="8"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 8</td>
-																			<td class="threebyseven" style="">
-																				<input type="radio" name="startpoint4" value="15"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 15</td>
-																			</tr>
-																			<tr>
-																				<td class="threebyseven" style="">
-																					<input type="radio" name="startpoint4" value="2"  class="form-group tick" style="
-																					margin: 0px 10px 0px 10px;
-																					"> 2</td>
-																					<td class="threebyseven" style="">
-																						<input type="radio" name="startpoint4" value="9"  class="form-group tick" style="
-																						margin: 0px 10px 0px 10px;
-																						"> 9</td>
-																						<td class="threebyseven" style="">
-																							<input type="radio" name="startpoint4" value="16"  class="form-group tick" style="
-																							margin: 0px 10px 0px 10px;
-																							"> 16</td>
-																						</tr>
-																						<tr>
-																							<td class="threebyseven" style="">
-																								<input type="radio" name="startpoint4" value="3"  class="form-group tick" style="
-																								margin: 0px 10px 0px 10px;
-																								"> 3</td>
-																								<td class="threebyseven" style="">
-																									<input type="radio" name="startpoint4" value="10"  class="form-group tick" style="
-																									margin: 0px 10px 0px 10px;
-																									"> 10</td>
-																									<td class="threebyseven" style="">
-																										<input type="radio" name="startpoint4" value="17"  class="form-group tick" style="
-																										margin: 0px 10px 0px 10px;
-																										"> 17</td>
-																									</tr>
-																									<tr>
-																										<td class="threebyseven" style="">
-																											<input type="radio" name="startpoint4" value="4"  class="form-group tick" style="
-																											margin: 0px 10px 0px 10px;
-																											"> 4</td>
-																											<td class="threebyseven" style="">
-																												<input type="radio" name="startpoint4" value="11"  class="form-group tick" style="
-																												margin: 0px 10px 0px 10px;
-																												"> 11</td>
-																												<td class="threebyseven" style="">
-																													<input type="radio" name="startpoint4" value="18"  class="form-group tick" style="
-																													margin: 0px 10px 0px 10px;
-																													"> 18</td>
-																												</tr>
-																												<tr>
-																													<td class="threebyseven" style="">
-																														<input type="radio" name="startpoint4" value="5"  class="form-group tick" style="
-																														margin: 0px 10px 0px 10px;
-																														"> 5</td>
-																														<td class="threebyseven" style="">
-																															<input type="radio" name="startpoint4" value="12"  class="form-group tick" style="
-																															margin: 0px 10px 0px 10px;
-																															"> 12</td>
-																															<td class="threebyseven" style="">
-																																<input type="radio" name="startpoint4" value="19"  class="form-group tick" style="
-																																margin: 0px 10px 0px 10px;
-																																"> 19</td>
-																															</tr>
-																															<tr>
-																																<td class="threebyseven" style="">
-																																	<input type="radio" name="startpoint4" value="6"  class="form-group tick" style="
-																																	margin: 0px 10px 0px 10px;
-																																	"> 6</td>
-																																	<td class="threebyseven" style="">
-																																		<input type="radio" name="startpoint4" value="13"  class="form-group tick" style="
-																																		margin: 0px 10px 0px 10px;
-																																		"> 13</td>
-																																		<td class="threebyseven" style="">
-																																			<input type="radio" name="startpoint4" value="20"  class="form-group tick" style="
-																																			margin: 0px 10px 0px 10px;
-																																			"> 20</td>
-																																		</tr>
-																																		<tr>
-																																			<td class="threebyseven" style="">
-																																				<input type="radio" name="startpoint4" value="7"  class="form-group tick" style="
-																																				margin: 0px 10px 0px 10px;
-																																				"> 7</td>
-																																				<td class="threebyseven" style="">
-																																					<input type="radio" name="startpoint4" value="14"  class="form-group tick" style="
-																																					margin: 0px 10px 0px 10px;
-																																					"> 14</td>
-																																					<td class="threebyseven" style="">
-																																						<input type="radio" name="startpoint4" value="21"  class="form-group tick" style="
-																																						margin: 0px 10px 0px 10px;
-																																						"> 21</td>
-																																					</tr>
-																																				</table>
-																																				<!-- 3x8 -->		
-																																				<table class="table table-bordered" id="threebyeight_pop" style="display: none">
-																																					<tr>
-																																						<td class="threebyseven" style="">
-																																							<input type="radio" name="startpoint5" value="1"  class="form-group tick" style="
-																																							margin: 0px 10px 0px 10px;
-																																							"> 1</td>
-																																							<td class="threebyseven" style="">
-																																								<input type="radio" name="startpoint5" value="9"  class="form-group tick" style="
-																																								margin: 0px 10px 0px 10px;
-																																								"> 9</td>
-																																								<td class="threebyseven" style="">
-																																									<input type="radio" name="startpoint5" value="17"  class="form-group tick" style="
-																																									margin: 0px 10px 0px 10px;
-																																									"> 17</td>
-																																								</tr>
-																																								<tr>
-																																									<td class="threebyseven" style="">
-																																										<input type="radio" name="startpoint5" value="2"  class="form-group tick" style="
-																																										margin: 0px 10px 0px 10px;
-																																										"> 2</td>
-																																										<td class="threebyseven" style="">
-																																											<input type="radio" name="startpoint5" value="10"  class="form-group tick" style="
-																																											margin: 0px 10px 0px 10px;
-																																											"> 10</td>
-																																											<td class="threebyseven" style="">
-																																												<input type="radio" name="startpoint5" value="18"  class="form-group tick" style="
-																																												margin: 0px 10px 0px 10px;
-																																												"> 18</td>
-																																											</tr>
-																																											<tr>
-																																												<td class="threebyseven" style="">
-																																													<input type="radio" name="startpoint5" value="3"  class="form-group tick" style="
-																																													margin: 0px 10px 0px 10px;
-																																													"> 3</td>
-																																													<td class="threebyseven" style="">
-																																														<input type="radio" name="startpoint5" value="11"  class="form-group tick" style="
-																																														margin: 0px 10px 0px 10px;
-																																														"> 11</td>
-																																														<td class="threebyseven" style="">
-																																															<input type="radio" name="startpoint5" value="19"  class="form-group tick" style="
-																																															margin: 0px 10px 0px 10px;
-																																															"> 19</td>
-																																														</tr>
-																																														<tr>
-																																															<td class="threebyseven" style="">
-																																																<input type="radio" name="startpoint5" value="4"  class="form-group tick" style="
-																																																margin: 0px 10px 0px 10px;
-																																																"> 4</td>
-																																																<td class="threebyseven" style="">
-																																																	<input type="radio" name="startpoint5" value="12"  class="form-group tick" style="
-																																																	margin: 0px 10px 0px 10px;
-																																																	"> 12</td>
-																																																	<td class="threebyseven" style="">
-																																																		<input type="radio" name="startpoint5" value="20"  class="form-group tick" style="
-																																																		margin: 0px 10px 0px 10px;
-																																																		"> 20</td>
-																																																	</tr>
-																																																	<tr>
-																																																		<td class="threebyseven" style="">
-																																																			<input type="radio" name="startpoint5" value="5"  class="form-group tick" style="
-																																																			margin: 0px 10px 0px 10px;
-																																																			"> 5</td>
-																																																			<td class="threebyseven" style="">
-																																																				<input type="radio" name="startpoint5" value="13"  class="form-group tick" style="
-																																																				margin: 0px 10px 0px 10px;
-																																																				"> 13</td>
-																																																				<td class="threebyseven" style="">
-																																																					<input type="radio" name="startpoint5" value="21"  class="form-group tick" style="
-																																																					margin: 0px 10px 0px 10px;
-																																																					"> 21</td>
-																																																				</tr>
-																																																				<tr>
-																																																					<td class="threebyseven" style="">
-																																																						<input type="radio" name="startpoint5" value="6"  class="form-group tick" style="
-																																																						margin: 0px 10px 0px 10px;
-																																																						"> 6</td>
-																																																						<td class="threebyseven" style="">
-																																																							<input type="radio" name="startpoint5" value="14"  class="form-group tick" style="
-																																																							margin: 0px 10px 0px 10px;
-																																																							"> 14</td>
-																																																							<td class="threebyseven" style="">
-																																																								<input type="radio" name="startpoint5" value="22"  class="form-group tick" style="
-																																																								margin: 0px 10px 0px 10px;
-																																																								"> 22</td>
-																																																							</tr>
-																																																							<tr>
-																																																								<td class="threebyseven" style="">
-																																																									<input type="radio" name="startpoint5" value="7"  class="form-group tick" style="
-																																																									margin: 0px 10px 0px 10px;
-																																																									"> 7</td>
-																																																									<td class="threebyseven" style="">
-																																																										<input type="radio" name="startpoint5" value="15"  class="form-group tick" style="
-																																																										margin: 0px 10px 0px 10px;
-																																																										"> 15</td>
-																																																										<td class="threebyseven" style="">
-																																																											<input type="radio" name="startpoint5" value="21"  class="form-group tick" style="
-																																																											margin: 0px 10px 0px 10px;
-																																																											"> 21</td>
-																																																										</tr>
+                      </table>
+                      <!-- 1x2 -->
+                      <table class="table table-bordered" id="onebytwo_pop" style="display: none">
+                       <tr>
+                        <td class="onebytwo">
+                         <input type="radio" name="startpoint2" value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
+                       </tr>
+                       <tr>
+                         <td class="onebytwo">
+                          <input type="radio" name="startpoint2" value="2" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 2</td>
+                        </tr>
+                      </table>
+                      <!-- 2x2 -->		
+                      <table class="table table-bordered" id="twobytwo_pop" style="display: none">
+                       <tr>
+                        <td class="twobytwo" style="">
+                         <input type="radio" name="startpoint3" value="1" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 1</td>
+                         <td class="twobytwo" style=""><input type="radio" name="startpoint3" value="3" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 3</td>
+                       </tr>
+                       <tr>
+                         <td class="twobytwo" style="">
+                          <input type="radio" name="startpoint3" value="2" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 2</td>
+                          <td class="twobytwo" style="">
+                           <input type="radio" name="startpoint3" value="4" class="form-group tick" style="margin: 0px 10px 0px 10px;"> 4</td>
+                         </tr>
+                       </table>
+                       <!-- 3x7 -->		
+                       <table class="table table-bordered" id="threebyseven_pop" style="display: none">
+                        <tr>
+                         <td class="threebyseven" style="">
+                          <input type="radio" name="startpoint4" value="1"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 1</td>
+                          <td class="threebyseven" style="">
+                           <input type="radio" name="startpoint4" value="8"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 8</td>
+                           <td class="threebyseven" style="">
+                            <input type="radio" name="startpoint4" value="15"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 15</td>
+                          </tr>
+                          <tr>
+                            <td class="threebyseven" style="">
+                             <input type="radio" name="startpoint4" value="2"  class="form-group tick" style="
+                             margin: 0px 10px 0px 10px;
+                             "> 2</td>
+                             <td class="threebyseven" style="">
+                              <input type="radio" name="startpoint4" value="9"  class="form-group tick" style="
+                              margin: 0px 10px 0px 10px;
+                              "> 9</td>
+                              <td class="threebyseven" style="">
+                               <input type="radio" name="startpoint4" value="16"  class="form-group tick" style="
+                               margin: 0px 10px 0px 10px;
+                               "> 16</td>
+                             </tr>
+                             <tr>
+                               <td class="threebyseven" style="">
+                                <input type="radio" name="startpoint4" value="3"  class="form-group tick" style="
+                                margin: 0px 10px 0px 10px;
+                                "> 3</td>
+                                <td class="threebyseven" style="">
+                                 <input type="radio" name="startpoint4" value="10"  class="form-group tick" style="
+                                 margin: 0px 10px 0px 10px;
+                                 "> 10</td>
+                                 <td class="threebyseven" style="">
+                                  <input type="radio" name="startpoint4" value="17"  class="form-group tick" style="
+                                  margin: 0px 10px 0px 10px;
+                                  "> 17</td>
+                                </tr>
+                                <tr>
+                                  <td class="threebyseven" style="">
+                                   <input type="radio" name="startpoint4" value="4"  class="form-group tick" style="
+                                   margin: 0px 10px 0px 10px;
+                                   "> 4</td>
+                                   <td class="threebyseven" style="">
+                                    <input type="radio" name="startpoint4" value="11"  class="form-group tick" style="
+                                    margin: 0px 10px 0px 10px;
+                                    "> 11</td>
+                                    <td class="threebyseven" style="">
+                                     <input type="radio" name="startpoint4" value="18"  class="form-group tick" style="
+                                     margin: 0px 10px 0px 10px;
+                                     "> 18</td>
+                                   </tr>
+                                   <tr>
+                                     <td class="threebyseven" style="">
+                                      <input type="radio" name="startpoint4" value="5"  class="form-group tick" style="
+                                      margin: 0px 10px 0px 10px;
+                                      "> 5</td>
+                                      <td class="threebyseven" style="">
+                                       <input type="radio" name="startpoint4" value="12"  class="form-group tick" style="
+                                       margin: 0px 10px 0px 10px;
+                                       "> 12</td>
+                                       <td class="threebyseven" style="">
+                                        <input type="radio" name="startpoint4" value="19"  class="form-group tick" style="
+                                        margin: 0px 10px 0px 10px;
+                                        "> 19</td>
+                                      </tr>
+                                      <tr>
+                                        <td class="threebyseven" style="">
+                                         <input type="radio" name="startpoint4" value="6"  class="form-group tick" style="
+                                         margin: 0px 10px 0px 10px;
+                                         "> 6</td>
+                                         <td class="threebyseven" style="">
+                                          <input type="radio" name="startpoint4" value="13"  class="form-group tick" style="
+                                          margin: 0px 10px 0px 10px;
+                                          "> 13</td>
+                                          <td class="threebyseven" style="">
+                                           <input type="radio" name="startpoint4" value="20"  class="form-group tick" style="
+                                           margin: 0px 10px 0px 10px;
+                                           "> 20</td>
+                                         </tr>
+                                         <tr>
+                                           <td class="threebyseven" style="">
+                                            <input type="radio" name="startpoint4" value="7"  class="form-group tick" style="
+                                            margin: 0px 10px 0px 10px;
+                                            "> 7</td>
+                                            <td class="threebyseven" style="">
+                                             <input type="radio" name="startpoint4" value="14"  class="form-group tick" style="
+                                             margin: 0px 10px 0px 10px;
+                                             "> 14</td>
+                                             <td class="threebyseven" style="">
+                                              <input type="radio" name="startpoint4" value="21"  class="form-group tick" style="
+                                              margin: 0px 10px 0px 10px;
+                                              "> 21</td>
+                                            </tr>
+                                          </table>
+                                          <!-- 3x8 -->		
+                                          <table class="table table-bordered" id="threebyeight_pop" style="display: none">
+                                           <tr>
+                                            <td class="threebyseven" style="">
+                                             <input type="radio" name="startpoint5" value="1"  class="form-group tick" style="
+                                             margin: 0px 10px 0px 10px;
+                                             "> 1</td>
+                                             <td class="threebyseven" style="">
+                                              <input type="radio" name="startpoint5" value="9"  class="form-group tick" style="
+                                              margin: 0px 10px 0px 10px;
+                                              "> 9</td>
+                                              <td class="threebyseven" style="">
+                                               <input type="radio" name="startpoint5" value="17"  class="form-group tick" style="
+                                               margin: 0px 10px 0px 10px;
+                                               "> 17</td>
+                                             </tr>
+                                             <tr>
+                                               <td class="threebyseven" style="">
+                                                <input type="radio" name="startpoint5" value="2"  class="form-group tick" style="
+                                                margin: 0px 10px 0px 10px;
+                                                "> 2</td>
+                                                <td class="threebyseven" style="">
+                                                 <input type="radio" name="startpoint5" value="10"  class="form-group tick" style="
+                                                 margin: 0px 10px 0px 10px;
+                                                 "> 10</td>
+                                                 <td class="threebyseven" style="">
+                                                  <input type="radio" name="startpoint5" value="18"  class="form-group tick" style="
+                                                  margin: 0px 10px 0px 10px;
+                                                  "> 18</td>
+                                                </tr>
+                                                <tr>
+                                                  <td class="threebyseven" style="">
+                                                   <input type="radio" name="startpoint5" value="3"  class="form-group tick" style="
+                                                   margin: 0px 10px 0px 10px;
+                                                   "> 3</td>
+                                                   <td class="threebyseven" style="">
+                                                    <input type="radio" name="startpoint5" value="11"  class="form-group tick" style="
+                                                    margin: 0px 10px 0px 10px;
+                                                    "> 11</td>
+                                                    <td class="threebyseven" style="">
+                                                     <input type="radio" name="startpoint5" value="19"  class="form-group tick" style="
+                                                     margin: 0px 10px 0px 10px;
+                                                     "> 19</td>
+                                                   </tr>
+                                                   <tr>
+                                                     <td class="threebyseven" style="">
+                                                      <input type="radio" name="startpoint5" value="4"  class="form-group tick" style="
+                                                      margin: 0px 10px 0px 10px;
+                                                      "> 4</td>
+                                                      <td class="threebyseven" style="">
+                                                       <input type="radio" name="startpoint5" value="12"  class="form-group tick" style="
+                                                       margin: 0px 10px 0px 10px;
+                                                       "> 12</td>
+                                                       <td class="threebyseven" style="">
+                                                        <input type="radio" name="startpoint5" value="20"  class="form-group tick" style="
+                                                        margin: 0px 10px 0px 10px;
+                                                        "> 20</td>
+                                                      </tr>
+                                                      <tr>
+                                                        <td class="threebyseven" style="">
+                                                         <input type="radio" name="startpoint5" value="5"  class="form-group tick" style="
+                                                         margin: 0px 10px 0px 10px;
+                                                         "> 5</td>
+                                                         <td class="threebyseven" style="">
+                                                          <input type="radio" name="startpoint5" value="13"  class="form-group tick" style="
+                                                          margin: 0px 10px 0px 10px;
+                                                          "> 13</td>
+                                                          <td class="threebyseven" style="">
+                                                           <input type="radio" name="startpoint5" value="21"  class="form-group tick" style="
+                                                           margin: 0px 10px 0px 10px;
+                                                           "> 21</td>
+                                                         </tr>
+                                                         <tr>
+                                                           <td class="threebyseven" style="">
+                                                            <input type="radio" name="startpoint5" value="6"  class="form-group tick" style="
+                                                            margin: 0px 10px 0px 10px;
+                                                            "> 6</td>
+                                                            <td class="threebyseven" style="">
+                                                             <input type="radio" name="startpoint5" value="14"  class="form-group tick" style="
+                                                             margin: 0px 10px 0px 10px;
+                                                             "> 14</td>
+                                                             <td class="threebyseven" style="">
+                                                              <input type="radio" name="startpoint5" value="22"  class="form-group tick" style="
+                                                              margin: 0px 10px 0px 10px;
+                                                              "> 22</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td class="threebyseven" style="">
+                                                               <input type="radio" name="startpoint5" value="7"  class="form-group tick" style="
+                                                               margin: 0px 10px 0px 10px;
+                                                               "> 7</td>
+                                                               <td class="threebyseven" style="">
+                                                                <input type="radio" name="startpoint5" value="15"  class="form-group tick" style="
+                                                                margin: 0px 10px 0px 10px;
+                                                                "> 15</td>
+                                                                <td class="threebyseven" style="">
+                                                                 <input type="radio" name="startpoint5" value="21"  class="form-group tick" style="
+                                                                 margin: 0px 10px 0px 10px;
+                                                                 "> 21</td>
+                                                               </tr>
 
-																																																										<tr>
-																																																											<td class="threebyseven" style="">
-																																																												<input type="radio" name="startpoint5" value="8"  class="form-group tick" style="
-																																																												margin: 0px 10px 0px 10px;
-																																																												"> 8</td>
-																																																												<td class="threebyseven" style="">
-																																																													<input type="radio" name="startpoint5" value="16"  class="form-group tick" style="
-																																																													margin: 0px 10px 0px 10px;
-																																																													"> 16</td>
-																																																													<td class="threebyseven" style="">
-																																																														<input type="radio" name="startpoint5" value="24"  class="form-group tick" style="
-																																																														margin: 0px 10px 0px 10px;
-																																																														"> 24</td>
-																																																													</tr>
-																																																												</table>
+                                                               <tr>
+                                                                 <td class="threebyseven" style="">
+                                                                  <input type="radio" name="startpoint5" value="8"  class="form-group tick" style="
+                                                                  margin: 0px 10px 0px 10px;
+                                                                  "> 8</td>
+                                                                  <td class="threebyseven" style="">
+                                                                   <input type="radio" name="startpoint5" value="16"  class="form-group tick" style="
+                                                                   margin: 0px 10px 0px 10px;
+                                                                   "> 16</td>
+                                                                   <td class="threebyseven" style="">
+                                                                    <input type="radio" name="startpoint5" value="24"  class="form-group tick" style="
+                                                                    margin: 0px 10px 0px 10px;
+                                                                    "> 24</td>
+                                                                  </tr>
+                                                                </table>
 
-																																																											</div>
-																																																											<div class="form-group " style="width: 50%; margin: 0px auto;">
-																																																												<button class="btn btn-lg btn-default" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
-																																																												<button class="btn btn-lg btn-primary" data-dismiss="modal" style="padding: 10px 31px;">확인</button>
-																																																												<div class="clearfix"></div>
-																																																											</div>
-																																																										</div>
+                                                              </div>
+                                                              <div class="form-group " style="width: 50%; margin: 0px auto;">
+                                                                <button class="btn btn-lg btn-default" id="startpoint_cancel" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
+                                                                <button class="btn btn-lg btn-primary" data-dismiss="modal" style="padding: 10px 31px;">확인</button>
+                                                                <div class="clearfix"></div>
+                                                              </div>
+                                                            </div>
 
-																																																									</div><!-- /.modal-content -->
-																																																								</div><!-- /.modal-dialog -->
-																																																							</div><!-- /.modal -->
+                                                          </div><!-- /.modal-content -->
+                                                        </div><!-- /.modal-dialog -->
+                                                      </div><!-- /.modal -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -1225,95 +921,119 @@
     
     <script>
     	var table, table_msg, table_delivery, table_feedback;
-		var cols_rows_info = $('#cols_rows_info');
-		var cols_info = $('#cols_info');
-		var rows_info = $('#rows_info');
+      var cols_rows_info = $('#cols_rows_info');
+      var cols_info = $('#cols_info');
+      var rows_info = $('#rows_info');
 
-    	$('.collapse_tbl').click(function(){
-    		$('.tbl_border').addClass("border-bottom");
-    	});
-		
-		$('#delivery_type').on('change', function() {
-			var deliverytype = $(this).val();
-			var shipmethodtext = $('#ship_method_text');
-			var shipmethod_selected = $("#ship_method option:selected").text();
-			var deliverytype_selected = $("#delivery_type option:selected").text();
-			shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
+      $('.collapse_tbl').click(function(){
+        $('.tbl_border').addClass("border-bottom");
+      });
+      
+      $('#delivery_type').on('change', function() {
+         var deliverytype = $(this).val();
+         var shipmethodtext = $('#ship_method_text');
+         var shipmethod_selected = $("#ship_method option:selected").text();
+         var deliverytype_selected = $("#delivery_type option:selected").text();
+         shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
 
-			$('.cn22tick').attr("disabled", true).attr("checked", false);
-			$('.cn22box').css({'background-color':'#eee'});
-			switch(deliverytype)
-			{
-				case 'document':
-					$('.info_1_section').show();
-					break;
-				case 'cn22':
-					$('.cn22tick').attr("disabled", false);
-					break;
-				default:
-					$('.info_1_section').hide();
-					if ($('.cn22tick').is(":checked")) {
-						$('.cn22box').click();
-					}
-				break;
-			}
-		});
-
-		$('#ship_method').on('change', function() {
-			var shipmethod = $(this).val();
-			var shipmethodtext = $('#ship_method_text');
-			var shipmethod_selected = $("#ship_method option:selected").text();
-			var deliverytype_selected = $("#delivery_type option:selected").text();
-			shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
-			switch(shipmethod)
-			{
-				case 'fedex':
-				case 'dhl':
-					$("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").hide();
-				break;
-				case 'post_office':
-					$("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").show();
-				break;
-			}
-		});
-
-		$('body').on('change','#print_label_dimensions, #print_label_dimensions_popup', function() {
-			var id = $(this);
-			displaySize(id);
-			var sizeid = id.val();
-
-			$('#print_label_dimensions_popup').val(sizeid);
-			$('#print_label_dimensions').val(sizeid);
-
-			$(cols_rows_info).text('0열 0행');
-			rows_info.val(0);
-			cols_info.val(0);
-			$('#startpoint_tables').find('table').each(function() {
-				if ($(this).css('display') !== 'none')
-					$(this).find('td :radio:checked').click();
-			});
-		});
-
-		$('body').on('click','#phrase_pop', function() {
-			$('#myModalPhrase').modal('show');
-			return false;
-		});
-
-		$('body').on('click','#pageSize_pop', function() {
-			$('#myModal').modal('show');
-			return false;
-		});
+         $('.cn22tick, .cn22logo, .cn22phrase').attr("disabled", true).attr("checked", false);
+         $('.cn22box, .cn22logobox, .cn22phrasebox').css({'background-color':'#eee'});
+         switch(deliverytype)
+         {
+          case 'document':
+          $('.info_1_section').show();
+          break;
+          case 'cn22':
+          $('.info_1_section').hide();
+          $('.cn22tick, .cn22logo, .cn22phrase').attr("disabled", false);
 
 
-		var orderItems;
-		function getallCheckOrders()
-		{	
-			orderItems = 0;
-			var orderItemsValue = '';
-			if (selected_tab == undefined) selected_tab = table;
 
-			selected_tab.$('input:checkbox[class^="table_order_check"]').each(function() {
-				if(this.checked){
+          break;
+          default:
+          $('.info_1_section').hide();
+          if ($('.cn22tick').is(":checked")) {
+            $('.cn22box').click();
+          }
+          break;
+        }
+      });
+
+      //$('#accordion').find('a:first').click().click();
+      $('#accordion').on('click', function() {
+        setTimeout(function(){ 
+          accordionCheck();
+        }, 100);
+      });
+
+      function accordionCheck()
+      {
+        $('#accordion').find('a').each(function(){
+          if ($(this).attr('aria-expanded') == 'true')
+            $(this).find('span').removeClass('fa-caret-up').addClass('fa-caret-down');
+          else
+            $(this).find('span').removeClass('fa-caret-down').addClass('fa-caret-up');
+        })
+      }
+
+      $('#ship_method').on('change', function() {
+       var shipmethod = $(this).val();
+       var shipmethodtext = $('#ship_method_text');
+       var shipmethod_selected = $("#ship_method option:selected").text();
+       var deliverytype_selected = $("#delivery_type option:selected").text();
+       shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
+       switch(shipmethod)
+       {
+        case 'fedex':
+        case 'dhl':
+        $("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").hide();
+        break;
+        case 'post_office':
+        $("#delivery_type option[value='kpacket'],#delivery_type option[value='ems']").show();
+        break;
+      }
+    });
+
+    $('body').on('change','#print_label_dimensions, #print_label_dimensions_popup', function() {
+      var id = $(this);
+      var sizeid = id.val();
+      displaySize(id);
+
+      $('#print_label_dimensions_popup').val(sizeid);
+      $('#print_label_dimensions').val(sizeid);
+
+      $(cols_rows_info).text('1열 1행');
+      rows_info.val(1);
+      cols_info.val(1);
+      $('#startpoint_tables').find('table').each(function() {
+        if ($(this).css('display') !== 'none')
+          $(this).find('td :radio:checked').click();
+      });
+    });
+
+      $('body').on('click','#phrase_pop', function() {
+       $('#myModalPhrase').modal('show');
+       return false;
+     });
+
+      $('body').on('click','#pageSize_pop, #pageSize_pop_button', function() {
+        if ($('#pageSize_pop').css('color') == 'rgb(211, 211, 211)')
+          return false;
+
+        $('#myModal').modal('show');
+        return false;
+      });
+
+
+      var orderItems;
+      function getallCheckOrders()
+      {	
+       orderItems = 0;
+       var orderItemsValue = '';
+       if (selected_tab == undefined) selected_tab = table;
+
+       selected_tab.$('input:checkbox[class^="table_order_check"]').each(function() {
+        if(this.checked){
 					// Create a hidden element
 					//console.log (this.value);
 					//console.log (this.id);
@@ -1332,10 +1052,10 @@
 			id = $(this).attr('ref');
 
 			$('#editmsgs'+id).editable({
-			    pk: id,
-			    url: '<?php echo base_url("/order/template/edit"); ?>',
-			    title: 'Edit template'
-   			});
+       pk: id,
+       url: '<?php echo base_url("/order/template/edit"); ?>',
+       title: 'Edit template'
+     });
 			$('#editmsgs'+id).editable('toggle');
 			//$("*[id^=editmsgs]").each(function( index ) {
 			//  console.log( index + ": " + $( this ).attr('ref') );
@@ -1353,8 +1073,19 @@
 			msg_template = 0;
 			$('#table_msg').find('input').removeAttr('checked');
 			$('.cn22phrase').prop("checked", false);
-		    $('.cn22phrasebox').css({'background-color':'#eee'});
-		});	
+      $('.cn22phrasebox').css({'background-color':'#eee'});
+    });	
+
+    $('body').on('click','#startpoint_cancel', function() {
+      $('#print_label_dimensions, #print_label_dimensions_popup').val(1);
+      $(cols_rows_info).text('1열 1행');
+
+      $('#startpoint_tables').find(':radio').prop('checked', false);
+      displaySize($('#print_label_dimensions'));
+      rows_info.val(1);
+      cols_info.val(1);
+    }); 
+
 
 		$("#myModalPhrase").on("hidden.bs.modal", function () {
 		    // console.log (msg_template);
@@ -1364,7 +1095,7 @@
 		    	$('.cn22phrase').prop("checked", false);
 		    	$('.cn22phrasebox').css({'background-color':'#eee'});
 		    }
-		});	
+      });	
 
 		// row horizontal - col vertical
 		$('#onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').find('tr').click(function() {
@@ -1422,7 +1153,7 @@
 
 		$(document).ready(function() {
 			//checkDimensionToSelect();
-		    table = $('#table').DataTable({ 
+      table = $('#table').DataTable({ 
 		    	// "dom": '<"top"i>rt<"bottom"flp><"clear">',
 		    	"sDom": '<t><"#info"lip><"#export"B>',
 		    	// dom: 'Bfrtip',
@@ -1449,90 +1180,126 @@
 		        "columnDefs": [{
 		            "targets": [ 0,1,2,3,4,5,6 ], //first column / numbering column
 		            "orderable": false, //set not orderable
-		        }],
-		    });
+              }],
+            });
 
-		    table_delivery = $('#table_delivery').DataTable({ 
-		    	"sDom": '<t><"#info"lip><"#export"B>',
-		    	buttons: ['excel'],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
-		        "processing": true, 
-		       	"serverSide": true, 
-		        "order": [],
-		        "iDisplayLength" :5,
-		        "ajax": {
-		        	"url": "<?php echo base_url('/order/order_list/beforedelivery')?>",
-		        	"type": "POST",
-		        	"dataType": "json",
-		        	"dataSrc": function (jsonData) {
-		        		return jsonData.data;
-		        	}
-		        },
-		        "columnDefs": [{ 
-		            "targets": [ 0,1,2,3,4,5,6 ], 
-		            "orderable": false, 
-		        }],
-		    });
+      table_delivery = $('#table_delivery').DataTable({ 
+       "sDom": '<t><"#info"lip><"#export"B>',
+       buttons: ['excel'],
+       "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+       "processing": true, 
+       "serverSide": true, 
+       "order": [],
+       "iDisplayLength" :5,
+       "ajax": {
+         "url": "<?php echo base_url('/order/order_list/beforedelivery')?>",
+         "type": "POST",
+         "dataType": "json",
+         "dataSrc": function (jsonData) {
+          return jsonData.data;
+        }
+      },
+      "columnDefs": [{ 
+        "targets": [ 0,1,2,3,4,5,6 ], 
+        "orderable": false, 
+      }],
+    });
 
-		    table_feedback = $('#table_feedback').DataTable({ 
-		    	"sDom": '<t><"#info"lip><"#export"B>',
-		    	buttons: ['excel'],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
-		        "processing": true, 
-		       	"serverSide": true, 
-		        "order": [],
-		        "iDisplayLength" :5,
-		        "ajax": {
-		        	"url": "<?php echo base_url('/order/order_list/waitingforfeedback')?>",
-		        	"type": "POST",
-		        	"dataType": "json",
-		        	"dataSrc": function (jsonData) {
-		        		return jsonData.data;
-		        	}
-		        },
-		        "columnDefs": [{ 
-		            "targets": [ 0,1,2,3,4,5,6 ], 
-		            "orderable": false, 
-		        }],
-		    });
+      table_feedback = $('#table_feedback').DataTable({ 
+       "sDom": '<t><"#info"lip><"#export"B>',
+       buttons: ['excel'],
+       "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+       "processing": true, 
+       "serverSide": true, 
+       "order": [],
+       "iDisplayLength" :5,
+       "ajax": {
+         "url": "<?php echo base_url('/order/order_list/waitingforfeedback')?>",
+         "type": "POST",
+         "dataType": "json",
+         "dataSrc": function (jsonData) {
+          return jsonData.data;
+        }
+      },
+      "columnDefs": [{ 
+        "targets": [ 0,1,2,3,4,5,6 ], 
+        "orderable": false, 
+      }],
+    });
 
-			$('#salechannel').on('change', function() {
-				var myValue = 'amazon';
-				regExSearch = '^\\s' + myValue +'\\s*$';
-				table.search('1000 GB', false, false).draw();
-			});
+      $('#salechannel').on('change', function() {
+        var myValue = 'amazon';
+        regExSearch = '^\\s' + myValue +'\\s*$';
+        table.search('1000 GB', false, false).draw();
+      });
 
-			table_msg = $('#table_msg').DataTable({ 
-		    	"sDom": '<t><"#info_msg"lip>',
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
-		        "processing": true, 
-		       	"serverSide": true, 
-		        "order": [], 
-		        "iDisplayLength" :5,
-		        "ajax": {
-		        	"url": "<?php echo base_url('/order/msg_list')?>",
-		        	"type": "POST",
-		        	"dataType": "json",
-		        	"dataSrc": function (jsonData) {
-		        		return jsonData.data;
-		        	}
-		        },
-		        "columnDefs": [
-			        { 
-			            "targets": [ 0,1,2 ], 
-			            "orderable": false,
-			        },
-		        ],
-		    });
+      table_msg = $('#table_msg').DataTable({ 
+       "sDom": '<t><"#info_msg"lip>',
+       "lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+       "processing": true, 
+       "serverSide": true, 
+       "order": [], 
+       "iDisplayLength" :50,
+       "ajax": {
+         "url": "<?php echo base_url('/order/msg_list')?>",
+         "type": "POST",
+         "dataType": "json",
+         "dataSrc": function (jsonData) {
+          return jsonData.data;
+        }
+      },
+      "columnDefs": [
+      { 
+       "targets": [ 0,1,2 ], 
+       "orderable": false,
+     },
+     ],
+   });
 
-		    $('#seller_msg_search').on('keyup', function() {
-		    	var value = $(this).val();
-				table_msg.search(value, false, false).draw();
-			});
+    // $('#seller_msg_search').on('keyup', function() {
+    //   var value = $(this).val();
+    //   table_msg.search(value, false, false).draw();
+    // });
 
-		    $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
-		});
+      $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
+    });
 
+    $('#seller_msg_button').on('click', function() {
+      var msg = $('#seller_msg_search').val();
+
+      if (msg == "")
+      {
+
+      }
+      else
+      {
+        $.ajax({
+          url  : '<?php echo base_url('/order/msg_add'); ?>',
+          data : 'msg=' + msg,
+          type : 'POST',
+          success : function(data) {
+            table_msg.draw();
+            $('#seller_msg_search').val("");
+          }
+        });
+      }
+      return false;
+    });
+
+    $('body').on("click", ".deleteMsg", function(){
+      var msgid = $(this).data("userid");
+      var confirmation = confirm("Are you sure to delete this message?");
+      if(confirmation)
+      {
+        $.ajax({
+          type : "POST",
+          url : '<?php echo base_url('/order/msg_delete'); ?>',
+          data : { msgid : msgid } 
+        }).done(function(data){
+          table_msg.draw();
+        });
+      }
+    });
 
 		var selected_tab = table;
 		$('.nav-orders').on('shown.bs.tab', function (e) {
@@ -1544,8 +1311,8 @@
 				default : selected_tab = table; break;
 			}
 			$('#table, #table_delivery, #table_feedback').hide().fadeIn('slow');
-			$('#order-select-all').prop('checked', false);
-			$('body').find('input:checkbox[class^="table_order_check"]').prop('checked', false);
+			// $('#order-select-all').prop('checked', false);
+			$('body').find('input:checkbox[class^="table_order_check"], input:checkbox[id^="order-select-all"]').prop('checked', false);
 			$('.info_order_list').html('주문 0개가 선택되었습니다');
 		});
 
@@ -1559,10 +1326,10 @@
 
 		// Handle click on checkbox to set state of "Select all" control
 		//$('#table tbody').on('change', 'input[type="checkbox"]', function(){
-		$('table').on('change', 'input:checkbox[class^="table_order_check"]', function(){
+      $('table').on('change', 'input:checkbox[class^="table_order_check"]', function(){
 			// If checkbox is not checked
-				if (!this.checked){
-					var el = $('#order-select-all').get(0);
+      if (!this.checked){
+       var el = $('#order-select-all').get(0);
 					// If "Select all" control is checked and has 'indeterminate' property
 					if(el && el.checked && ('indeterminate' in el)){
 					// Set visual state of "Select all" control
@@ -1573,22 +1340,22 @@
 			getallCheckOrders();
 		});
 
-		$('body').on('click','#refreshorders', function() {
+      $('body').on('click','#refreshorders', function() {
 
-			var $elem = $('#refreshorders');
-		    $({deg: 0}).animate({deg: 1080}, {
-		        duration: 5000,
-		        step: function(now) {
-		            $elem.css({
-		                transform: 'rotate(' + now + 'deg)'
-		            });
-		        }
-		    });
+       var $elem = $('#refreshorders');
+       $({deg: 0}).animate({deg: 1080}, {
+        duration: 5000,
+        step: function(now) {
+          $elem.css({
+            transform: 'rotate(' + now + 'deg)'
+          });
+        }
+      });
 
-			$.ajax({
-				url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-				type : 'GET',
-				success : function(data) {
+       $.ajax({
+        url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
+        type : 'GET',
+        success : function(data) {
 					//console.log (data);
 
 					var total_order_count = $('#total_order_count').html();
@@ -1602,43 +1369,43 @@
 					table_feedback.draw();
 				}
 			});
-		});
+     });
 
-		$('body').on('click', '.cn22from', function() {
-    		if ($(this).is(":checked")) $('.cn22frombox').css({'background-color':'#21b4f9'});
-    		else $('.cn22frombox').css({'background-color':'#eee'});
-
-    		//checkDimensionToSelect();
-    	});
-    	$('body').on('click', '.cn22to', function() {
-    		if ($(this).is(":checked")) $('.cn22tobox').css({'background-color':'#21b4f9'});
-    		else $('.cn22tobox').css({'background-color':'#eee'});
+      $('body').on('click', '.cn22from', function() {
+        if ($(this).is(":checked")) $('.cn22frombox').css({'background-color':'#21b4f9'});
+        else $('.cn22frombox').css({'background-color':'#eee'});
 
     		//checkDimensionToSelect();
     	});
-    	$('body').on('click', '.cn22tick', function() {
-
-    		if ($(this).is(":checked")) $('.cn22box').css({'background-color':'#21b4f9'});
-    		else $('.cn22box').css({'background-color':'#eee'});
+      $('body').on('click', '.cn22to', function() {
+        if ($(this).is(":checked")) $('.cn22tobox').css({'background-color':'#21b4f9'});
+        else $('.cn22tobox').css({'background-color':'#eee'});
 
     		//checkDimensionToSelect();
     	});
-    	$('body').on('click', '.cn22logo', function() {
-    		if ($(this).is(":checked")) $('.cn22logobox').css({'background-color':'#21b4f9'});
-    		else $('.cn22logobox').css({'background-color':'#eee'});
+      $('body').on('click', '.cn22tick', function() {
+
+        if ($(this).is(":checked")) $('.cn22box').css({'background-color':'#21b4f9'});
+        else $('.cn22box').css({'background-color':'#eee'});
+
+    		//checkDimensionToSelect();
     	});
-    	$('body').on('click', '.cn22phrase', function() {
-    		if ($(this).is(":checked")) {
-    			$('.cn22phrasebox').css({'background-color':'#21b4f9'});
-    			$('#phrase_pop').click();
-    		}
-    		else 
-    		{
-				$('.cn22phrasebox').css({'background-color':'#eee'});
-				msg_template = 0;
-				$('#table_msg').find('input').removeAttr('checked');
-    		}
-    	});
+      $('body').on('click', '.cn22logo', function() {
+        if ($(this).is(":checked")) $('.cn22logobox').css({'background-color':'#21b4f9'});
+        else $('.cn22logobox').css({'background-color':'#eee'});
+      });
+      $('body').on('click', '.cn22phrase', function() {
+        if ($(this).is(":checked")) {
+         $('.cn22phrasebox').css({'background-color':'#21b4f9'});
+         $('#phrase_pop').click();
+       }
+       else 
+       {
+        $('.cn22phrasebox').css({'background-color':'#eee'});
+        msg_template = 0;
+        $('#table_msg').find('input').removeAttr('checked');
+      }
+    });
 		////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////
@@ -1686,6 +1453,9 @@
 			//checkDimensionToSelect();
 		});
 		$('body').on('click', '.cn22logobox', function() {
+
+      if ($('.cn22logo').is(":disabled")) return false;
+
 			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
 				$(this).css({'background-color':'#eee'});
 				$('.cn22logo').prop("checked", false);
@@ -1697,6 +1467,8 @@
 			} 
 		});
 		$('body').on('click', '.cn22phrasebox', function() {
+      if ($('.cn22phrase').is(":disabled")) return false;
+
 			if ($(this).css('background-color') == 'rgb(33, 180, 249)') {
 				$(this).css({'background-color':'#eee'});
 				$('.cn22phrase').prop("checked", false);
@@ -1718,12 +1490,20 @@
 			//$('#startpoint_tables').find('table').each(function() {
 			//	console.log ($(this).attr('style'));
 			//});
+      $('#pageSize_pop').css({'color':'#000'});
+      $('#pageSize_pop_button').removeClass('btn-gray').addClass('btn-primary');
+
+      $('#startpoint_tables').css({'background':'inherit','opacity':1});
 
 			switch (sizes)
 			{
 				case '1' :
 				$('#onebyone, #onebyone_pop').show();
 				$('#size_text').html('(폼텍, 1x1)');
+
+        $('#pageSize_pop').css({'color':'lightgray'});
+        $('#pageSize_pop_button').removeClass('btn-primary').addClass('btn-gray');
+        $('#startpoint_tables').css({'background':'lightgray','opacity':0.2});
 				break;
 
 				case '2' :

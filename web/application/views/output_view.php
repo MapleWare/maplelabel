@@ -1,235 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
-
-  <title>Output - OnLabels</title>
-
-  <!-- Bootstrap core CSS -->
-  <link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
-  
-  <link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
-  <link href="<?php echo base_url("assets2/css/bootstrap-datepicker.min.css"); ?>" rel="stylesheet">
-  
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-
-  <!-- Custom styles for this template -->
-  <link href="<?php echo base_url("assets2/css/style.css"); ?>" rel="stylesheet">
-
-  <link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-  <link href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">
-
-  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
       <style>
-        html,
-        body {
-          height: 100%;
-        }
+      table#table td:nth-child(1) {
+        width: 20%;
+      }
+      table#table td:nth-child(2) {
+        width: 25%;
+      }
+      table#table td:nth-child(3) {
+        width: 15%;
+      }
+      table#table td:nth-child(4) {
+        width: 45%;
+      }
 
-        .carousel,
-        .item,
-        .active {
-          height: 100%;
-        }
+      #info_epost {
+        display: none;
+      }
 
-        .carousel-inner {
-          height: 100%;
+      
+      table#table_epost td:nth-child(4) {
+        width: 50%;
+      }
+      table#table_epost td:nth-child(6) {
+        width: 15%;
+      }
+      table#table_epost td:nth-child(5) {
+        text-align: center;
+      }
+      #table_epost th  {
+        /*font-size: 13px;*/
+      }
+      #table_epost {
+        /*font-size: 12px;*/
+      }
+      @media (min-width: 768px) {
+        .modal-dialog {
+          width: 600px;
+          margin: 30px auto;
         }
+      }
 
-        /* Background images are set within the HTML using inline CSS, not here */
-
-        .fill {
-          width: 100%;
-          height: 100%;
-          background-position: center;
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          background-size: cover;
-          -o-background-size: cover;
-        }
-        .img-center {
-          margin: 0 auto;
-        }
-        .caption {
-          position: absolute;
-          top: 23%;
-          color: #ffffff;
-          padding: 0 45px 0px 90px;
-          width: 100%;
-        }
-        ul{
-          -webkit-padding-start: 20px;
-          margin-bottom: 100px;
-        }
-        footer {
-          margin: 0px 0 0 0;
-        }
-        .footer{
-          color: #fff;
-          background: #29363c;
-          padding: 20px 0px 40px 0px;
-        }
-        .footer ul{
-          margin-bottom: 0px;
-          padding: 10px;
-          list-style: none;
-        }
-
-        .footer a{
-          padding: 3px;
-          color: #f7f7f7;
-        }
-        .footer-bottom{
-          background: #222222;
-          color: #a3a0a0;
-          padding: 20px 0px 10px 0px;
-        }
-        .sidebar img{
-          margin-right: 15px;
-        }
-        .nav-pills{
-          border-bottom: 1px solid #ccc;
-
-        }
-        .main{   margin-left: 45px;}
-        h4{margin: 30px 0px;}
-
-
-        input[type=checkbox] {
-          display: inline-block;
-          vertical-align: middle;
-          cursor: pointer;
-          background: #fff;
-          border: 1px solid #888;
-          padding: 1px;
-          height: 20px;
-          width: 20px;
-        }
-        .tbl_border, .out{
-          border-bottom: 1px solid #ddd;
-        }
-
-        .border-bottom{
-          border-bottom: 0px solid #ddd !important;
-        }
-        .collapse{
-          border-top: 1px solid #ddd;
-
-        }
-        .tbl_border .in{
-          border-bottom: 0px solid #ddd !important;
-        }
-        .panel-heading{
-          padding: 10px 10px;
-        }
-        .option-1{
-          margin-left: 30px;
-        }
-        .option-2{
-          margin-left: 40px;
-        }
-        .option-3{
-          margin-left: 50px;
-        }
-        label {
-
-          margin: 0px 20px;
-        }
-        .panel-body {
-          padding-top: 0px; 
-
-        }
-        .spacer{
-          border-spacing: 3px;
-          border-collapse: inherit;
-        }
-        @media (min-width: 768px) {
-          .modal-dialog {
-            width: 450px;
-            margin: 30px auto;
-          }
-        }
-
-        table.dataTable thead th, table.dataTable thead td {
-          padding: 10px;
-        }
-
-        .table-responsive {
-          overflow-x: inherit;
-        }
-
-        #export {
-          float: left;
-          position: absolute;
-          margin-top: 23px;
-        }
-
-        #info {
-          float: right;
-          margin-top: 20px;
-          font-size: 12px;
-        }
-
-        #table_length {
-          margin-top: 8px;
-          position: absolute;
-          margin-left: -180px;
-        }
-        table.dataTable {
-          font-size: 12px;
-        }
       </style>
-
-    </head>
-
-    <body>
-
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="<?php echo base_url(); ?>">
-              <img src="<?php echo base_url("assets2/img/logo_white.png"); ?>" />
-            </a>
-          </div>
-          <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-
-              <li><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-              <li><a href="<?php echo base_url(); ?>order/index">신규주문(<span id="total_order_count"><?php echo $total_orders; ?></span>) </a></li>
-              <li><a class="active" href="<?php echo base_url(); ?>output/index">출력관리</a></li>
-              <li><a href="#">제품관리</a></li>
-
-              <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" id="refreshorders" style="padding: 12px;width: 50px; cursor: pointer;"/></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
-              <li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li>
-              <li class=""><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </nav>
-
+  
       <div class="container">
         <div class="row">
 
@@ -252,8 +63,8 @@
                       <label for="exampleInputEmail2">판매채널 </label>
                       <div class='input-group date' id='datetimepicker5'>
                         <input type='text' id="from_date" class="form-control  text-center" />
-                        <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-calendar"></span>
+                        <span class="input-group-addon" style="background-color:#969393;">
+                          <span class="glyphicon glyphicon-calendar" style="color:#ececec;"></span>
                         </span>
                       </div>
                     </div>
@@ -261,8 +72,8 @@
                       <label for="exampleInputEmail2">종료일 </label>
                       <div class='input-group date' id='datetimepicker6'>
                         <input type='text' id="to_date" class="form-control  text-center" />
-                        <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-calendar"></span>
+                        <span class="input-group-addon" style="background-color:#969393;">
+                          <span class="glyphicon glyphicon-calendar" style="color:#ececec;"></span>
                         </span>
                       </div>
                     </div>
@@ -272,7 +83,7 @@
                     <table class="table" id="table">
                       <thead>
                         <tr>
-                          <th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
+                          <!-- <th><input id="order-select-all" type="checkbox" class="form-group tick"></th> -->
                           <th>일련번호</th>
                           <th>생성일자</th>
                           <th>출력수</th>
@@ -329,145 +140,44 @@
           </div>
 
         </div>
-        <footer>
-          <div class="footer" id="footer">
-            <div class="container">
-              <div class="row">
-                <div class="col-lg-3  col-md-3 col-xs-6">
-                  <h3> Site Link</h3>
-                  <ul>
-
-                    <li> <a href="#"> Privacy Policy </a> </li>
-                    <li> <a href="#"> Terms of Service </a> </li>
-                    <li> <a href="#"> Blog </a> </li>
-                    <li> <a href="#"> Tour </a> </li>
-                    <li> <a href="#"> Pricing & Signup </a> </li>
-                  </ul>
-                </div>
-                <div class="col-lg-3  col-md-3  col-xs-6">
-                  <h3> Support</h3>
-                  <ul>
-
-                    <li> <a href="#"> FAQ </a> </li>
-                    <li> <a href="#"> Request a Feature </a> </li>
-                    <li> <a href="#"> Report a Bug </a> </li>
-                    <li> <a href="#"> Contact Us </a> </li>
-                  </ul>
-                </div>
-                <div class="col-lg-3  col-md-3 col-xs-6">
-                  <h3> New on the Blog </h3>
-                  <ul>
-                    <li> <a href="#"> Using mail merge for packing slips</a> </li>
-                    <li> <a href="#"> The end of eBook delivery </a> </li>
-                    <li> <a href="#"> Alter Customer Address </a> </li>
-                    <li> <a href="#"> Powerful new email features </a> </li>
-                    <li> <a href="#"> The new list view in Scrobbld </a> </li>
-                  </ul>
-                </div>
-                <div class="col-lg-3  col-md-3 col-sm-4 col-xs-6">
-                  <h3> Community</h3>
-                  <ul>
-                    <li> <a href="#"> Forums / Features </a> </li>
-                    <li> <a href="#"> Questions </a> </li>
-                    <li> <a href="#"> LScrobbld Blog </a> </li>
-                    <li> <a href="#"> Twitter </a> </li>
-                    <li> <a href="#"> Facebook </a> </li>
-                  </ul>
-                </div>
-              </div>
-              <!--/.row--> 
-            </div>
-            <!--/.container--> 
-          </div>
-          <!--/.footer-->
-
-          <div class="footer-bottom">
-            <div class="container">
-              <p class="pull-right">  iLABs Technology © 2015~2017 All rights reserved. </p>
-
-            </div>
-          </div>
-          <!--/.footer-bottom--> 
-        </footer>
-        <!--button href="#myModal" id="openBtn" data-toggle="modal" class="btn btn-default">Modal</button-->
-
+        <input type="hidden" name="epost" id="epost" value="0">
         <div class="modal fade in" id="myModal" style="display: none">
           <div class="modal-dialog">
             <div class="modal-content">
-              <div class="modal-header">
+              <div class="modal-header" style="border-bottom:0; padding-bottom:0;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 class="text-center">판매자 문구 추가</h3>
-                <h5 class="text-center">라벨 하단에 판매자 문구를 추가할 수 있습니다.(예, 취급주의)</h5>
-                <form class="form-inline">
-
-                  <div class="form-group col-xs-10">
-
-                    <input type="text" class="form-control" id="" placeholder="최대 20자로 입력할 수 있습니다 " style="width: 100%">
-                  </div>
-                  <button type="submit" class="btn btn-default" style="background: #444444;color: #fff;padding-left: 20px; padding-right: 20px">등록</button>
-                </form>
+                <h3 class="text-center">국제 우편물 접수증 출력 주문 선택</h3>
+                <!-- <h5 class="text-center">라벨 하단에 판매자 문구를 추가할 수 있습니다.(예, 취급주의)</h5> -->
               </div>
               <div class="modal-body">
-
-                <table class="table table-striped" id="tblGrid">
+                <table class="table table-striped" id="table_epost">
                   <thead id="tblHead">
-                    <tr>
-                      <th><input type="checkbox" class="form-group tick"></th>
-                      <th class="text-center">판매자 문구</th>
-                      <th class="text-center">관리</th>
+                    <tr style="border-top: 2px solid #ddd;">
+                      <th><input type="checkbox" id="order-select-all" class="form-group tick"></th>
+                      <th class="text-left">신분증</th>
+                      <th class="text-left">시장</th>
+                      <th class="text-left">이름</th>
+                      <th class="text-left">수량</th>
+                      <th class="text-left">양</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td><input type="checkbox" class="form-group tick"></td>
-                      <td>Handle with care. - Fragile</td>
-                      <td class="text-right">
-                        <button type="submit" class="btn btn-primary">수정</button>
-                        <button type="submit" class="btn btn-default"  style="background: #444444;color: #fff;">삭제</button>
-                      </td>
-                    </tr>
                     
-                    <tr>
-                      <td><input type="checkbox" checked class="form-group tick"></td>
-                      <td>Handle with care. - Fragile</td>
-                      <td class="text-right">
-                        <button type="submit" class="btn btn-primary">수정</button>
-                        <button type="submit" class="btn btn-default"  style="background: #444444;color: #fff;">삭제</button>
-                      </td>
-                    </tr>
-                    
-                    <tr>
-                      <td><input type="checkbox" checked class="form-group tick"></td>
-                      <td>Handle with care. - Fragile</td>
-                      <td class="text-right">
-                        <button type="submit" class="btn btn-primary">수정</button>
-                        <button type="submit" class="btn btn-default"  style="background: #444444;color: #fff;">삭제</button>
-                      </td>
-                    </tr>
-                    
-                    <tr>
-                      <td><input type="checkbox" class="form-group tick"></td>
-                      <td>Handle with care. - Fragile</td>
-                      <td class="text-right">
-                        <button type="submit" class="btn btn-primary">수정</button>
-                        <button type="submit" class="btn btn-default"  style="background: #444444;color: #fff;">삭제</button>
-                      </td>
-                    </tr>
-                    
-                    <tr>
+                    <!-- <tr>
                       <td><input type="checkbox" class="form-group tick"></td>
                       <td>Handle with care. - Fragile</td>
                       <td class="text-right">
                         <button type="submit" class="btn btn-primary"  >수정</button>
                         <button type="submit" class="btn btn-default" style="background: #444444;color: #fff;">삭제</button>
                       </td>
-                    </tr>
+                    </tr> -->
                     
                   </tbody>
                 </table>
-                <div class="form-group " style="width: 50%; margin: 0px auto;">
-                 <button class="btn btn-lg btn-default"   style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
-                 <button class="btn btn-lg btn-primary">입력하기</button>
+                <br>
+                <div class="form-group " style="width: 100%; text-align: right; margin: 0px auto; ">
+                 <button class="btn btn-lg btn-primary"   style=" ">print</button>
+                 <button class="btn btn-lg btn-primary">print</button>
                  <div class="clearfix"></div>
                </div>
              </div>
@@ -500,6 +210,7 @@
     </script>
     <script>
       var table;
+      var table_epost;
       
       $(document).ready(function() {
         //datatables
@@ -521,6 +232,28 @@
               }
           },
           "columnDefs": [{ 
+            "targets": [ 0,1,2,3,4 ], 
+            "orderable": false,
+            }],
+        });
+
+        table_epost = $('#table_epost').DataTable({ 
+          "sDom": '<t><"#info_epost"lip>',
+          "lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+          "processing": true, 
+          "serverSide": true, 
+          "order": [],
+          "iDisplayLength" :50,
+          "ajax": {
+            "url": "<?php echo base_url('/output/epost_list')?>",
+            "type": "POST",
+            "dataType": "json",
+            "data": function (jsonData) {
+              jsonData.id = $('#epost').val();
+              return jsonData.data;
+              }
+          },
+          "columnDefs": [{ 
             "targets": [ 0,1,2,3,4,5 ], 
             "orderable": false,
             }],
@@ -536,25 +269,46 @@
 
       $('body').on('change','#reprocess', function() {
         var orderids = $(this).val();
-        var dimensions = $('#dimension'+orderids).attr('ref');
-        var additonal_info = $('#infos'+orderids).attr('ref');
-        var selected_tab = table;
-        var table_selected = selected_tab.context[0].nTable.id;
-        var startpoint = 0;
-        $.ajax({
-          url  : '<?php echo base_url('/order/process'); ?>',
-          data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + additonal_info,
-          type : 'POST',
-          dataType: 'JSON',
-          success : function(data) {
-            window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
+        $('#epost').val(orderids);
+        var orderids_txt = $(this).find(':selected').text().trim();
 
-            setTimeout(function() {
-              table.draw();
-            }, 500);
-          }
-        });
+        // console.log (orderids_txt);
+        if (orderids_txt=='PDF') 
+        {
+          var dimensions = $('#dimension'+orderids).attr('ref');
+          var additonal_info = $('#infos'+orderids).attr('ref');
+          var selected_tab = table;
+          var table_selected = selected_tab.context[0].nTable.id;
+          var startpoint = 0;
+          $.ajax({
+            url  : '<?php echo base_url('/order/process'); ?>',
+            data : 'ids=' + orderids + ',' + dimensions+ ',' + startpoint + ',' + table_selected + ',' + additonal_info,
+            type : 'POST',
+            dataType: 'JSON',
+            success : function(data) {
+              window.open("<?php echo base_url('/order/generate/'); ?>" + data, "_blank");
+
+              setTimeout(function() {
+                //table.draw();
+              }, 500);
+            }
+          });
+        }
+        else if (orderids_txt=='국제우편물접수출력')
+        {
+          // console.log (orderids)
+          $('#myModal').modal('show');
+          //table.draw();
+          table_epost.draw();
+          $('#table_epost').fadeOut('fast').fadeIn('slow');
+        }
+        
       });
+
+      $("#myModal").on("hidden.bs.modal", function () {
+        console.log ('close')
+        $('body').find('input:checkbox[id^="order-select-all"]').prop('checked', false);
+      }); 
 
       $('body').on('click','#refreshorders', function() {
         var $elem = $('#refreshorders');
@@ -579,12 +333,12 @@
       });
 
       $('#order-select-all').on('click', function(){
-        var rows = table.rows({ 'search': 'applied' }).nodes();
+        var rows = table_epost.rows({ 'search': 'applied' }).nodes();
         $('input[type="checkbox"]', rows).prop('checked', this.checked);
       });
 
       // Handle click on checkbox to set state of "Select all" control
-      $('#table tbody').on('change', 'input[type="checkbox"]', function(){
+      $('#table_epost tbody').on('change', 'input[type="checkbox"]', function(){
         // If checkbox is not checked
           if (!this.checked){
             var el = $('#order-select-all').get(0);

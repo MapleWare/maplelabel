@@ -1,5 +1,5 @@
 <?php
-class Sellers extends CI_Controller
+class Product extends CI_Controller
 {
 	public function __construct()
 	{
@@ -9,6 +9,11 @@ class Sellers extends CI_Controller
 		$this->load->database();
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
+		$this->load->model('printlabels_model', 'print_label');
+		$this->load->model('printlist_model', 'print_list');
+
+		
+		$this->load->helper('encrypter');
 	}
 	
 	function index()
@@ -16,15 +21,17 @@ class Sellers extends CI_Controller
 		if ($this->session->userdata('uid') !== null)
 		{
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			
-			$data['title'] = 'Sellers';
+			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['print_labels'] = $this->print_label->get_print_labels();
+
+			$data['title'] = 'Product Management'; 
 			$this->load->view('header', $data);
-			$this->load->view('sellers_view', $data);
+			$this->load->view('product_view', $data);
 			$this->load->view('footer');
 		}
 		else redirect(base_url());
 	}
+    
 }

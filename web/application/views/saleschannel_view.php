@@ -1,35 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <link rel="icon" href="<?php echo base_url("assets2/img/favicon.ico"); ?>">
-
-  <title>Sales Channel - Onlabels</title>
-
-  <!-- Bootstrap core CSS -->
-  <link href="<?php echo base_url("assets2/css/bootstrap.css"); ?>" rel="stylesheet">
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-
-  <!-- Custom styles for this template -->
-  <link href="<?php echo base_url("assets2/css/style.css"); ?>" rel="stylesheet">
-  
-  <link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-
-  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-      <style>
+  <style>
         .panel-heading {
           padding: 10px 10px;
           border-bottom: 1px solid transparent;
@@ -74,67 +43,6 @@
         .dropdown img.flag { border:none; vertical-align:middle; margin-left:10px; }
         .flagvisibility { display:none;}
       </style>
-    </head>
-
-    <body>
-
-      <?php if ($this->session->userdata('uid') !== null): ?>
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-         <div class="container-fluid">
-           <div class="navbar-header">
-             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-               <span class="sr-only">Toggle navigation</span>
-               <span class="icon-bar"></span>
-               <span class="icon-bar"></span>
-               <span class="icon-bar"></span>
-             </button>
-             <a class="navbar-brand" href="<?php echo base_url(); ?>">
-               <img src="<?php echo base_url("assets2/img/logo_white.png"); ?>" />
-             </a>
-           </div>
-           <div id="navbar" class="collapse navbar-collapse">
-             <ul class="nav navbar-nav">
-              
-               <li class=""><a href="<?php echo base_url(); ?>dashboard/index">데시보드</a></li>
-               <li><a href="<?php echo base_url(); ?>order/index">신규주문(<?php echo $total_orders; ?>) </a></li>
-               <li><a href="<?php echo base_url(); ?>output/index">출력관리</a></li>
-               <li><a href="#">제품관리</a></li>
-               
-               <li><img src="<?php echo base_url("assets2/img/update-icon.png"); ?>" style="padding: 12px;width: 50px;"/></li>
-             </ul>
-             <ul class="nav navbar-nav navbar-right">
-               <li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
-               <li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li>
-               <li class=""><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
-             </ul>
-           </div><!--/.nav-collapse -->
-         </div>
-       </nav>
-     <?php else : ?>
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-       <div class="container">
-         <div class="navbar-header">
-           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-             <span class="sr-only">Toggle navigation</span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-           </button>
-           <a class="navbar-brand" href="<?php echo base_url(); ?>">
-             <img src="<?php echo base_url("assets2/img/logo_white.png"); ?>" />
-           </a>
-         </div>
-         <div id="navbar" class="collapse navbar-collapse pull-right">
-           <ul class="nav navbar-nav">
-             <li class=""><a href="<?php echo base_url(); ?>login">로그인</a></li>
-             <li><a href="<?php echo base_url(); ?>signup">회원가입</a></li>
-             <li><a href="#">도움말</a></li>
-           </ul>
-         </div><!--/.nav-collapse -->
-       </div>
-     </nav>
-   <?php endif; ?>
-
    <div class="container" style="padding: 100px;">    
     
     <div id="loginbox" class="mainbox col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2"> 
@@ -221,7 +129,6 @@
       if (! $clicked.parents().hasClass("dropdown"))
         $(".dropdown dd ul").hide();
     });
-
 
 
     $(".dropdown img.flag").toggleClass("flagvisibility");

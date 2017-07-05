@@ -33,7 +33,11 @@ class Order extends CI_Controller
 			$data['uemail'] = $details[0]->email;
 			$data['print_labels'] = $this->print_label->get_print_labels();
 			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+
+			$data['title'] = 'Order Management'; 
+			$this->load->view('header', $data);
 			$this->load->view('new_order_view', $data);	
+			$this->load->view('footer');
 		}
 		else redirect(base_url());
 	}
@@ -75,7 +79,7 @@ class Order extends CI_Controller
 							   'ol_user_id'=>$this->session->userdata('uid'),
 							   'sales_order_id'=>$order['id'],
 							   'pdf_down_cnt'=>1,
-							   'is_ship_from_print'=>$from_toggle,
+							   'is_ship_from'=>$from_toggle,
 							   'is_ship_to'=>$to_toggle,
 							   'is_cn22'=>$cn22_toggle,
 							   'seller_msg_template_id'=>$msg_template,
@@ -83,16 +87,20 @@ class Order extends CI_Controller
 			$printlog = array('start_point'=>$startpoint);
 			$check_print_list = $this->print_list->get_order($order['id']);
 			if ($check_print_list == 0)
+			{
+				$printlist['print_date'] = date('Y-m-d H:i:s');
 				$this->print_list->create($printlist, $printlog);
+			}
 			else
 			{
 				$new_printlist = array('pdf_file'=>$dimension,
 									   'pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1),
-									   'is_ship_from_print'=>$from_toggle,
+									   'is_ship_from'=>$from_toggle,
 							   		   'is_ship_to'=>$to_toggle,
 							           'is_cn22'=>$cn22_toggle,
 							           'seller_msg_template_id'=>$msg_template,
 							           'is_print_comment'=>$is_print_comment);
+				$new_printlist['modified'] = date('Y-m-d H:i:s');
 				$this->print_list->edit($new_printlist, $check_print_list['id']);
 			}
 		}
@@ -136,12 +144,23 @@ class Order extends CI_Controller
         $list = $this->orders->get_orders($query);
         $data = array();
         $no = $_POST['start'];
+
+        $cnt_ebay = $_POST['start'];
+        $cnt_amazon = $_POST['start'];
         foreach ($list as $orders) {
+
+        	if ($orders->sc_market == 'ebay') :
+        		$cnt_ebay++;
+        	elseif ($orders->sc_market == 'amazon') :
+        		$cnt_amazon++;
+        	endif; 
+
 	        $no++;
 	        $row = array();
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="table_order_check form-group tick">';
-	        $row[] = '<b>'.$orders->sc_ordered_id.'</b>';
+	        // $row[] = $orders->sc_market=='ebay'?'<b>1-'.$cnt_ebay.'</b>':'<b>2-'.$cnt_amazon.'</b>'; 
+	        $row[] = '<b>'.$orders->id.'</b>';
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->ordered_date));
 	        
 	        $row[] = $orders->sc_market;
@@ -181,6 +200,18 @@ class Order extends CI_Controller
        echo json_encode($output);
     }
 
+    public function msg_add()
+    {
+    	$msg = $this->input->post('msg');
+    	$this->seller_msg->create(array('ol_user_id'=>$this->session->userdata('uid'),'seller_msg'=>$msg));
+    }
+
+    public function msg_delete()
+    {
+		$msgid = $this->input->post('msgid');
+		$this->seller_msg->delete($msgid);
+    }
+
     public function msg_list()
     {
         $list = $this->seller_msg->get_msg();
@@ -192,7 +223,7 @@ class Order extends CI_Controller
 	        $row[] = '<input type="radio" name="msg_template" id="msg_template" value="'.$msg->id.'" class="form-group tick">';
 	        // $row[] = $msg->seller_msg;
 	        $row[] = '<span id="editmsgs'.$msg->id.'" data-type="textarea">'.$msg->seller_msg.'</span>';
-	        $row[] = '<button type="submit" id="editmsg" ref="'.$msg->id.'" class="btn btn-primary">수정</button><button type="submit" class="btn btn-default" style="background: #444444;color: #fff;">삭제</button>';
+	        $row[] = '<button type="submit" id="editmsg" ref="'.$msg->id.'" class="btn btn-primary">수정</button><button type="submit" data-userid="'.$msg->id.'" class="btn btn-default deleteMsg" style="background: #444444;color: #fff;">삭제</button>';
 	        $data[] = $row;
         }
 

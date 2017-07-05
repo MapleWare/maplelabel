@@ -22,12 +22,14 @@ class Saleschannel extends CI_Controller
 
 			$RuName = "Davinci_Tech-DavinciT-DevDAV-qvqch";
 	        $siteID = 0;
-	        get_ebay_session($siteID,,$RuName);
+	        get_ebay_session($siteID,$RuName);
 
 	        $ebay_session = $this->session->userdata('ebay_session');
 	        $data['ebay_link'] = 'https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName='.$RuName.'&SessID='.$ebay_session;
 
-			$this->load->view('saleschannel_view', $data);	
+			$data['title'] = 'Sales Channel';
+			$this->load->view('header', $data);
+			$this->load->view('saleschannel_view', $data);
 		}
 		else redirect(base_url());
 	}

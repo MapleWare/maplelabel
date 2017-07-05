@@ -5,7 +5,7 @@ class Order_model extends CI_Model
     var $table = 'sales_order ord';
     var $column_order = array(null, 'ord.sc_ordered_id','ord.ordered_date'); //set column field database for datatable orderable
     var $column_search = array('ord.sc_ordered_id','ord.ordered_date','channel.sc_market','ord.order_title','ord.order_user_name'); //set column field database for datatable searchable 
-    var $order = array('ord.sc_ordered_id' => 'asc'); // default order 
+    var $order = array('ord.created' => 'desc'); // default order 
 
     public function __construct()
     {
@@ -84,7 +84,8 @@ class Order_model extends CI_Model
 
     private function _get_query($custom_where = '', $dates = array())
     {
-    	$this->db->select('ord.sc_ordered_id, 
+    	$this->db->select('ord.id,
+    					   ord.sc_ordered_id, 
 	    				   ord.ordered_date, 
 	    				   channel.sc_market,
 	    				   ord.delivery_status,
@@ -123,7 +124,7 @@ class Order_model extends CI_Model
 
 	    				   printlist.created as print_date,
 	    				   printlist.pdf_down_cnt,
-	    				   printlist.is_ship_from_print,
+	    				   printlist.is_ship_from,
 	    				   printlist.is_ship_to,
 	    				   printlist.is_cn22,
 	    				   printlist.pdf_file,

@@ -9,6 +9,7 @@ class Dashboard extends CI_Controller
 		$this->load->database();
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
+		$this->load->model('notice_model', 'notice');
 	}
 	
 	function index()
@@ -20,7 +21,14 @@ class Dashboard extends CI_Controller
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 
+			$data['notice'] = $this->notice->get('notice');
+			$data['news'] = $this->notice->get('news');
+			$data['update'] = $this->notice->get('update');
+
+			$data['title'] = 'Dashboard'; 
+			$this->load->view('header', $data);
 			$this->load->view('dashboard_view', $data);	
+			$this->load->view('footer');
 		}
 		else redirect(base_url());
 	}

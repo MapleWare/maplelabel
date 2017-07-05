@@ -11,6 +11,17 @@ class Seller_msg_model extends CI_Model
         parent::__construct();
     }
 
+    public function create($values) 
+	{
+		$this->db->set($values);
+		$this->db->insert('seller_msg_template');
+
+		$insert_id = $this->db->insert_id();
+		if ($insert_id>0) 
+			return $insert_id;
+		return false;
+	}
+
     public function edit($values,$id)
 	{
 		$this->db->set($values);
@@ -19,6 +30,12 @@ class Seller_msg_model extends CI_Model
 		if ($this->db->affected_rows())
 			return true;
 		return false;
+	}
+
+	public function delete($id)
+	{
+		$this->db->delete('seller_msg_template', array('id' => $id));
+		return $this->db->affected_rows();
 	}
 	
 	private function _get_query()
