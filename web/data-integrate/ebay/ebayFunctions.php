@@ -80,4 +80,44 @@ function getDatetimeFromEbay($ebaytime) {
     return  $date->format("Y-m-d H:i:s");;
 }
 
+
+function completeSaleRequest($orderId) {
+
+    global $token;
+
+    $requestXmlBody = '<?xml version="1.0" encoding="utf-8"?>
+                    <CompleteSaleRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                        <OrderID>' . $orderId . '</OrderID>
+                        <Shipped>true</Shipped>
+                        <RequesterCredentials>
+                          <eBayAuthToken>' . $token . '</eBayAuthToken>
+                        </RequesterCredentials>
+                        <WarningLevel>High</WarningLevel>
+                    </CompleteSaleRequest>';
+
+    $response = callEbayAPI($requestXmlBody, "CompleteSale");
+    return $response;
+}
+
+function getItemsAwaitingFeedbackRequest($page) {
+
+    global $token;
+
+    $requestXmlBody = '<?xml version="1.0" encoding="utf-8"?>
+                        <GetItemsAwaitingFeedbackRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                            <Pagination>
+                               <EntriesPerPage>200</EntriesPerPage>
+                               <PageNumber>' . $page . '</PageNumber>
+                            </Pagination>
+                            <RequesterCredentials>
+                              <eBayAuthToken>' . $token . '</eBayAuthToken>
+                            </RequesterCredentials>
+                            <WarningLevel>High</WarningLevel>
+                        </GetItemsAwaitingFeedbackRequest>';
+
+    $response = callEbayAPI($requestXmlBody, "GetItemsAwaitingFeedback");
+    return $response;
+}
+
+
 ?>
