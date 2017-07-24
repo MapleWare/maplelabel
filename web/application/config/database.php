@@ -73,12 +73,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+
+$dbname = 'onlabelspilotdev';
+if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+	$dbname = 'onlabelspilotstg';
+endif;
+
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'onlabelsdev.chzjzofxptj9.us-west-2.rds.amazonaws.com',
 	'username' => 'onlabelsdev',
 	'password' => 'successonlabels',
-	'database' => 'onlabelspilotdev',
+	'database' => $dbname,
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
