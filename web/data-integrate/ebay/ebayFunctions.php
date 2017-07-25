@@ -81,27 +81,27 @@ function getDatetimeFromEbay($ebaytime) {
 }
 
 
-function completeSaleRequest($orderId) {
+function completeSaleRequest($orderId, $user_token) {
 
-    global $token;
+    //global $token;
 
     $requestXmlBody = '<?xml version="1.0" encoding="utf-8"?>
                     <CompleteSaleRequest xmlns="urn:ebay:apis:eBLBaseComponents">
                         <OrderID>' . $orderId . '</OrderID>
                         <Shipped>true</Shipped>
                         <RequesterCredentials>
-                          <eBayAuthToken>' . $token . '</eBayAuthToken>
+                          <eBayAuthToken>' . $user_token . '</eBayAuthToken>
                         </RequesterCredentials>
                         <WarningLevel>High</WarningLevel>
                     </CompleteSaleRequest>';
 
-    $response = callEbayAPI($requestXmlBody, "CompleteSale");
+    $response = callapi($requestXmlBody, "CompleteSale");
     return $response;
 }
 
-function getItemsAwaitingFeedbackRequest($page) {
+function getItemsAwaitingFeedbackRequest($page, $user_token) {
 
-    global $token;
+    //global $token;
 
     $requestXmlBody = '<?xml version="1.0" encoding="utf-8"?>
                         <GetItemsAwaitingFeedbackRequest xmlns="urn:ebay:apis:eBLBaseComponents">
@@ -110,12 +110,12 @@ function getItemsAwaitingFeedbackRequest($page) {
                                <PageNumber>' . $page . '</PageNumber>
                             </Pagination>
                             <RequesterCredentials>
-                              <eBayAuthToken>' . $token . '</eBayAuthToken>
+                              <eBayAuthToken>' . $user_token . '</eBayAuthToken>
                             </RequesterCredentials>
                             <WarningLevel>High</WarningLevel>
                         </GetItemsAwaitingFeedbackRequest>';
 
-    $response = callEbayAPI($requestXmlBody, "GetItemsAwaitingFeedback");
+    $response = callapi($requestXmlBody, "GetItemsAwaitingFeedback");
     return $response;
 }
 
