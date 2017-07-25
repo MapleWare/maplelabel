@@ -10,12 +10,15 @@ class Dashboard extends CI_Controller
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
 		$this->load->model('notice_model', 'notice');
+		if ($_SERVER['SERVER_PORT'] == 443) $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
 	}
 	
 	function index()
 	{
 		if ($this->session->userdata('uid') !== null)
 		{
+			if ($this->session->userdata('ebay_session') !== NULL) save_user_token(0,'');
+
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
 			$data['uname'] = $details[0]->username;
