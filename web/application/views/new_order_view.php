@@ -2,6 +2,10 @@
   label {
     margin: 0px 20px;
   }
+  a:hover, a:focus 
+  {
+    text-decoration: none;
+  }
 </style>
 <div class="container-fluid">
   <div class="row">
@@ -100,11 +104,11 @@
   													피드백 : 100점 주문수 : 3회
   												</td>
   												<td>
-  													<span><img src="<?php echo base_url("assets2/img/icon-1.png"); ?>"></span>
-  													<span><img src="<?php echo base_url("assets2/img/icon-2.png"); ?>"></span>
-  													<span><img src="<?php echo base_url("assets2/img/icon-3.png"); ?>"></span>
-  													<span><img src="<?php echo base_url("assets2/img/icon-4.png"); ?>"></span>
-  													<span><img src="<?php echo base_url("assets2/img/icon-5.png"); ?>"></span>
+  													<span><img src="<?php #echo base_url("assets2/img/icon-1.png"); ?>"></span>
+  													<span><img src="<?php #echo base_url("assets2/img/icon-2.png"); ?>"></span>
+  													<span><img src="<?php #echo base_url("assets2/img/icon-3.png"); ?>"></span>
+  													<span><img src="<?php #echo base_url("assets2/img/icon-4.png"); ?>"></span>
+  													<span><img src="<?php #echo base_url("assets2/img/icon-5.png"); ?>"></span>
   												</td>
   											</tr> -->
   										</tbody>
@@ -286,7 +290,7 @@
 
 
       </select>
-      <img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
+      <img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
     </div>
     <div class="form-group">
      <label for="exampleInputName2" style="margin: 0px 10px 0px 0px;">배송유형   </label>
@@ -298,7 +302,7 @@
 																<!-- <option class="option-1">K-Packet</option>
 																<option class="option-1">EMS</option> -->
 															</select>
-															<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
+															<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
 														</div>
 													</form>
 													<p class="info_1_section" style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p>
@@ -335,12 +339,12 @@
 															</tr>
 															<tr>
 																<td><label for="exampleInputName2" style=" margin: 0px">판매자 로고  </label>
-																	<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
+																	<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
 																	<td><input type="checkbox" class="form-group tick cn22logo" disabled></td>
 																</tr>
 																<tr>
 																	<td><label for="exampleInputName2" style=" margin: 0px">판매자 문구  </label>
-																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
+																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info"></td>
 																		<td><input type="checkbox" class="form-group tick cn22phrase" disabled></td>
 																	</tr>
 																</table>
@@ -385,7 +389,7 @@
 																		<select class="form-control" id="exampleInputName2" style="width: 90px">
 																			<option class="option-1">폼텍   </option>
 																		</select>
-																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
+																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
 																	</div>
 																	<div class="form-group">
 																		<label for="exampleInputName2" style="    margin: 0px 10px 0px 0px;">라벨규격   </label>
@@ -393,16 +397,16 @@
 
 																			<?php foreach ($print_labels as $row) : ?>
 
-																				<option class="option-1" value="<?php echo $row['id']; ?>"><?php echo $row['cols_rows']; ?></option>
+																				<option class="option-1" value="<?php echo $row['parent_label_paper_id']; ?>"><?php echo $row['cols_rows']; ?></option>
 																			<?php endforeach; ?>
 
 																		</select>
-																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
+																		<img src="<?php echo base_url("assets2/img/info.png"); ?>" style="width: 19px; padding-left: 2px;" data-popover="true" data-html=true data-toggle="popover" data-content="More Info">
 																	</div>
 																</form>
 															</div>
 															<div class="col-lg-4">
-																<table style="display:" class="table table-bordered" id="onebyone">
+																<table style="display: none" class="table table-bordered" id="onebyone">
 																	<tr>
 																		<td style="border-bottom:0">&nbsp;</td>
 																	</tr>
@@ -429,7 +433,7 @@
 																	</tr>
 																</table>
 
-																<table  style="display: none" class="table table-bordered" id="threebyseven">
+																<table  style="display: " class="table table-bordered" id="threebyseven">
 																	<tr>
 																		<td>&nbsp;</td>
 																		<td>&nbsp;</td>
@@ -510,7 +514,7 @@
 																</table>
 															</div>
 														</div>
-														<h5><span style="cursor:pointer; color:lightgray" id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;" id="cols_rows_info"> 1열 1행 </span>		<button type="submit" id="pageSize_pop_button" class="btn btn-gray" style="">시작위치수정</button></h5>
+														<h5><span style="cursor:pointer; " id="pageSize_pop">라벨 시작 위치 지정</span> |  <span style="font-weight: 200;font-size: 12px;" id="cols_rows_info"> 1열 1행 </span>		<button type="submit" id="pageSize_pop_button" class="btn btn-primary" style="">시작위치수정</button></h5>
 														<!-- <p style="color: #21b4f9;font-size: 12px;margin-top: 10px;"> *서장은 길이 xx미만의 xxkq미만의 제품 배송</p> -->
 													</div>
 												</div>
@@ -572,8 +576,9 @@
 									</table>
 									<br>
 									<div class="form-group " style="width: 50%; margin: 0px auto;">
+                  <button class="btn btn-lg btn-primary" data-dismiss="modal">입력하기</button>
 										<button class="btn btn-lg btn-default" id="phrase_cancel" data-dismiss="modal" style="background: #999999;color: #fff; padding: 10px 31px;">취소</button>
-										<button class="btn btn-lg btn-primary" data-dismiss="modal">입력하기</button>
+										
 										<div class="clearfix"></div>
 									</div>
 								</div>
@@ -623,11 +628,10 @@
 										<div class="form-group">
 											<label for="exampleInputName2">라벨규격</label>
 											<select class="form-control" id="print_label_dimensions_popup" style="/*width: 50px;*/">
-												<option class="option-11" value="1">1x1 </option>
-												<option class="option-11" value="2">1x2 </option>
-												<option class="option-11" value="3">2x2 </option>
-												<option class="option-11" value="4">3x7 </option>
-												<option class="option-11" value="5">3x8 </option>
+												<?php foreach ($print_labels as $row) : ?>
+
+                          <option class="option-1" value="<?php echo $row['parent_label_paper_id']; ?>"><?php echo $row['cols_rows']; ?></option>
+                        <?php endforeach; ?>
 											</select>
 										</div>
 										<div class="form-group" style="width: 25%">
@@ -644,7 +648,7 @@
 								<div class="modal-body">
 									<div id="startpoint_tables" style="padding: 10px;border: 1px solid #ccc;margin-bottom: 10px">
 										<!-- 1x1 -->
-										<table class="table table-bordered" id="onebyone_pop" style="display: ">
+										<table class="table table-bordered" id="onebyone_pop" style="display: none">
 											<tr>
 												<td class="onebyone">
 													<input type="radio" name="startpoint1" disabled value="1" class="form-group tick" style="margin: 0px 160px 0px 10px;"> 1</td>
@@ -676,7 +680,7 @@
                          </tr>
                        </table>
                        <!-- 3x7 -->		
-                       <table class="table table-bordered" id="threebyseven_pop" style="display: none">
+                       <table class="table table-bordered" id="threebyseven_pop" style="display: ">
                         <tr>
                          <td class="threebyseven" style="">
                           <input type="radio" name="startpoint4" value="1"  class="form-group tick" style="margin: 0px 10px 0px 10px;"> 1</td>
@@ -905,7 +909,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="<?php echo base_url("assets2/js/jquery.js"); ?>"><\/script>')</script>
     <script src="<?php echo base_url("assets2/js/bootstrap.min.js"); ?>"></script>
-    <script src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
 
     <!-- <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script> -->
@@ -936,19 +940,45 @@
          var deliverytype_selected = $("#delivery_type option:selected").text();
          shipmethodtext.html('('+shipmethod_selected+', '+deliverytype_selected+')');
 
+
          $('.cn22tick, .cn22logo, .cn22phrase').attr("disabled", true).attr("checked", false);
          $('.cn22box, .cn22logobox, .cn22phrasebox').css({'background-color':'#eee'});
+
+          displaySize('1 x 1');
+          $('#print_label_dimensions option:selected').attr('selected', false);
+          $('#print_label_dimensions_popup option:selected').attr('selected', false);
+          $('#print_label_dimensions option:eq(0), #print_label_dimensions_popup option:eq(0)').attr('selected', true);
+          $('#print_label_dimensions option:eq(0), #print_label_dimensions_popup option:eq(0)').attr('disabled', false);
+          $('#print_label_dimensions option:eq(1), #print_label_dimensions_popup option:eq(1)').attr('disabled', false);
+          $('#print_label_dimensions option:eq(2), #print_label_dimensions_popup option:eq(2)').attr('disabled', false);
+          $('#print_label_dimensions option:eq(3), #print_label_dimensions_popup option:eq(0)').attr('disabled', false);
+          $('#print_label_dimensions option:eq(4), #print_label_dimensions_popup option:eq(1)').attr('disabled', false);
+          $('.cn22box').css({'background-color':'#eee'});
+
+          console.log (deliverytype);
          switch(deliverytype)
          {
           case 'document':
           $('.info_1_section').show();
+            displaySize('3 x 7');
+            $('#print_label_dimensions option:selected').attr('selected', false);
+            $('#print_label_dimensions_popup option:selected').attr('selected', false);
+            $('#print_label_dimensions option:eq(3), #print_label_dimensions_popup option:eq(3)').attr('selected', true);
+            $('#print_label_dimensions option:eq(0), #print_label_dimensions_popup option:eq(0)').attr('disabled', true);
+            $('#print_label_dimensions option:eq(1), #print_label_dimensions_popup option:eq(1)').attr('disabled', true);
+            $('#print_label_dimensions option:eq(2), #print_label_dimensions_popup option:eq(2)').attr('disabled', true);
+            $('.cn22box').css({'background-color':'#ccc'});
           break;
           case 'cn22':
           $('.info_1_section').hide();
           $('.cn22tick, .cn22logo, .cn22phrase').attr("disabled", false);
+          $('.cn22box').css({'background-color':'#eee'});
 
-
-
+          $('#print_label_dimensions option:selected').attr('selected', false);
+          $('#print_label_dimensions_popup option:selected').attr('selected', false);
+          $('#print_label_dimensions option:eq(0), #print_label_dimensions_popup option:eq(0)').attr('selected', true);
+          $('#print_label_dimensions option:eq(3), #print_label_dimensions_popup option:eq(3)').attr('disabled', true);
+          $('#print_label_dimensions option:eq(4), #print_label_dimensions_popup option:eq(4)').attr('disabled', true);
           break;
           default:
           $('.info_1_section').hide();
@@ -969,10 +999,16 @@
       function accordionCheck()
       {
         $('#accordion').find('a').each(function(){
-          if ($(this).attr('aria-expanded') == 'true')
-            $(this).find('span').removeClass('fa-caret-up').addClass('fa-caret-down');
+          if ($(this).attr('aria-expanded') == 'true') 
+          {
+            $(this).find('span:first').removeClass('fa-caret-right');
+            $(this).find('span:first').addClass('fa-caret-down');
+          } 
           else
-            $(this).find('span').removeClass('fa-caret-down').addClass('fa-caret-up');
+          {
+            $(this).find('span:first').removeClass('fa-caret-down');
+            $(this).find('span:first').addClass('fa-caret-right');
+          }
         })
       }
 
@@ -996,15 +1032,18 @@
 
     $('body').on('change','#print_label_dimensions, #print_label_dimensions_popup', function() {
       var id = $(this);
+
+      var selected_text = $(this).find('option:selected').text();
+      // var selected_text = $("#print_label_dimensions_popup option:selected").text();
+      // console.log (selected_text);
+
       var sizeid = id.val();
-      displaySize(id);
+      displaySize(selected_text);
 
       $('#print_label_dimensions_popup').val(sizeid);
       $('#print_label_dimensions').val(sizeid);
 
-      $(cols_rows_info).text('1열 1행');
-      rows_info.val(1);
-      cols_info.val(1);
+      $(cols_rows_info).text('1열 1행'); rows_info.val(1); cols_info.val(1);
       $('#startpoint_tables').find('table').each(function() {
         if ($(this).css('display') !== 'none')
           $(this).find('td :radio:checked').click();
@@ -1045,6 +1084,16 @@
 			//console.log (orderItems.length-1);
 			$('.info_order_list').html('주문 '+orderItems+'개가 선택되었습니다');
 			$('#orderids').val(orderItemsValue.substr(0, orderItemsValue.length-1));
+
+      setTimeout(function(){ 
+        if (orderItems>0) {
+          $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeIn();
+        }
+        else 
+        {
+          $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
+        }
+      }, 100);
 		}
 
 		$('body').on('click','#editmsg', function(e) {
@@ -1077,11 +1126,17 @@
     });	
 
     $('body').on('click','#startpoint_cancel', function() {
-      $('#print_label_dimensions, #print_label_dimensions_popup').val(1);
+      // $('#print_label_dimensions, #print_label_dimensions_popup').val(1);
+      var pld = $('#print_label_dimensions');
+      var pldp = $('#print_label_dimensions_popup');
+      
+      // pld.val (pld.find("option:first").val());
+      // pldp.val (pldp.find("option:first").val());
+
       $(cols_rows_info).text('1열 1행');
 
       $('#startpoint_tables').find(':radio').prop('checked', false);
-      displaySize($('#print_label_dimensions'));
+      // displaySize($("#print_label_dimensions option:selected").text()); //$('#print_label_dimensions'));
       rows_info.val(1);
       cols_info.val(1);
     }); 
@@ -1152,6 +1207,22 @@
 		});
 
 		$(document).ready(function() {
+
+      if (orderItems==0 || orderItems==undefined)
+      {
+        setTimeout(function(){ 
+          $('#csvoutput').fadeOut();
+        }, 100);
+      }
+
+
+
+      $('#print_label_dimensions option:eq(3), #print_label_dimensions_popup option:eq(3)').attr('selected', true);
+      $('#print_label_dimensions option:eq(0), #print_label_dimensions_popup option:eq(0)').attr('disabled', true);
+      $('#print_label_dimensions option:eq(1), #print_label_dimensions_popup option:eq(1)').attr('disabled', true);
+      $('#print_label_dimensions option:eq(2), #print_label_dimensions_popup option:eq(2)').attr('disabled', true);
+      $('.cn22box').css({'background-color':'#ccc'});
+
 			//checkDimensionToSelect();
       table = $('#table').DataTable({ 
 		    	// "dom": '<"top"i>rt<"bottom"flp><"clear">',
@@ -1160,7 +1231,7 @@
 		    	buttons: [
 		    	'excel'
 		    	],
-		    	"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+		    	"lengthMenu": [[5, 10, 15, 100], [5, 10, 15, "All"]],
 		        "processing": true, //Feature control the processing indicator.
 		       	"serverSide": true, //Feature control DataTables' servermside processing mode.
 		        "order": [], //Initial no order.
@@ -1186,7 +1257,7 @@
       table_delivery = $('#table_delivery').DataTable({ 
        "sDom": '<t><"#info"lip><"#export"B>',
        buttons: ['excel'],
-       "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+       "lengthMenu": [[5, 10, 15, 100], [5, 10, 15, "All"]],
        "processing": true, 
        "serverSide": true, 
        "order": [],
@@ -1208,13 +1279,13 @@
       table_feedback = $('#table_feedback').DataTable({ 
        "sDom": '<t><"#info"lip><"#export"B>',
        buttons: ['excel'],
-       "lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+       "lengthMenu": [[5, 10, 15, 100], [5, 10, 15, "All"]],
        "processing": true, 
        "serverSide": true, 
        "order": [],
        "iDisplayLength" :5,
        "ajax": {
-         "url": "<?php echo base_url('/order/order_list/waitingforfeedback')?>",
+         "url": "<?php echo base_url('/order/order_list/shipped')?>",
          "type": "POST",
          "dataType": "json",
          "dataSrc": function (jsonData) {
@@ -1261,7 +1332,7 @@
     //   table_msg.search(value, false, false).draw();
     // });
 
-      $('.buttons-html5').html('<button type="submit" class="btn btn-primary">엑셀 다운로드</button>');
+      $('.buttons-html5').html('<button id="csvoutput" type="submit" class="btn btn-primary">엑셀 다운로드</button>');
     });
 
     $('#seller_msg_button').on('click', function() {
@@ -1303,6 +1374,9 @@
 
 		var selected_tab = table;
 		$('.nav-orders').on('shown.bs.tab', function (e) {
+      setTimeout(function() { 
+        $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
+      }, 500);
 			var target = $(e.target).attr("href");
 			switch(target)
 			{
@@ -1352,23 +1426,45 @@
         }
       });
 
-       $.ajax({
-        url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-        type : 'GET',
-        success : function(data) {
-					//console.log (data);
+       <?php if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate-stg/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
 
-					var total_order_count = $('#total_order_count').html();
-					var new_total_order_count = parseInt(data)+parseInt(total_order_count);
-					$('#total_order_count, #total_order_count_sub').html(new_total_order_count);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count, #total_order_count_sub').html(new_total_order_count);
 
-					$('#table, #table_delivery, #table_feedback').fadeOut('fast').fadeIn('slow');
+              $('#table, #table_delivery, #table_feedback').fadeOut('fast').fadeIn('slow');
 
-					table.draw();
-					table_delivery.draw();
-					table_feedback.draw();
-				}
-			});
+              table.draw();
+              table_delivery.draw();
+              table_feedback.draw();
+            }
+          });
+        <?php else : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count, #total_order_count_sub').html(new_total_order_count);
+
+              $('#table, #table_delivery, #table_feedback').fadeOut('fast').fadeIn('slow');
+
+              table.draw();
+              table_delivery.draw();
+              table_feedback.draw();
+            }
+          });
+        <?php endif; ?>
+
+       
      });
 
       $('body').on('click', '.cn22from', function() {
@@ -1482,9 +1578,9 @@
 				$('#phrase_pop').click();
 			} 
 		});
-		function displaySize(id)
+		function displaySize(sizes)
 		{
-			var sizes = id.val();
+			// var sizes = id.val();
 			$('#onebyone, #onebytwo, #twobytwo, #threebyseven, #threebyeight, #onebyone_pop, #onebytwo_pop, #twobytwo_pop, #threebyseven_pop, #threebyeight_pop').hide();
 
 			//$('#startpoint_tables').find('table').each(function() {
@@ -1497,7 +1593,7 @@
 
 			switch (sizes)
 			{
-				case '1' :
+				case '1 x 1' :
 				$('#onebyone, #onebyone_pop').show();
 				$('#size_text').html('(폼텍, 1x1)');
 
@@ -1506,22 +1602,22 @@
         $('#startpoint_tables').css({'background':'lightgray','opacity':0.2});
 				break;
 
-				case '2' :
+				case '1 x 2' :
 				$('#onebytwo, #onebytwo_pop').show();
 				$('#size_text').html('(폼텍, 1x2)');
 				break;
 
-				case '3' :
+				case '2 x 2' :
 				$('#twobytwo, #twobytwo_pop').show();
 				$('#size_text').html('(폼텍, 2x2)');
 				break;
 
-				case '4' :
+				case '3 x 7' :
 				$('#threebyseven, #threebyseven_pop').show();
 				$('#size_text').html('(폼텍, 3x7)');
 				break;
 
-				case '5' :
+				case '3 x 8' :
 				$('#threebyeight, #threebyeight_pop').show();
 				$('#size_text').html('(폼텍, 3x8)');
 				break;

@@ -1,5 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 require_once APPPATH.'third_party/fpdf/tfpdf.php';
+// require_once APPPATH.'third_party/fpdf/fpdf.php';
+// require_once('easyTable.php');
+require_once('fpdi.php');
+
 
 class Fpdflibrary extends tFPDF {
 
@@ -13,11 +18,443 @@ class Fpdflibrary extends tFPDF {
 
     function __construct($orientation='P', $unit='mm', $size='A4')
     {
+        // parent::tFPDF();
         parent::__construct($orientation, $unit, $size);
+    }
+
+    function GetPageWidth()
+    {
+        // Get current page width
+        return $this->w;
+    }
+
+    function pdf1x1fromto($pdf, $order, $options) {
+
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        $ci->load->model('printlabels_model','printlabel');
+        $label_info = $ci->printlabel->detail($ci->session->userdata('uid'), 1);
+        if ($label_info==0) $label_info = $ci->printlabel->get(1);
+        $options['print_box_height'] = $label_info['print_box_height'];
+        $options['print_box_width'] = $label_info['print_box_width'];
+        $options['paper_margin_top'] = $label_info['paper_margin_top'];
+        $options['paper_margin_bottom'] = $label_info['paper_margin_bottom'];
+        $options['paper_margin_left'] = $label_info['paper_margin_left'];
+        $options['paper_margin_right'] = $label_info['paper_margin_right'];
+        $pdffiles = array();
+
+
+        $pdf = new fpdflibrary('P','mm', array(132,190));
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+        for ($i=0; $i<count($order); $i++) :
+            $this->createAirMail1Form(0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+            if (($i+1)<count($order)) $pdf->AddPage();
+        endfor;
+        $fromtopdfname = 'fromto-1-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdffiles[] = $fromtopdfname;
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+
+        if ($options['cn22']>0) :
+            $pdf = new fpdflibrary('P','mm', array(132,190));
+            $pdf->AddPage();
+            $pdf->SetAutoPageBreak(false);
+            $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+            $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+            for ($i=0; $i<count($order); $i++) :
+                $this->createCustomsDeclaration1Form(0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+                if (($i+1)<count($order)) $pdf->AddPage();
+            endfor;
+            $cn22pdfname = 'cn22-1-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+            $pdffiles[] = $cn22pdfname;
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+        endif;
+
+        $paper_margin_left = $options['paper_margin_left'];
+        $paper_margin_top = $options['paper_margin_top'];
+        $print_box_width = $options['print_box_width'];
+        $print_box_height = $options['print_box_height'];
+
+        $pdf1 = new fpdi('L'); 
+        $plus = 0;
+        $pdf1->AddPage();
+
+        $pagescount = array();
+
+        $repeater=0;
+        for ($i=0;$i<count($pdffiles);$i++) :
+
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+
+            if ($repeater>0) break;
+            
+            for ($p=1;$p<=count($order);$p++) :
+
+                $separationwidth = $paper_margin_left;
+                
+                if ($p % 2 == 0) : 
+                    $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                endif;
+
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($p % 1 == 0) :  $separationwidth = $paper_margin_left; endif; 
+                endif;
+
+                if ($options['from']>0 || $options['to']>0):
+                    //fromto
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $templateId = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId, $separationwidth, $paper_margin_top, $print_box_width, $print_box_height);
+                endif;
+
+                if ($options['cn22']>0):
+                    if ($options['from']>0 || $options['to']>0) :
+                        $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                    endif; 
+                    //cn22
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $templateId1 = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId1, $separationwidth, $paper_margin_top, $print_box_width, $print_box_height);
+                endif;
+
+                // echo 'p== '.$p.'<br>';
+
+                // // just from and to
+                // if ($options['cn22']==0) :
+                //     if ($p % 2 == 0) : 
+                //        if ($p<count($order)) $pdf1->AddPage();
+                //     endif;
+                // endif;
+
+                // // just cn22
+                // if ($options['cn22']>0 && $options['from']==0 && $options['to']==0) :
+                //     if ($p % 2 == 0) :  $pdf1->AddPage(); endif;
+                // endif;
+
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($p % 1 == 0) :  if ($p<count($order)) $pdf1->AddPage(); endif;
+                else :
+                    if ($p % 2 == 0) : 
+                       if ($p<count($order)) $pdf1->AddPage();
+                    endif;
+                endif;
+            
+            endfor;
+            $repeater++;
+        endfor;
+
+        $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+
+        for ($i=0;$i<count($pdffiles);$i++) :
+            unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+        endfor;
+    }
+
+    function pdf1x2fromto($pdf, $order, $options) {
+
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        $ci->load->model('printlabels_model','printlabel');
+        $label_info = $ci->printlabel->detail($ci->session->userdata('uid'), 2);
+        if ($label_info==0) $label_info = $ci->printlabel->get(2);
+        $options['print_box_height'] = $label_info['print_box_height'];
+        $options['print_box_width'] = $label_info['print_box_width'];
+        $options['paper_margin_top'] = $label_info['paper_margin_top'];
+        $options['paper_margin_bottom'] = $label_info['paper_margin_bottom'];
+        $options['paper_margin_left'] = $label_info['paper_margin_left'];
+        $options['paper_margin_right'] = $label_info['paper_margin_right'];
+        $pdffiles = array();
+
+        $pdf = new fpdflibrary('P','mm', array(95, 135));
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+        for ($i=0; $i<count($order); $i++) :
+            $this->createAirMail2Form(0, 0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+            if (($i+1)<count($order)) $pdf->AddPage();
+        endfor;
+        $fromtopdfname = 'fromto-2-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdffiles[] = $fromtopdfname;
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+        
+        if ($options['cn22']>0) :
+            $pdf = new fpdflibrary('P','mm', array(95,135));
+            $pdf->AddPage();
+            $pdf->SetAutoPageBreak(false);
+            $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+            $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+            for ($i=0; $i<count($order); $i++) :
+                $this->createCustomsDeclaration2Form(0, 0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+                if (($i+1)<count($order)) $pdf->AddPage();
+            endfor;
+            $cn22pdfname = 'cn22-2-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+            $pdffiles[] = $cn22pdfname;
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+        endif;
+
+        $paper_margin_left = $options['paper_margin_left'];
+        $paper_margin_top = $options['paper_margin_top'];
+        $print_box_width = $options['print_box_width'];
+        $print_box_height = $options['print_box_height'];
+        
+        $pdf1 = new fpdi('P'); 
+        $plus = 0;
+        $pdf1->AddPage();
+
+        $pagescount = array();
+
+        $repeater=0;
+        for ($i=0;$i<count($pdffiles);$i++) :
+
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+
+            if ($repeater>0) break;
+
+            $margintopcounter = 1;
+            for ($p=1;$p<=count($order);$p++) :
+
+                $separationwidth = $paper_margin_left;
+                $separationtop = $paper_margin_top;
+                
+                if ($p % 2 == 0) : 
+                    $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                endif;
+
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($p % 1 == 0) :  $separationwidth = $paper_margin_left; endif; 
+                    if ($margintopcounter % 2 == 0) : $separationtop = (($paper_margin_top*2)+$print_box_height); endif;
+                else :
+                    if ($margintopcounter % 3 == 0 || $margintopcounter % 4 == 0) : 
+                        $separationtop = (($paper_margin_top*2)+$print_box_height);
+                        if ($margintopcounter>3) $margintopcounter=0; 
+                    endif;
+                endif;
+                $margintopcounter++;
+
+                // echo 'separationwidth ' . $separationwidth .'<br>';
+                // echo 'separationtop ' . $separationtop .'<br>';
+
+                if ($options['from']>0 || $options['to']>0):
+                    //fromto
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $templateId = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId, $separationwidth, $separationtop, $print_box_width, $print_box_height);
+                endif;
+
+                if ($options['cn22']>0):
+                    if ($options['from']>0 || $options['to']>0) :
+                        $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                    endif; 
+                    //cn22
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $templateId1 = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId1, $separationwidth, $separationtop, $print_box_width, $print_box_height);
+                endif;
+
+                // // just from and to
+                // if ($options['cn22']==0) :
+                //     if ($p % 4 == 0) : 
+                //         $pdf1->AddPage(); 
+                //     endif;
+                // endif;
+
+                // // just cn22
+                // if ($options['cn22']>0 && $options['from']==0 && $options['to']==0) :
+                //     if ($p % 4 == 0) :  $pdf1->AddPage(); endif;
+                // endif;
+
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($p % 2 == 0) :  if ($p<count($order)) $pdf1->AddPage(); endif;
+                else :
+                    if ($p % 4 == 0) : 
+                        $pdf1->AddPage(); 
+                    endif;
+                endif;
+            
+            endfor;
+            $repeater++;
+        endfor;
+
+        $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+
+        for ($i=0;$i<count($pdffiles);$i++) :
+           unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+        endfor;
+    }
+
+    function pdf2x2fromto($pdf, $order, $options) {
+
+        $ci=&get_instance();
+        $ci->load->model('order_model','order');
+        $ci->load->model('printlabels_model','printlabel');
+        $label_info = $ci->printlabel->detail($ci->session->userdata('uid'), 3);
+        if ($label_info==0) $label_info = $ci->printlabel->get(3);
+        $options['print_box_height'] = $label_info['print_box_height'];
+        $options['print_box_width'] = $label_info['print_box_width'];
+        $options['paper_margin_top'] = $label_info['paper_margin_top'];
+        $options['paper_margin_bottom'] = $label_info['paper_margin_bottom'];
+        $options['paper_margin_left'] = $label_info['paper_margin_left'];
+        $options['paper_margin_right'] = $label_info['paper_margin_right'];
+        $pdffiles = array();
+
+        $pdf = new fpdflibrary('P','mm', array(66, 96));
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+        for ($i=0; $i<count($order); $i++) :
+            $this->createAirMail3Form(0, 0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+            if (($i+1)<count($order)) $pdf->AddPage();
+        endfor;
+        $fromtopdfname = 'fromto-3-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdffiles[] = $fromtopdfname;
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+        
+        if ($options['cn22']>0) :
+            $pdf = new fpdflibrary('P','mm', array(66, 96));
+            $pdf->AddPage();
+            $pdf->SetAutoPageBreak(false);
+            $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+            $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+            for ($i=0; $i<count($order); $i++) :
+                $this->createCustomsDeclaration3Form(0, 0, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+                if (($i+1)<count($order)) $pdf->AddPage();
+            endfor;
+            $cn22pdfname = 'cn22-3-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+            $pdffiles[] = $cn22pdfname;
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+        endif;
+
+        $paper_margin_left = $options['paper_margin_left'];
+        $paper_margin_top = $options['paper_margin_top'];
+        $print_box_width = $options['print_box_width'];
+        $print_box_height = $options['print_box_height'];
+        
+        $pdf1 = new fpdi('L'); 
+        $plus = 0;
+        $pdf1->AddPage();
+
+        $pagescount = array();
+
+        $repeater=0;
+        for ($i=0;$i<count($pdffiles);$i++) :
+
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+
+            if ($repeater>0) break;
+
+            $margintopcounter = 1;
+            $marginwidthcounter = 1;
+            for ($p=1;$p<=count($order);$p++) :
+
+                $separationwidth = $paper_margin_left;
+                $separationtop = $paper_margin_top;
+                
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($margintopcounter % 2 == 0) : 
+                        $separationtop = (($paper_margin_top*2)+$print_box_height);
+                    endif;
+                    if ($marginwidthcounter % 3 == 0 || $marginwidthcounter % 4 == 0) :
+                        // $separationwidth = ((($paper_margin_left*2)+$print_box_width)*2);
+                        $separationwidth = ($paper_margin_left*2)+($print_box_width*2)+$paper_margin_left;
+                    endif;
+                else :
+                    if ($p % 2 == 0 ) : 
+                        $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                    endif;
+
+                    if ($margintopcounter % 3 == 0 || $margintopcounter % 4 == 0) : 
+                        $separationtop = (($paper_margin_top*2)+$print_box_height);
+                        if ($margintopcounter>3) $margintopcounter=0;
+                    endif;
+
+                    if ($marginwidthcounter % 5 == 0 || $marginwidthcounter % 6 == 0 || $marginwidthcounter % 7 == 0 || $marginwidthcounter % 8 == 0) : 
+                        if ($marginwidthcounter % 5 == 0 || $marginwidthcounter % 7 == 0) :
+                            // $separationwidth = ((($paper_margin_left*2)+$print_box_width)*2);
+                            $separationwidth = ($paper_margin_left*2)+($print_box_width*2)+$paper_margin_left;
+                        endif;
+                        if ($marginwidthcounter % 6 == 0 || $marginwidthcounter % 8 == 0) :
+                            $separationwidth = ((($paper_margin_left*2)+$print_box_width)*2)+$print_box_width;
+                        endif;
+                        if ($marginwidthcounter>7) : $marginwidthcounter=0; endif;
+                    endif;
+                endif;
+
+                
+                if ($options['from']>0 || $options['to']>0):
+                    //fromto
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $templateId = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId, $separationwidth, $separationtop, $print_box_width, $print_box_height);
+                endif;
+
+                // echo '1-separationwidth ' . $separationwidth .'<br>';
+                // echo '1-separationtop ' . $separationtop .'<br>';
+
+                if ($options['cn22']>0):
+                    if ($options['from']>0 || $options['to']>0) :
+                        if ($marginwidthcounter % 1 == 0) : 
+                            $separationwidth = (($paper_margin_left*2)+$print_box_width);
+                        endif;
+
+                        if ($marginwidthcounter % 3 == 0 || $marginwidthcounter % 4 == 0) :
+                            $separationwidth = ((($paper_margin_left*2)+$print_box_width)*2)+$print_box_width;
+                        endif;
+
+                        if ($marginwidthcounter>4) : $marginwidthcounter=1; endif;
+                    endif; 
+                    
+                    // if ($marginwidthcounter % 4 == 0) :
+                    //     $separationwidth = ((($paper_margin_left*2)+$print_box_width)*2)+$print_box_width;
+                    // endif;
+
+                    //cn22
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $templateId1 = $pdf1->importPage($p);
+                    $pdf1->useTemplate($templateId1, $separationwidth, $separationtop, $print_box_width, $print_box_height);
+                endif;
+
+                // echo '2-separationwidth ' . $separationwidth .'<br>';
+                // echo '2-separationtop ' . $separationtop .'<br>';
+                // echo 'margintopcounter ' . $margintopcounter . '<br>';
+
+                $marginwidthcounter++;
+                $margintopcounter++;
+                
+                // all cn22, from and to
+                if ($options['cn22']>0 && $options['from']>0 && $options['to']>0) :
+                    if ($p % 4 == 0) :  if ($p<count($order)) $pdf1->AddPage(); endif;
+                else :
+                    if ($p % 8 == 0) : 
+                        $pdf1->AddPage(); 
+                    endif;
+                endif;
+            
+            endfor;
+            $repeater++;
+        endfor;
+
+        $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+
+        for ($i=0;$i<count($pdffiles);$i++) :
+           unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+        endfor;
     }
 
     function pdf1x1($pdf, $order, $options)
     {
+        // $pdf = new fpdflibrary('P','mm', 'A4');
         $pdf->AddPage();
         $pdf->SetAutoPageBreak(false);
         $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
@@ -25,6 +462,7 @@ class Fpdflibrary extends tFPDF {
 
         $ci=&get_instance();
         $ci->load->model('order_model','order');
+        $ci->load->model('printlabels_model','printlabel');
 
         $y=0;
         for ($i=0; $i<count($order); $i++) :
@@ -35,7 +473,7 @@ class Fpdflibrary extends tFPDF {
                 // for cn22 only
                 if ($options['from']==0 && $options['to']==0 && $options['cn22']>0) :
                     $x=-149;
-                    if ($i>1) : $pdf->AddPage(); endif;
+                    // if ($i>1) : $pdf->AddPage(); endif;
                 endif;
             else:
                 $x = 149;
@@ -51,12 +489,19 @@ class Fpdflibrary extends tFPDF {
 
             if ($options['from']>0 || $options['to']>0) :
                 $this->createAirMail1Form($x, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+
             endif;
             
             if ($options['cn22']>0) :
-                $this->createCustomsDeclaration1Form($x, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+               // $this->createCustomsDeclaration1Form($x, $pdf, $ci->orders->get_specific_order($order[$i]), $options);
+
                 if ($options['from']>0 || $options['to']>0) :
-                    if ($i<(count($order)-1)) $pdf->AddPage();
+
+                    if ($i<(count($order)-1)) :
+                        $pdf->AddPage();
+                    endif;
+                else:
+                    if (($i+1)<count($order)) $pdf->AddPage();
                 endif;
             endif;
         endfor;
@@ -230,6 +675,7 @@ class Fpdflibrary extends tFPDF {
         {
             $array_order[$i] = $ci->orders->get_specific_order($orders[$i]);
 
+            if ($options['from']>0) :
             $merge_orders[] = 
                     array ('FROM',
                            $array_order[$i]['seller_company_name'],
@@ -237,7 +683,9 @@ class Fpdflibrary extends tFPDF {
                            $array_order[$i]['seller_city'].' '.$array_order[$i]['seller_stateorprovice'],
                            $array_order[$i]['seller_country'],
                            $array_order[$i]['seller_phone_no']);
+            endif; 
 
+            if ($options['to']>0) :
             $merge_orders[] = 
                     array ('TO',
                            $array_order[$i]['name'],
@@ -245,36 +693,73 @@ class Fpdflibrary extends tFPDF {
                            $array_order[$i]['city_name'].' '.$array_order[$i]['stateorprovince'],
                            $array_order[$i]['country_name'],
                            $array_order[$i]['shipto_phone_no']);
+            endif;
         }
         
-        switch ($col) {
-            case 7: $y_1 = 10; $y_2 = 250; $y_3 = 39.4; $height = 38.1; break;
-            case 8: $y_1 = 6; $y_2 = 280; $y_3 = 35.3; $height = 34; break;
-        }
-
+        $empty_orders = array();
+        for ($i=1;$i<$options['startpoint'];$i++) :
+            $empty_orders[] = array('','','','','','');
+        endfor;
+        if (count($empty_orders)>0) $merge_orders = array_merge($empty_orders,$merge_orders);
+        
+        $x=3;
+        $y=10;
+        $height = 38.1;
         $count=0;
-        $index=0;
-        for ($x=3; $x<150; $x+=67.3) :
-            for ($y=$y_1; $y<$y_2; $y+=$y_3) :
-                $count++;
+        if ($col==8) :
+            $y=6;
+            $height = 34;
+        endif;
 
-                if ($options['startpoint'] <= $count) :
-                    if (isset($merge_orders[$index]))
-                        $this->createBoxForm($x, $y, 66, $height, $pdf, $merge_orders[$index], $count, $options);
-                    $index++;
+        for ($i=0; $i<count($merge_orders); $i++) :
+            // echo $x.'<br>';
+
+            if ($i % $col == 0) :
+                if ($i>0) : 
+                    if ($col==7) : 
+                        $y=10;
+                    elseif ($col==8) : 
+                        $y=6;
+                    endif;
+                    $x+=67.3;
                 endif;
-            endfor;
+                // if ($i>0) $x+=67.3;
+                if (ctype_digit($i/($col*3).'')) $x=3;
+            endif;
+            $this->createBoxForm($x, $y, 66, $height, $pdf, $merge_orders[$i], $i, $options);
+
+            // $y+=39.4;
+            if ($col==7) : 
+                $y+=39.4;
+            elseif ($col==8) : 
+                $y+=35.3;
+            endif;
         endfor;
     }
 
-    function createAirMail1Form($ValueToAdd = 0, $pdf, $order, $options)
+    function heightpercentage($percent, $height)
     {
+        return (($height/100)*$percent);
+    }
+
+    function createAirMail1Form($ValueToAdd = 0, $pdf, $order, $options)
+    {   
+        $options['paper_margin_left'] = 0;
+        $options['paper_margin_top'] = 0;   
+        $options['print_box_width'] = 132;
+        $options['print_box_height'] = 190;
         $pdf->SetLineWidth(0.2);
         $pdf->SetFillColor(255);
-        $pdf->RoundedRect(8+$ValueToAdd, 8, 132, 190, 0, 'DF'); // 
+        $pdf->RoundedRect($options['paper_margin_left']+$ValueToAdd,
+                          $options['paper_margin_top'], 
+                          $options['print_box_width'], 
+                          $options['print_box_height'], 0, 'DF'); // 
         // lines
         $pdf->SetLineWidth(0.7);
-        $pdf->Line(13+$ValueToAdd,13.5,13+$ValueToAdd,19.5); // header line
+        $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                   $options['paper_margin_top']+5.5,
+                   $options['paper_margin_left']+5+$ValueToAdd,
+                   $options['paper_margin_top']+11.5); // header line
 
         $pdf->SetDrawColor(169,169,169);
         $pdf->SetLineWidth(0.4);
@@ -283,50 +768,99 @@ class Fpdflibrary extends tFPDF {
         for ($i=0;$i<2;$i++) :
             if ($i>0) $fromNtoY+=69;
 
-            $pdf->Line(13+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,27+$fromNtoY); // top
-            $pdf->Line(13+$ValueToAdd,27+$fromNtoY,13+$ValueToAdd,96+$fromNtoY); // left
-            $pdf->Line(135+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // right
-            $pdf->Line(13+$ValueToAdd,96+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // bottom
-            $pdf->Line(38+$ValueToAdd,27+$fromNtoY,38+$ValueToAdd,42+$fromNtoY); // first row
-            $pdf->Line(112+$ValueToAdd,27+$fromNtoY,112+$ValueToAdd,42+$fromNtoY); 
-            $pdf->Line(13+$ValueToAdd,42+$fromNtoY,135+$ValueToAdd,42+$fromNtoY); 
-            $pdf->Line(13+$ValueToAdd,72+$fromNtoY,135+$ValueToAdd,72+$fromNtoY); // second row
-            $pdf->Line(13+$ValueToAdd,84+$fromNtoY,135+$ValueToAdd,84+$fromNtoY); // third row
-            $pdf->Line(38+$ValueToAdd,72+$fromNtoY,38+$ValueToAdd,84+$fromNtoY);
-            $pdf->Line(70+$ValueToAdd,72+$fromNtoY,70+$ValueToAdd,84+$fromNtoY);
-            $pdf->Line(95+$ValueToAdd,72+$fromNtoY,95+$ValueToAdd,84+$fromNtoY); 
-            $pdf->Line(38+$ValueToAdd,84+$fromNtoY,38+$ValueToAdd,96+$fromNtoY); 
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY); // top
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY,
+                       $options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+88+$fromNtoY); // left
+            $pdf->Line($options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+88+$fromNtoY); // right
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+88+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+88+$fromNtoY); // bottom
+            $pdf->Line($options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY,
+                       $options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+34+$fromNtoY); // first row
+            $pdf->Line($options['paper_margin_left']+104+$ValueToAdd,
+                       $options['paper_margin_top']+19+$fromNtoY,
+                       $options['paper_margin_left']+104+$ValueToAdd,
+                       $options['paper_margin_top']+34+$fromNtoY); 
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+34+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+34+$fromNtoY); 
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+64+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+64+$fromNtoY); // second row
+            $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY,
+                       $options['paper_margin_left']+127+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY); // third row
+            $pdf->Line($options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+64+$fromNtoY,
+                       $options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY);
+            $pdf->Line($options['paper_margin_left']+62+$ValueToAdd,
+                       $options['paper_margin_top']+64+$fromNtoY,
+                       $options['paper_margin_left']+62+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY);
+            $pdf->Line($options['paper_margin_left']+87+$ValueToAdd,
+                       $options['paper_margin_top']+64+$fromNtoY,
+                       $options['paper_margin_left']+87+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY);
+            $pdf->Line($options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+76+$fromNtoY,
+                       $options['paper_margin_left']+30+$ValueToAdd,
+                       $options['paper_margin_top']+88+$fromNtoY);
 
             if ($fromNtoY>68) :
                 $fromNtoY=96;
-                $pdf->Line(13+$ValueToAdd,27+$fromNtoY,13+$ValueToAdd,96+$fromNtoY); // left
-                $pdf->Line(135+$ValueToAdd,27+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // right
-                $pdf->Line(13+$ValueToAdd,96+$fromNtoY,135+$ValueToAdd,96+$fromNtoY); // bottom
+                $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                           $options['paper_margin_top']+19+$fromNtoY,
+                           $options['paper_margin_left']+5+$ValueToAdd,
+                           $options['paper_margin_top']+88+$fromNtoY); // left
+                $pdf->Line($options['paper_margin_left']+127+$ValueToAdd,
+                           $options['paper_margin_top']+19+$fromNtoY,
+                           $options['paper_margin_left']+127+$ValueToAdd,
+                           $options['paper_margin_top']+88+$fromNtoY); // right
+                $pdf->Line($options['paper_margin_left']+5+$ValueToAdd,
+                           $options['paper_margin_top']+88+$fromNtoY,
+                           $options['paper_margin_left']+127+$ValueToAdd,
+                           $options['paper_margin_top']+88+$fromNtoY); // bottom
             endif;
         endfor;
 
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
-        $pdf->SetXY(13+$ValueToAdd,14);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+6);
         $pdf->SetFont('Arial','B',20);
-        $pdf->Cell(79,6,' AIR MAIL Small Packet',0,0,'L');
+        
+        $pdf->CellFitScale(79,6,' AIR MAIL Small Packet',0,0,'L');
 
-        $pdf->SetXY(13+$ValueToAdd,32);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+24);
         $pdf->SetFont('Arial','B',18);
         $pdf->Cell(25,5,'FROM',0,1,'C');
 
-        $pdf->SetXY(13+$ValueToAdd,101);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+93);
         $pdf->SetFont('Arial','B',18);
         $pdf->Cell(25,5,'TO',0,1,'C');
 
         // custom text
         $nameYvalue = 2;
         if (strlen($order['seller_company_name']) > 25) $nameYvalue = 10;
-        $pdf->SetXY(39+$ValueToAdd,30+$nameYvalue);
+        $pdf->SetXY($options['paper_margin_left']+31+$ValueToAdd,$options['paper_margin_top']+22+$nameYvalue);
         $pdf->SetFont('Arial','B',16);
         $pdf->MultiCell(72,5,$order['seller_company_name'],0,'C');
 
-        $pdf->SetXY(112+$ValueToAdd,32);
+        $pdf->SetXY($options['paper_margin_left']+104+$ValueToAdd,$options['paper_margin_top']+24);
         $pdf->SetFont('Arial','B',16);
 
         $seller_country_code = 'KR';
@@ -334,7 +868,7 @@ class Fpdflibrary extends tFPDF {
             $seller_country_code = $order['seller_country'];
         $pdf->Cell(23,5,$seller_country_code,0,1,'C');
 
-        $pdf->SetXY(16+$ValueToAdd,45);
+        $pdf->SetXY($options['paper_margin_left']+8+$ValueToAdd,$options['paper_margin_top']+37);
         $pdf->SetFont('Arial','',16);
 
 if (!empty($order['seller_street2'])) :
@@ -347,43 +881,43 @@ else :
 endif;
         //$pdf->Cell(118,5,'Maplestore',1,1,'L');
 
-        $pdf->SetXY(13+$ValueToAdd,76);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+68);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'Post Code',0,1,'C');
 
-        $pdf->SetXY(38+$ValueToAdd,76);
+        $pdf->SetXY($options['paper_margin_left']+30+$ValueToAdd,$options['paper_margin_top']+68);
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(32,5,$order['seller_postal_code'],0,1,'C');
 
-        $pdf->SetXY(70+$ValueToAdd,76);
+        $pdf->SetXY($options['paper_margin_left']+62+$ValueToAdd,$options['paper_margin_top']+68);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'Country',0,1,'C');
 
-        $pdf->SetXY(95+$ValueToAdd,76);
+        $pdf->SetXY($options['paper_margin_left']+87+$ValueToAdd,$options['paper_margin_top']+68);
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(40,5,$order['seller_country'],0,1,'C');
 
-        $pdf->SetXY(13+$ValueToAdd,88);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+80);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'TEL',0,1,'C');
 
-        $pdf->SetXY(41+$ValueToAdd,88);
+        $pdf->SetXY($options['paper_margin_left']+33+$ValueToAdd,$options['paper_margin_top']+80);
         $pdf->Cell(91,4,$order['seller_phone_no'],0,1,'L');
 
         // second
         $nameYvalue = 2;
         if (strlen($order['name']) > 25) $nameYvalue = 0;
-        $pdf->SetXY(39+$ValueToAdd,99+$nameYvalue);
+        $pdf->SetXY($options['paper_margin_left']+31+$ValueToAdd,$options['paper_margin_top']+91+$nameYvalue);
         $pdf->SetFont('Arial','B',16);
         //$pdf->Cell(57,5,$order['name'],0,1,'C');
         $pdf->MultiCell(72,5,$order['name'],0,'C');
 
-        $pdf->SetXY(112+$ValueToAdd,101);
+        $pdf->SetXY($options['paper_margin_left']+104+$ValueToAdd,$options['paper_margin_top']+93);
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(23,5,$order['country_code'],0,1,'C');
 
 
-        $pdf->SetXY(16+$ValueToAdd,114);
+        $pdf->SetXY($options['paper_margin_left']+8+$ValueToAdd,$options['paper_margin_top']+106);
         $pdf->SetFont('Arial','',16);
 
 if (!empty($order['street2'])) :
@@ -394,37 +928,56 @@ else :
             $pdf->MultiCell(116,8,$order['street1'].'
 '.$order['city_name'].' '.$order['stateorprovince'],0,'L');
 endif;
-        $pdf->SetXY(13+$ValueToAdd,145);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+137);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'Post Code',0,1,'C');
 
-        $pdf->SetXY(38+$ValueToAdd,145);
+        $pdf->SetXY($options['paper_margin_left']+30+$ValueToAdd,$options['paper_margin_top']+137);
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(32,5,$order['postal_code'],0,1,'C');
 
-        $pdf->SetXY(70+$ValueToAdd,145);
+        $pdf->SetXY($options['paper_margin_left']+62+$ValueToAdd,$options['paper_margin_top']+137);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'Country',0,1,'C');
 
-        $pdf->SetXY(95+$ValueToAdd,145);
+        $pdf->SetXY($options['paper_margin_left']+87+$ValueToAdd,$options['paper_margin_top']+137);
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(40,5,$order['country_name'],0,1,'C');
 
-        $pdf->SetXY(13+$ValueToAdd,157);
+        $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+149);
         $pdf->SetFont('Arial','',14);
         $pdf->Cell(25,4,'TEL',0,1,'C');
 
-        $pdf->SetXY(41+$ValueToAdd,157);
+        $pdf->SetXY($options['paper_margin_left']+33+$ValueToAdd,$options['paper_margin_top']+149);
         $pdf->Cell(91,4,$order['shipto_phone_no'],0,1,'L');
 
         $pdf->SetFont('NanumBarunGothicBold','',12);
-        $pdf->SetXY(16.5+$ValueToAdd,170);
+        $pdf->SetXY($options['paper_margin_left']+8.5+$ValueToAdd,$options['paper_margin_top']+162);
         $pdf->MultiCell(115,5,$order['seller_msg'],0,'C');
+
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables'.$order['id'].'.pdf','F');
+
+        //generate
+        // $pdfname = 'fromto-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname,'F');
+
+        //formulate
+        // $pdf1=new fpdi('L'); // so we initiate exFPDF instead of FPDI
+        // $pdf1->AddPage();
+        // $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname);
+        // $tplIdx = $pdf1->importPage(1);
+        // $pdf1->useTemplate($tplIdx, 0, 0, 264, 380);
+        // $pdf1->Output();
+        // unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname);
     }
 
     function createAirMail2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order, $options)
     {
         if ($order['id']==0) return;
+
+        $xToAdd=-8;
+        $yToAdd=-8;
+
 
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
@@ -582,6 +1135,9 @@ endif;
     {
         // print_r($order);
         if ($order['id']==0) return;
+
+        $xToAdd=-2;
+        $yToAdd=-2;
            
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.1);
@@ -728,192 +1284,208 @@ endif;
         // }
     }
 
-    function createCustomsDeclaration1Form($ValueToAdd = 0, $pdf, $order)
+    function createCustomsDeclaration1Form($ValueToAdd = 0, $pdf, $order, $options)
     {
+        $ValueToAdd = -157; 
+        $yValueToADd = 0;
+
         $pdf->SetLineWidth(0.2);
         $pdf->SetFillColor(255);
-        $pdf->RoundedRect(157+$ValueToAdd, 8, 132, 190, 0, 'DF');
+        $pdf->RoundedRect(157+$ValueToAdd, $yValueToADd, 132, 190, 0, 'DF');
 
         // vertical line
         $pdf->SetLineWidth(0.7);
-        $pdf->Line(162+$ValueToAdd,13.5,162+$ValueToAdd,24.5);
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+5.5,162+$ValueToAdd,24.5);
 
-        $pdf->SetXY(162+$ValueToAdd,13);
+        $pdf->SetXY(162+$ValueToAdd,$yValueToADd+5);
         $pdf->SetFont('Arial','B',20);
         $pdf->Cell(37,6,' CUSTOMS',0,0,'L');
-        $pdf->SetXY(162+$ValueToAdd,19.5);
+        $pdf->SetXY(162+$ValueToAdd,$yValueToADd+11.5);
         $pdf->Cell(53,6,' DECLARATION',0,0,'L');
 
-        $pdf->SetXY(162+$ValueToAdd,26);
+        $pdf->SetXY(162+$ValueToAdd,$yValueToADd+18);
         $pdf->SetFont('NanumBarunGothic','',16);
         $pdf->Cell(27,6,' 세관신고서',0,0,'L');
 
-        $pdf->SetXY(192+$ValueToAdd,13);
+        $pdf->SetXY(192+$ValueToAdd,$yValueToADd+5);
         $pdf->SetFont('Arial','B',35);
         $pdf->Cell(96,12,'CN22 ',0,1,'R');
 
         // vertical line
-        $pdf->Line(162+$ValueToAdd,38,162+$ValueToAdd,40.5);
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+30,162+$ValueToAdd,$yValueToADd+32.5);
 
-        $pdf->SetXY(162+$ValueToAdd,37.5);
+        $pdf->SetXY(162+$ValueToAdd,$yValueToADd+29.5);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->Cell(39,4,' May be opened officialy',0,1,'L');
-        $pdf->SetXY(162+$ValueToAdd,42);
+        $pdf->SetXY(162+$ValueToAdd,$yValueToADd+34);
         $pdf->Cell(38,4,' 공개적으로 개봉될 수 있음',0,0,'L');
 
         // table
         $pdf->SetDrawColor(169,169,169);
         $pdf->SetLineWidth(0.4);
-        $pdf->Line(162+$ValueToAdd,49,284+$ValueToAdd,49); // top
-        $pdf->Line(162+$ValueToAdd,49,162+$ValueToAdd,193); // left
-        $pdf->Line(162+$ValueToAdd,193,284+$ValueToAdd,193); // bottom
-        $pdf->Line(284+$ValueToAdd,49,284+$ValueToAdd,193); // right
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+41,284+$ValueToAdd,$yValueToADd+41); // top
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+41,162+$ValueToAdd,$yValueToADd+185); // left
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+185,284+$ValueToAdd,$yValueToADd+185); // bottom
+        $pdf->Line(284+$ValueToAdd,$yValueToADd+41,284+$ValueToAdd,$yValueToADd+185); // right
 
-        $pdf->Line(162+$ValueToAdd,64,284+$ValueToAdd,64); // 1st row
-        $pdf->Line(236+$ValueToAdd,49,236+$ValueToAdd,56); // 1st row vertical line
-        $pdf->Line(162+$ValueToAdd,78,284+$ValueToAdd,78); // 2nd row 
-        $pdf->Line(162+$ValueToAdd,93,284+$ValueToAdd,93); // 3rd row
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+56,284+$ValueToAdd,$yValueToADd+56); // 1st row
+        $pdf->Line(236+$ValueToAdd,$yValueToADd+41,236+$ValueToAdd,$yValueToADd+48); // 1st row vertical line
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+70,284+$ValueToAdd,$yValueToADd+70); // 2nd row 
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+85,284+$ValueToAdd,$yValueToADd+85); // 3rd row
 
-        $pdf->Line(236+$ValueToAdd,78,236+$ValueToAdd,148); // 3rd row vertical line A
-        $pdf->Line(260+$ValueToAdd,78,260+$ValueToAdd,148); // 3rd row vertical line B
+        $pdf->Line(236+$ValueToAdd,$yValueToADd+70,236+$ValueToAdd,$yValueToADd+140); // 3rd row vertical line A
+        $pdf->Line(260+$ValueToAdd,$yValueToADd+70,260+$ValueToAdd,$yValueToADd+140); // 3rd row vertical line B
 
-        $pdf->Line(162+$ValueToAdd,108,284+$ValueToAdd,108); // 4th row
-        $pdf->Line(162+$ValueToAdd,131,284+$ValueToAdd,131); // 5th row
-        $pdf->Line(162+$ValueToAdd,148,284+$ValueToAdd,148); // 6th row
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+100,284+$ValueToAdd,$yValueToADd+100); // 4th row
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+123,284+$ValueToAdd,$yValueToADd+123); // 5th row
+        $pdf->Line(162+$ValueToAdd,$yValueToADd+140,284+$ValueToAdd,$yValueToADd+140); // 6th row
         //$pdf->Line(161,183,283,183); // 7th row
-
 
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
 
-        $pdf->SetXY(163+$ValueToAdd,49);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+41);
         $pdf->SetFont('Arial','B',12);
         $pdf->Cell(45,7,'Designated operator',0,0,'L');
-        $pdf->SetXY(237+$ValueToAdd,50.5);
+        $pdf->SetXY(237+$ValueToAdd,$yValueToADd+42.5);
         $pdf->SetFont('Arial','B',10);
         $pdf->MultiCell(27,4,'Important! See instructions on the back',0,'L');
 
         // table 2nd line
         $pdf->SetDrawColor(169,169,169);
         $pdf->SetTextColor(68,68,68);
-        $pdf->SetXY(169+$ValueToAdd,66);
+        $pdf->SetXY(169+$ValueToAdd,$yValueToADd+58);
         $pdf->SetFont('NanumBarunGothicBold','',10);
         $pdf->Cell(17,5,'Gift(선물)',0,0,'L');
         // checkbox
-        $pdf->Line(164+$ValueToAdd,65.5,169+$ValueToAdd,65.5); // top
-        $pdf->Line(164+$ValueToAdd,70.5,169+$ValueToAdd,70.5); // bottom
-        $pdf->Line(164+$ValueToAdd,65.5,164+$ValueToAdd,70.5); // left
-        $pdf->Line(169+$ValueToAdd,65.5,169+$ValueToAdd,70.5); // right
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+57.5,169+$ValueToAdd,$yValueToADd+57.5); // top
 
-        $pdf->SetXY(169+$ValueToAdd,72);
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.8);
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+57.5,169+$ValueToAdd,$yValueToADd+62.5); // cross
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+62.5,169+$ValueToAdd,$yValueToADd+57.5); // cross
+        $pdf->SetLineWidth(0.2);
+
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+62.5,169+$ValueToAdd,$yValueToADd+62.5); // bottom
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+57.5,164+$ValueToAdd,$yValueToADd+62.5); // left
+        $pdf->Line(169+$ValueToAdd,$yValueToADd+57.5,169+$ValueToAdd,$yValueToADd+62.5); // right
+
+        $pdf->SetXY(169+$ValueToAdd,$yValueToADd+64);
         $pdf->Cell(29,5,'Documents(서류)',0,0,'L');
         // checkbox
-        $pdf->Line(164+$ValueToAdd,71.5,169+$ValueToAdd,71.5); // top
-        $pdf->Line(164+$ValueToAdd,76.5,169+$ValueToAdd,76.5); // bottom
-        $pdf->Line(164+$ValueToAdd,71.5,164+$ValueToAdd,76.5); // left
-        $pdf->Line(169+$ValueToAdd,71.5,169+$ValueToAdd,76.5); // right
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+63.5,169+$ValueToAdd,$yValueToADd+63.5); // top
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+68.5,169+$ValueToAdd,$yValueToADd+68.5); // bottom
+        $pdf->Line(164+$ValueToAdd,$yValueToADd+63.5,164+$ValueToAdd,$yValueToADd+68.5); // left
+        $pdf->Line(169+$ValueToAdd,$yValueToADd+63.5,169+$ValueToAdd,$yValueToADd+68.5); // right
 
-        $pdf->SetXY(226+$ValueToAdd,66);
+        $pdf->SetXY(226+$ValueToAdd,$yValueToADd+58);
         $pdf->Cell(49,5,'Commercial Sample(상업샘플)',0,0,'L');
         // checkbox
-        $pdf->Line(221+$ValueToAdd,65.5,226+$ValueToAdd,65.5); // top
-        $pdf->Line(221+$ValueToAdd,70.5,226+$ValueToAdd,70.5); // bottom
-        $pdf->Line(221+$ValueToAdd,65.5,221+$ValueToAdd,70.5); // left
-        $pdf->Line(226+$ValueToAdd,65.5,226+$ValueToAdd,70.5); // right
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+57.5,226+$ValueToAdd,$yValueToADd+57.5); // top
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+62.5,226+$ValueToAdd,$yValueToADd+62.5); // bottom
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+57.5,221+$ValueToAdd,$yValueToADd+62.5); // left
+        $pdf->Line(226+$ValueToAdd,$yValueToADd+57.5,226+$ValueToAdd,$yValueToADd+62.5); // right
 
-        $pdf->SetXY(226+$ValueToAdd,72);
+        $pdf->SetXY(226+$ValueToAdd,$yValueToADd+64);
         $pdf->Cell(20,5,'Other(기타)',0,0,'L');
         // checkbox
-        $pdf->Line(221+$ValueToAdd,71.5,226+$ValueToAdd,71.5); // top
-        $pdf->Line(221+$ValueToAdd,76.5,226+$ValueToAdd,76.5); // bottom
-        $pdf->Line(221+$ValueToAdd,71.5,221+$ValueToAdd,76.5); // left
-        $pdf->Line(226+$ValueToAdd,71.5,226+$ValueToAdd,76.5); // right
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+63.5,226+$ValueToAdd,$yValueToADd+63.5); // top
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+68.5,226+$ValueToAdd,$yValueToADd+68.5); // bottom
+        $pdf->Line(221+$ValueToAdd,$yValueToADd+63.5,221+$ValueToAdd,$yValueToADd+68.5); // left
+        $pdf->Line(226+$ValueToAdd,$yValueToADd+63.5,226+$ValueToAdd,$yValueToADd+68.5); // right
 
         // table 3rd line
-        $pdf->SetXY(163+$ValueToAdd,79);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+71);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(72,4,'Quantity and detailed description of contents(1)',0,'L');
-        $pdf->SetXY(163+$ValueToAdd,87);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+79);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->Cell(72,4.5,'내용증명, 수량 등 자세한 설명',0,0,'L');
 
         // text for quantiy
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(164+$ValueToAdd,95);
+        $pdf->SetXY(164+$ValueToAdd,$yValueToADd+87);
         $pdf->MultiCell(70,11,$order['cnt'].'x '.$order['order_title'],0,'L');
 
-        $pdf->SetXY(238+$ValueToAdd,79);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+71);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(20,4,'Weight    (in kg)(2)',0,'C');
-        $pdf->SetXY(238+$ValueToAdd,87.5);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+79.5);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->Cell(20,3,'무게',0,0,'C');
 
         // text for weight
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(238+$ValueToAdd,95);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+87);
         $pdf->MultiCell(20,11,$order['item_weight'].' '.$order['item_weight_unit'],0,'C');
 
-        $pdf->SetXY(262+$ValueToAdd,79);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+71);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(20,4,'Value (3)',0,'C');
-        $pdf->SetXY(262+$ValueToAdd,83.5);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+75.5);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->Cell(20,3,'가격',0,0,'C');
         // table 4th line 
         
         // text for price
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(262+$ValueToAdd,95);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+87);
         $pdf->MultiCell(20,11,$order['item_price'].' '.$order['item_price_currency'],0,'C');
 
         // table 5th line
-        $pdf->SetXY(163+$ValueToAdd,109);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+101);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(72,4,'For commercial items only if know, HS tarif number(4) and country of origin of goods(5)',0,'L');
-        $pdf->SetXY(163+$ValueToAdd,121);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+113);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->MultiCell(72,4,'상업물품인 경우 원산지 및 HS코드(상품분류번호) 기입 ',0,'L');
 
-        $pdf->SetXY(238+$ValueToAdd,109);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+101);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(20,4,'Total Weight (in kg)(6)',0,'C');
-        $pdf->SetXY(238+$ValueToAdd,121.5);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+113.5);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->Cell(20,3,'총무게',0,0,'C');
 
         // text for total weight
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(238+$ValueToAdd,133);
+        $pdf->SetXY(238+$ValueToAdd,$yValueToADd+125);
         $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_weight']),2).' '.$order['item_weight_unit'],0,'C');
 
-        $pdf->SetXY(262+$ValueToAdd,109);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+101);
         $pdf->SetFont('NanumBarunGothic','',10);
         $pdf->MultiCell(20,4,'Total Value (7)',0,'C');
-        $pdf->SetXY(262+$ValueToAdd,117.5);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+109.5);
         $pdf->SetFont('NanumBarunGothic','',9);
         $pdf->Cell(20,3,'총가격',0,0,'C');
 
         // text for total price
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(262+$ValueToAdd,133);
+        $pdf->SetXY(262+$ValueToAdd,$yValueToADd+125);
         $pdf->MultiCell(20,13,number_format(($order['cnt'] * $order['item_price']),2).' '.$order['item_price_currency'],0,'C');
 
         // table 6th line
-        $pdf->SetXY(163+$ValueToAdd,149);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+141);
         $pdf->SetFont('NanumBarunGothic','',11);
         $pdf->MultiCell(120,4.2,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
-        $pdf->SetXY(163+$ValueToAdd,172);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+164);
         $pdf->MultiCell(120,4.5,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나 위험물품을 포함하지 않음을 증명합니다',0,'L');
-        $pdf->SetXY(163+$ValueToAdd,184.5);
+        $pdf->SetXY(163+$ValueToAdd,$yValueToADd+176.5);
         $pdf->SetTextColor(0);
         $pdf->SetFont('Arial','B',17);
         $pdf->MultiCell(120,5,'Date and senders signature(8)',0,'L');
+
+        //generate
+        // $pdfname = 'cn22-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname,'F');
     }
 
     function createCustomsDeclaration2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
     {
         if ($order['id']==0) return;
+
+        $xToAdd=-107;
+        $yToAdd=-8;
 
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.2);
@@ -972,6 +1544,13 @@ endif;
         $pdf->Cell(14,3,'Gift(선물)',0,0,'L');
         // // checkbox
         $pdf->Line(113+$xToAdd,50.5+$yToAdd,116+$xToAdd,50.5+$yToAdd); // top
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.6);
+        $pdf->Line(113+$xToAdd,50.5+$yToAdd,116+$xToAdd,53.5+$yToAdd); // cross
+        $pdf->Line(113+$xToAdd,53.5+$yToAdd,116+$xToAdd,50.5+$yToAdd);; // cross
+        $pdf->SetLineWidth(0.2);
+
         $pdf->Line(113+$xToAdd,53.5+$yToAdd,116+$xToAdd,53.5+$yToAdd); // bottom
         $pdf->Line(113+$xToAdd,50.5+$yToAdd,113+$xToAdd,53.5+$yToAdd); // left
         $pdf->Line(116+$xToAdd,50.5+$yToAdd,116+$xToAdd,53.5+$yToAdd); // right
@@ -1079,6 +1658,9 @@ endif;
     {
         if ($order['id']==0) return;
 
+        $xToAdd=-72;
+        $yToAdd=-2;
+
         $pdf->SetDrawColor(0);
         $pdf->SetLineWidth(0.1);
         $pdf->SetFillColor(255);
@@ -1137,6 +1719,13 @@ endif;
         $pdf->Cell(11,2,'Gift(선물)',0,0,'L');
     //  // // checkbox
         $pdf->Line(75+$xToAdd,31+$yToAdd,77+$xToAdd,31+$yToAdd); // top
+
+        $pdf->SetDrawColor(0);
+        $pdf->SetLineWidth(0.4);
+        $pdf->Line(75+$xToAdd,31+$yToAdd,77+$xToAdd,33+$yToAdd); // cross
+        $pdf->Line(75+$xToAdd,33+$yToAdd,77+$xToAdd,31+$yToAdd); // cross
+        $pdf->SetLineWidth(0.2);
+
         $pdf->Line(75+$xToAdd,33+$yToAdd,77+$xToAdd,33+$yToAdd); // bottom
         $pdf->Line(75+$xToAdd,31+$yToAdd,75+$xToAdd,33+$yToAdd); // left
         $pdf->Line(77+$xToAdd,31+$yToAdd,77+$xToAdd,33+$yToAdd); // right
@@ -1243,10 +1832,30 @@ endif;
 
     function createBoxForm($xToAdd = 0, $yToAdd = 0, $sizex, $sizey, $pdf, $order, $count=0, $options=array())
     {   
+
+        // print_r($order);
+        if (empty($order[0][0])) return;
+
+        // echo $count . '<br>';
         $yleft = 6; $yright = 1; $yline = 5.4;
         if ($sizey == 34) { $yleft = 5; $yright = 0.1; $yline = 4; }
 
         for ($i=1;$i<count($order);$i++) :
+
+            //echo $yToAdd.'<br>';
+
+            //if (isset($merge_orders[$i]['id'])) 
+            // echo $count. '<br>';
+
+            if ($yToAdd == 10 && $count>0) :
+                if ($count%21==0) :
+                    $pdf->AddPage();
+                endif;
+            elseif ($yToAdd == 6 && $count>0) :
+                if ($count%24==0) :
+                    $pdf->AddPage();
+                endif;
+            endif;
 
             if ($i==1) :
                 if ($options['from']<1 && $order[0] == 'FROM' ||
@@ -1846,5 +2455,98 @@ endif;
         $y=$this->GetY()+$this->hLine/2;
         $this->SetXY($x,$y);
     }
+
+    //Cell with horizontal scaling if text is too wide
+    function CellFit($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $scale=false, $force=true)
+    {
+        //Get string width
+        $str_width=$this->GetStringWidth($txt);
+
+        //Calculate ratio to fit cell
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $ratio = ($w-$this->cMargin*2)/$str_width;
+
+        $fit = ($ratio < 1 || ($ratio > 1 && $force));
+        if ($fit)
+        {
+            if ($scale)
+            {
+                //Calculate horizontal scaling
+                $horiz_scale=$ratio*100.0;
+                //Set horizontal scaling
+                $this->_out(sprintf('BT %.2F Tz ET', $horiz_scale));
+            }
+            else
+            {
+                //Calculate character spacing in points
+                $char_space=($w-$this->cMargin*2-$str_width)/max($this->MBGetStringLength($txt)-1, 1)*$this->k;
+                //Set character spacing
+                $this->_out(sprintf('BT %.2F Tc ET', $char_space));
+            }
+            //Override user alignment (since text will fill up cell)
+            $align='';
+        }
+
+        //Pass on to Cell method
+        $this->Cell($w, $h, $txt, $border, $ln, $align, $fill, $link);
+
+        //Reset character spacing/horizontal scaling
+        if ($fit)
+            $this->_out('BT '.($scale ? '100 Tz' : '0 Tc').' ET');
+    }
+
+    //Cell with horizontal scaling only if necessary
+    function CellFitScale($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        $this->CellFit($w, $h, $txt, $border, $ln, $align, $fill, $link, true, false);
+    }
+
+    //Cell with horizontal scaling always
+    function CellFitScaleForce($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        $this->CellFit($w, $h, $txt, $border, $ln, $align, $fill, $link, true, true);
+    }
+
+    //Cell with character spacing only if necessary
+    function CellFitSpace($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        $this->CellFit($w, $h, $txt, $border, $ln, $align, $fill, $link, false, false);
+    }
+
+    //Cell with character spacing always
+    function CellFitSpaceForce($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
+    {
+        //Same as calling CellFit directly
+        $this->CellFit($w, $h, $txt, $border, $ln, $align, $fill, $link, false, true);
+    }
+
+    //Patch to also work with CJK double-byte text
+    function MBGetStringLength($s)
+    {
+        if($this->CurrentFont['type']=='Type0')
+        {
+            $len = 0;
+            $nbbytes = strlen($s);
+            for ($i = 0; $i < $nbbytes; $i++)
+            {
+                if (ord($s[$i])<128)
+                    $len++;
+                else
+                {
+                    $len++;
+                    $i++;
+                }
+            }
+            return $len;
+        }
+        else
+            return strlen($s);
+    }
+
+
+
+    ///////
+   
     
 }

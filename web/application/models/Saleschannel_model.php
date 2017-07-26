@@ -7,7 +7,7 @@ class Saleschannel_model extends CI_Model
         parent::__construct();
     }
 	
-	public function create($values1, $values2) 
+	public function create($values1) 
 	{
 		$this->db->set($values1);
 		$this->db->insert('sales_channel');

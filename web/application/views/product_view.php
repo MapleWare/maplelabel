@@ -127,10 +127,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="<?php echo base_url("assets2/js/jquery.js"); ?>"><\/script>')</script>
     <script src="<?php echo base_url("assets2/js/bootstrap.min.js"); ?>"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <script src="<?php echo base_url("assets2/js/bootstrap-datepicker.min.js"); ?>"></script>
 
-    <script src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
@@ -178,16 +178,29 @@
                 });
             }
         });
-        $.ajax({
-          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-          type : 'GET',
-          success : function(data) {
-            //console.log (data);
-            var total_order_count = $('#total_order_count').html();
-            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
-            $('#total_order_count').html(new_total_order_count);
-          }
-        });
+        <?php if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate-stg/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php else : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php endif; ?>
       });
 
       $('#order-select-all').on('click', function(){

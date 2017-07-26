@@ -11,6 +11,7 @@
     }
     .main { padding:0; }
     .page-header { margin: 12px 0 20px; }
+    .nav > li > a:hover, .nav > li > a:focus { border: 0; }
   </style>
   <div class="container-fluid">
     <div class="row">
@@ -21,7 +22,7 @@
         <ul class="nav nav-sidebar">
           <li ><a href="<?php echo base_url('profile/index');?>"><img src="<?php echo base_url("assets2/img/user_profile.png"); ?>" /> 프로파일</a></li>
           <li><a href="<?php echo base_url('sellers/index');?>"><img src="<?php echo base_url("assets2/img/setting.png"); ?>" /> 셀러설정</a></li>
-          <li><a href="#"><img src="<?php echo base_url("assets2/img/print.png"); ?>" /> 프린팅</a></li>
+          <li><a href="<?php echo base_url(); ?>layout/index"><img src="<?php echo base_url("assets2/img/print.png"); ?>" /> 프린팅</a></li>
           <li class="active"><a href="#"><img src="<?php echo base_url("assets2/img/arrow_up.png"); ?>" /> 업그레이드</a></li>
         </ul>
       </div>
@@ -128,16 +129,29 @@
             });
           }
         });
-        $.ajax({
-          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-          type : 'GET',
-          success : function(data) {
-            //console.log (data);
-            var total_order_count = $('#total_order_count').html();
-            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
-            $('#total_order_count').html(new_total_order_count);
-          }
-        });
+        <?php if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate-stg/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php else : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php endif; ?>
       });
     </script>
   </body>

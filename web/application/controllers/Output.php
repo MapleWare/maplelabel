@@ -14,6 +14,13 @@ class Output extends CI_Controller
 
 		
 		$this->load->helper('encrypter');
+		if ($_SERVER['SERVER_PORT'] == 443) {
+			if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+	            $this->config->set_item('base_url','https://stg.onlabels.co.kr/');
+	        else :
+	            $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
+	        endif; 
+		}
 	}
 	
 	function index()

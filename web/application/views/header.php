@@ -21,8 +21,8 @@
 	<!-- Custom styles for this template -->
 	<link href="<?php echo base_url("assets2/css/style.css"); ?>" rel="stylesheet">
 
-	<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
-	<link href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet">
 
 	<!-- <link href="<?php echo base_url("assets2/css/bootstrap-editable.css"); ?>" rel="stylesheet"> -->
 	<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
@@ -265,6 +265,61 @@
             .navbar-brand > img {
                   margin-top: -2px;
             }
+
+            /* Dropdown Button */
+            .dropbtn {
+                background-color: #222;
+                color: white;
+                padding: 13px;
+                font-size: 15px;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* The container <div> - needed to position the dropdown content */
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            /* Dropdown Content (Hidden by Default) */
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #3e3c3c;
+                min-width: 200px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                        left: -60px;
+            }
+
+            /* Links inside the dropdown */
+            .dropdown-content a {
+                color: white;
+                padding: 5px 16px;
+                text-decoration: none;
+                display: block;
+            }
+
+
+
+            /* Show the dropdown menu on hover */
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+            .dropdown-content a:hover {background-color: #000}
+
+                  .btn-group{
+                        
+                                    margin-top: 8px;
+                                    margin-left: 10px;
+                        }
+                        .carousel-caption {
+                top: 70px;
+            }
+            .right10{
+                  margin-right:  10px;
+            }
     </style>
 </head>
 <body>
@@ -294,7 +349,22 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                               <li><img src="<?php echo base_url("assets2/img/user-icon.png"); ?>" style=" padding: 8px 0px;"></li>
-                              <li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li>
+                              <li>
+                                    <div class="dropdown">
+                                          <button class="dropbtn"><?php echo $this->session->userdata('uname'); ?></button>
+                                          <div class="dropdown-content">
+                                          <h5 class="text-center"><div style="color:#2d7787; margin: 11px 20px 7px 20px;"><?php echo $uemail; ?></div>
+                                          <div style="color:#fff; margin-top: 6px; font-size: 14px;"> Free Member</div></h5>
+                                          <hr style="margin:0px 10px 5px 10px">
+
+                                          <a href="<?php echo base_url(); ?>profile/index" class="active_color"><img src="<?php echo base_url("assets2/img/new/user.png"); ?>" class="right10"> 프로파일</a>
+                                          <a href="<?php echo base_url(); ?>sellers/index"><img src="<?php echo base_url("assets2/img/new/setting.png"); ?>" class="right10"/> 셀러설정</a>
+                                          <a href="<?php echo base_url(); ?>layout/index"><img src="<?php echo base_url("assets2/img/new/print.png"); ?>" class="right10"/> 프린팅</a>
+                                          <a href="<?php echo base_url(); ?>upgrade/index"s><img src="<?php echo base_url("assets2/img/new/up.png"); ?>" class="right10"/> 업그레이드</a>
+                                          <br>
+                                    </div>
+                              </li>       
+                              <!-- <li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li> -->
                               <li><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
                         </ul>
                   </div><!--/.nav-collapse -->

@@ -9,6 +9,13 @@ class Profile extends CI_Controller
 		$this->load->database();
 		$this->load->model('user_model');
 		$this->load->model('order_model', 'orders');
+		if ($_SERVER['SERVER_PORT'] == 443) {
+			if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+	            $this->config->set_item('base_url','https://stg.onlabels.co.kr/');
+	        else :
+	            $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
+	        endif; 
+		}
 	}
 	
 	function index()
@@ -34,8 +41,6 @@ class Profile extends CI_Controller
 	        $postal_code = $this->input->post("postal_code");
 
 
-
-
 			$this->form_validation->set_rules("companyname", "Company Name", "trim|required");
 			$this->form_validation->set_rules("first_name", "First Name", "trim|required");
 			$this->form_validation->set_rules("last_name", "Last Name", "trim|required");
@@ -53,6 +58,21 @@ class Profile extends CI_Controller
 			else :
 
 				if (isset($_POST['company_update'])) :
+
+					$record = $this->input->post();
+					$uid = $this->session->userdata('uid');
+					unset($record['company_update']);
+					unset($record['search']);
+					$record['stateorprovice'] = $record['province'];
+					unset($record['province']);
+					$search = array('ol_user_id' => $uid);
+					$user_company = $this->user_model->get_company($search);
+					if ($user_company==0) :
+						$record['ol_user_id'] = $uid;
+						$this->user_model->insert_company($record);
+					else : 
+						$this->user_model->update_company($user_company['ol_user_id'], $record);
+					endif;
 					$this->session->set_userdata('company_success', true);
 					redirect(base_url('profile/index'));
 				endif;

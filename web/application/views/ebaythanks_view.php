@@ -56,24 +56,13 @@
             <div class="iconmelon">
               <img src="<?php echo base_url("assets2/img/global_icon.png"); ?>" class="img img-responsive"/>
             </div>
-            <h5 class="text-center" style="padding: 0px 160px;line-height: 20px;font-weight: bold;">글로벌 판매 채널 연동을 통해서 OnLabels의 다양한 서비스를 경험해 보세요</h5>
+            <h5 class="text-center" style="padding: 0px 160px;line-height: 20px;font-weight: bold;">You are now sign-in to <img class="flag" src="<?php echo base_url("assets2/img/eBay Logo.png"); ?>" alt="" /> this window will closes automatically.</h5>
           </div>
           <div class="col-md-3"></div>
           <div class="col-md-6 col-xs-12">
             <form name="form" id="form" class="form-horizontal" enctype="multipart/form-data" method="POST" action="<?php echo base_url('dashboard/index');?>">
              
              <div class="form-group">
-               <dl id="sample" class="dropdown" style="width: 100%">
-                <dt><a href="#"><span>글로벌 판매 채널  </span></a></dt>
-                <dd>
-                  <ul>
-                    <li><a href="#"><img class="flag" src="<?php echo base_url("assets2/img/eBay Logo.png"); ?>" alt="" /><span class="value"></span></a></li>
-                                  <!-- <li><a href="#"><img class="flag" src="<?php #echo base_url("assets2/img/PNGPIX-COM-Amazon-Com-Logo-PNG-Transparent.png"); ?>" alt="" /><span class="value"></span></a></li>
-                                  <li><a href="#"><img class="flag" src="<?php #echo base_url("assets2/img/Etsy_logo_lg_rgb.png"); ?>" alt="" /><span class="value"></span></a></li> -->
-                                  
-                                </ul>
-                              </dd>
-                            </dl>
                             <span id="result"></span>
                           </div>
                           <div class="form-group channelbutton" style="display: none; margin-top: 30px;">
@@ -102,23 +91,22 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script>
 
+
+    function closeWindow() {
+      setTimeout(function() {
+        window.opener.location.href = "<?php echo base_url('dashboard/index') ?>";
+        window.close();
+      }, 3000);
+    }
+    window.onload = closeWindow();
+
+
+
      $(".dropdown img.flag").addClass("flagvisibility");
 
      $(".dropdown dt a").click(function() {
       $(".dropdown dd ul").toggle();
     });
-     
-     $(".dropdown dd ul li a").click(function() {
-      var text = $(this).html();
-      $(".dropdown dt a span").html(text);
-      $(".dropdown dd ul").hide();
-
-                var left = (screen.width/2)-(1000/2);
-                var top = (screen.height/2)-(600/2);
-                window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
-                $(".channelbutton").show();
-                //$("#result").html("Selected value is: " + getSelectedValue("sample"));
-              });
      
      function getSelectedValue(id) {
       return $("#" + id).find("dt a span.value").html();

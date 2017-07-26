@@ -28,7 +28,7 @@
 		<div class="panel panel-default" >
 			<div class="panel-heading panel-body" >
 				<div class="row" style="padding-bottom: 20px;">
-					<h4 class="text-center" style="font-size: 16.4px;">OnLabels 서비스 </h4>
+					<h4 class="text-center" style="font-size: 25px;">OnLabels 서비스 </h4>
 					<p style="font-weight: 700;" class="text-center">로그인 후 이용하세요</p>
 					
 				</div>

@@ -10,6 +10,13 @@ class Fb_Authentication extends CI_Controller
 		//Load user model
 		$this->load->model('fb_model','fb');
 		$this->load->model('user_model','user');
+        if ($_SERVER['SERVER_PORT'] == 443) {
+            if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+                $this->config->set_item('base_url','https://stg.onlabels.co.kr/');
+            else :
+                $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
+            endif; 
+        }
     }
     
     public function index(){
@@ -116,7 +123,11 @@ class Fb_Authentication extends CI_Controller
 
 		// Load login & profile view
         //$this->load->view('profile/index',$data);
-        redirect("profile/index");
+        if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+            redirect("https://stg.onlabels.co.kr/saleschannel/index");
+        else :
+            redirect("https://dev.onlabels.co.kr/saleschannel/index");
+        endif; 
     }
 
 	public function logout($showinfo = FALSE) {

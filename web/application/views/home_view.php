@@ -149,16 +149,29 @@
                 });
             }
         });
-        $.ajax({
-          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-          type : 'GET',
-          success : function(data) {
-            //console.log (data);
-            var total_order_count = $('#total_order_count').html();
-            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
-            $('#total_order_count').html(new_total_order_count);
-          }
-        });
+        <?php if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate-stg/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php else : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php endif; ?>
       });
     </script>
 </body>
