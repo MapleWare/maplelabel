@@ -1,3 +1,4 @@
+
 <?php
 
 set_time_limit(0);
@@ -6,7 +7,7 @@ require_once(dirname(__FILE__) . '/../config/AppManager.php');
 require_once(dirname(__FILE__) . '/../config/country_code.php');
 $pm = AppManager::getPM();
 
-$days = 2;
+$days = 3;
 
 $s_ol_user_id = $_REQUEST["s_ol_user_id"];
 
@@ -86,14 +87,18 @@ foreach ($sales_channel_list as $rows) {
                 $org_status = "";
                 $valid_cnt = 0;
                 $order_valid_cnt_sql = 'select count(EbayOrderDatasId) as valid_cnt from EbayOrderDetails where `OrderID`="' . $OrderID . '"';
-                //echo $order_valid ;
+                //echo $order_valid_cnt_sql ;
                 //echo "<br>";
+
                 $resultListValidCnt = $pm->fetchResult($order_valid_cnt_sql);
 
                 foreach ($resultListValidCnt as $rowsCnt) {
                     $valid_cnt = $rowsCnt['valid_cnt'];
                 }
 
+                //echo $valid_cnt;
+                //echo "<br>";
+                //echo "<br>";
 
                 if ($valid_cnt == 0) {
                     
@@ -298,12 +303,14 @@ foreach ($sales_channel_list as $rows) {
 
                     $order_when_existed = 'select * from EbayOrderDetails where `OrderID`="' . $OrderID . '"';
                     $result = $pm->fetchResult($order_when_existed);
-                    //echo empty($result);
+                    //echo $order_when_existed;
                     //echo "TEST";
 
                     foreach ($result as $rows2) {
                         $org_status = $rows2['OrderStatus'];
                     } 
+                    //echo $org_status;
+			//echo "<br>";
 
                     //foreach ($result as $rows) {
 
