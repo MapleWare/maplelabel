@@ -62,7 +62,7 @@
               <table class="table">
                 <thead>
                   <tr>
-                    <th>00월 출력 가능 라벨수는 00개 입니다</th>
+                    <th><?php echo date('m'); ?>월 출력 가능 라벨수는 <?php echo number_format($remaining_cnt); ?>개 입니다</th>
                     <th class="text-right"><img src="<?php echo base_url("assets2/img/plus.png"); ?>"/> 라벨 충전</th>
                   </tr>
                   
@@ -74,11 +74,11 @@
                         <a class="collapse_tbl" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                           <span class="fa fa-caret-down"> </span> <strong> 라벨 사용 수 </strong>
                         </a>
-                        <strong class="pull-right">00</strong>
+                        <strong class="pull-right"><?php echo $printed_count_total; ?></strong>
                         <div class="collapse in" id="collapseExample" style="padding: 10px 0px 10px 15px;">
-                          <p>eBay<strong  class="pull-right">00</strong></p>
-                          <p>Amazon<strong class="pull-right">00</strong></p>
-                          <p>Esty<strong class="pull-right">00</strong></p>
+                          <p>eBay<strong  class="pull-right"><?php echo $ebay_count; ?></strong></p>
+                          <p>Amazon<strong class="pull-right"><?php echo $amazon_count; ?></strong></p>
+                          <p>Esty<strong class="pull-right"><?php echo $esty_count; ?></strong></p>
                           
                         </div>
                       </td>
@@ -86,7 +86,7 @@
                     <tr>
                       <td colspan="2">
                       <strong> 라벨 잔여 수 </strong>
-                      <strong class="pull-right"> 00 </strong>
+                      <strong class="pull-right"> <?php echo number_format($remaining_cnt); ?> </strong>
                       </td>
                       
                     </tr>
@@ -95,7 +95,7 @@
                 <tfoot>
                   <tr>
                     <th>라벨 총 수</th>
-                    <th class="text-right">00</th>
+                    <th class="text-right"><?php echo number_format($last_value); ?></th>
                   </tr>
                 </tfoot>
               </table>
@@ -216,16 +216,30 @@
                 });
             }
         });
-        $.ajax({
-          url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id=1'); ?>',
-          type : 'GET',
-          success : function(data) {
-            //console.log (data);
-            var total_order_count = $('#total_order_count').html();
-            var new_total_order_count = parseInt(data)+parseInt(total_order_count);
-            $('#total_order_count').html(new_total_order_count);
-          }
-        });
+
+        <?php if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate-stg/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php else : ?>
+          $.ajax({
+            url  : '<?php echo base_url('data-integrate/ebay/downloadOrders.php?s_ol_user_id='.$this->session->userdata('uid')); ?>',
+            type : 'GET',
+            success : function(data) {
+              //console.log (data);
+              var total_order_count = $('#total_order_count').html();
+              var new_total_order_count = parseInt(data)+parseInt(total_order_count);
+              $('#total_order_count').html(new_total_order_count);
+            }
+          });
+        <?php endif; ?>
       });
     </script>
     <script type="text/javascript">
@@ -242,12 +256,18 @@
               type: "column",
               /*showInLegend: true,*/
               dataPoints: [
-              { legendText: "4월", y: 45, label: "4월" },
-              { legendText: "5월", y: 31, label: "5월" },
-              { legendText: "6월", y: 52, label: "6월" },
-              { legendText: "7월", y: 10, label: "7월" },
-              { legendText: "8월", y: 46, label: "8월" },
-              { legendText: "9월", y: 30, label: "9월" },
+
+              <?php foreach($graph as $row) : ?>
+                { legendText: "<?php echo $row['printed_month'] ?>월", y: <?php echo $row['count(*)'] ?>, label: "<?php echo $row['printed_month'] ?>월" },
+              <?php endforeach; ?>
+
+              // { legendText: "4월", y: 45, label: "4월" },
+              // { legendText: "5월", y: 31, label: "5월" },
+              // { legendText: "6월", y: 52, label: "6월" },
+              // { legendText: "7월", y: 10, label: "7월" },
+              // { legendText: "8월", y: 46, label: "8월" },
+              // { legendText: "9월", y: 30, label: "9월" },
+
               ]
             }]
           });

@@ -19,10 +19,11 @@ class Printlist_model extends CI_Model
 		$insert_id = $this->db->insert_id();
 		if ($insert_id>0) 
 		{
-			$this->db->set(array('print_list_id'=>$insert_id,
-								 'start_point'=>$values2['start_point'],));
-			$this->db->insert('print_log');
-			$this->db->insert_id();
+			$this->deduct_subscript();
+			// $this->db->set(array('print_list_id'=>$insert_id,
+			// 					 'start_point'=>$values2['start_point'],));
+			// $this->db->insert('print_log');
+			// $this->db->insert_id();
 			return $insert_id;
 		}
 		return false;
@@ -33,6 +34,20 @@ class Printlist_model extends CI_Model
 		$this->db->set($values);
 		$this->db->where('id', $id);
 		$this->db->update('print_list');
+		if ($this->db->affected_rows())
+		{
+			$this->deduct_subscript();
+			return true;
+		}
+		return false;
+	}
+
+	public function deduct_subscript()
+	{
+		$this->db->set('remaining_cnt', 'remaining_cnt-1', FALSE);
+		$this->db->set('status', 'active');
+		$this->db->where('ol_user_id', $this->session->userdata('uid'));
+		$this->db->update('subscript_list');
 		if ($this->db->affected_rows())
 			return true;
 		return false;

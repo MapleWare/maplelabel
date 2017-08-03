@@ -9,6 +9,14 @@ class Login extends CI_Controller
 		$this->load->database();
 		$this->load->model('user_model','user');
 		$this->load->model('saleschannel_model', 'saleschannel');
+
+		if ($_SERVER['SERVER_PORT'] == 443) {
+			if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+	            $this->config->set_item('base_url','https://stg.onlabels.co.kr/');
+	        else :
+	            $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
+	        endif; 
+		}
 	}
     public function index()
     {
@@ -34,20 +42,65 @@ class Login extends CI_Controller
 			$uresult = $this->user->get_user($email, $password);
 			if (count($uresult) > 0)
 			{
-				// set session
-				$sess_data = array('login' => TRUE, 'uname' => $uresult[0]->username, 'uid' => $uresult[0]->id);
-				$this->session->set_userdata($sess_data);
-				// redirect("profile/index");
-				$user_channel = $this->saleschannel->get_user_channel($uresult[0]->id);
+				$isverified = $this->user->is_verified(md5($email));
+
+				if ($isverified)
+				{
+					// set session
+					$sess_data = array('login' => TRUE, 'uname' => $uresult[0]->username, 'uid' => $uresult[0]->id);
+					$this->session->set_userdata($sess_data);
+					// redirect("profile/index");
+					$user_channel = $this->saleschannel->get_user_channel($uresult[0]->id);
+					
+					if (empty($user_channel['user_token'])) 
+						//redirect("saleschannel/index");
+
+						if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+							redirect("https://stg.onlabels.co.kr/saleschannel/index");
+						else :
+							redirect("https://dev.onlabels.co.kr/saleschannel/index");
+						endif; 
+					else redirect("dashboard/index");	
+				}
+				else
+				{
+					$this->session->set_flashdata('msg', '<div class="alert alert-danger text-center">Please verify your account first!</div>');
+					redirect('login/index');
+				}
 				
-				if (empty($user_channel['user_token'])) redirect("saleschannel/index");
-				else redirect("dashboard/index");
 			}
 			else
 			{
-				$this->session->set_flashdata('msg', '<div class="alert alert-danger text-center">Wrong Email-ID or Password!</div>');
+				// $this->session->set_flashdata('msg', '<div class="alert alert-danger text-center">이메일이 이미 등록되어 있습니다!</div>');
+				$this->session->set_flashdata('msg', '<div class="alert alert-danger text-center">아이디 비밀번호가 일치하지 않습니다!</div>');
 				redirect('login/index');
 			}
 		}
     }
+
+
+
+	function verify($hash=NULL)
+	{
+		$isverified = $this->user->is_verified($hash);
+
+		if ($isverified == false)
+		{
+			if ($this->user->verify_email($hash))
+			{
+				$this->session->set_flashdata('msg','<div class="alert alert-success text-center">Your email address is successfully verified! You may now login to your account.</div>');
+				redirect('login/index');
+			}
+			else
+			{
+				$this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Sorry, there was an error verifying your email address!</div>');
+				redirect('login/index');
+			}
+		}
+		else
+		{
+			$this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Your account is already verified!</div>');
+			redirect('login/index');
+		}
+	}
 }

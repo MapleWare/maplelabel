@@ -13,6 +13,8 @@ class Order_model extends CI_Model
         $this->load->database();
     }
 
+
+
     public function get_specific_order($id)
     {
     	$this->db->select('ord.id,
@@ -54,9 +56,9 @@ class Order_model extends CI_Model
 	    				   shipitem.item_price_currency,
 	    				   msg_template.seller_msg');
         $this->db->from($this->table);
-        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
-        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
-        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
+        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'left');
+        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'left');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'left');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
 
         $this->db->join('print_list printlist', 'ord.id = printlist.sales_order_id', 'left');
@@ -131,17 +133,17 @@ class Order_model extends CI_Model
 	    				   printlist.is_print_comment,
 	    				   printlog.start_point');
         $this->db->from($this->table);
-        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
-        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
-        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
+        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'left');
+        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'left');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'left');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
 
 
         $this->db->join('print_list printlist', 'ord.id = printlist.sales_order_id', 'left');
         $this->db->join('print_log printlog', 'printlist.id = printlog.print_list_id', 'left');
 
-		$this->db->where('ord.ol_user_id', 1);
-		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
+		$this->db->where('ord.ol_user_id', $this->session->userdata('uid'));
+		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -180 day ) and NOW()";
 		if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
 		$this->db->where($where);
 
@@ -200,7 +202,7 @@ class Order_model extends CI_Model
         $this->db->limit($_POST['length'], $_POST['start']);
 		// print_r($_POST);die;
         $query = $this->db->get();
-        //echo $this->db->last_query();
+        // echo $this->db->last_query();
         return $query->result();
     }
 

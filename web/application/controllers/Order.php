@@ -1,4 +1,5 @@
 <?php
+
 class Order extends CI_Controller
 {
 	public function __construct()
@@ -13,25 +14,24 @@ class Order extends CI_Controller
 		$this->load->model('printlist_model', 'print_list');
 		$this->load->model('seller_msg_model', 'seller_msg');
 		$this->load->helper('encrypter');
+		if ($_SERVER['SERVER_PORT'] == 443) {
+			if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') : 
+	            $this->config->set_item('base_url','https://stg.onlabels.co.kr/');
+	        else :
+	            $this->config->set_item('base_url','https://dev.onlabels.co.kr/');
+	        endif; 
+		}
 	}
 	
 	function index()
 	{
 		if ($this->session->userdata('uid') !== null)
 		{
-			// $RuName = "Davinci_Tech-DavinciT-DevDAV-qvqch";
-			// $siteID = 0;
-			// get_ebay_session($siteID,,$RuName);
-			// $ebay_session = $this->session->userdata('ebay_session');
-			// $data['ebay_link'] = 'https://signin.sandbox.ebay.com/ws/eBayISAPI.dll?SignIn&RuName='.$RuName.'&SessID='.$ebay_session;
-
-			if ($this->session->userdata('ebay_session') !== NULL) 
-				save_user_token(0,'');
-
+			if ($this->session->userdata('ebay_session') !== NULL) save_user_token(0,'');
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			$data['print_labels'] = $this->print_label->get_print_labels();
+			$data['print_labels'] = $this->print_label->get_info($this->session->userdata('uid')); //$this->print_label->get_print_labels();
 			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
 
 			$data['title'] = 'Order Management'; 
@@ -73,6 +73,8 @@ class Order extends CI_Controller
 		{
 			$order = $this->orders->get_specific_order($order_ids[$i]);
 			$this->orders->edit(array('print_status'=>'postprint'),$order_ids[$i]);
+
+
 			$print_list_maxid = ($this->print_list->getmaxid()+1);
 			$printlist = array('id'=>$print_list_maxid,
 							   'pdf_file'=>$dimension,
@@ -86,6 +88,9 @@ class Order extends CI_Controller
 							   'is_print_comment'=>$is_print_comment);
 			$printlog = array('start_point'=>$startpoint);
 			$check_print_list = $this->print_list->get_order($order['id']);
+
+
+			
 			if ($check_print_list == 0)
 			{
 				$printlist['print_date'] = date('Y-m-d H:i:s');
@@ -115,17 +120,48 @@ class Order extends CI_Controller
 	{
 		$orientation = 'L';
 		if ($dimension==2 || $dimension==4 || $dimension==5) $orientation = 'P';
-		
-		$pdf = new $this->fpdflibrary($orientation,'mm','A4');
 
+		// switch ($dimension) {
+		// 	case 1 :
+		// 		$papersize = array(132,190);
+		// 		break;
+		// 	case 2 :
+		// 		$papersize = array(95,135);
+		// 		break;
+		// 	default:
+		// 	$papersize = 'A4';		
+		// 		break;
+		// }
+
+		$pdf = new fpdflibrary($orientation, 'mm', 'A4');
+
+		$options['uid'] = $this->session->userdata('uid');
+		$options['dimension'] = $dimension;
+		$options['order_ids'] = rand(1, 999999);
 		switch ($dimension) {
-			case 1: $this->fpdflibrary->pdf1x1($pdf, $orders, $options); break;
-			case 2: $this->fpdflibrary->pdf1x2($pdf, $orders, $options); break;
-			case 3: $this->fpdflibrary->pdf2x2($pdf, $orders, $options); break;
-			case 4: $this->fpdflibrary->pdf3xn($pdf, $orders, $options, 7); break;
-			case 5: $this->fpdflibrary->pdf3xn($pdf, $orders, $options, 8); break;
+			case 1: 
+				$this->fpdflibrary->pdf1x1fromto($pdf, $orders, $options);
+				// $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables.pdf','I');
+				// $this->fpdflibrary->pdf1x1fromto($pdf, $orders, $options, true);
+			break;
+			case 2: 
+				$this->fpdflibrary->pdf1x2fromto($pdf, $orders, $options); 
+				// $this->fpdflibrary->pdf1x2($pdf, $orders, $options); 
+				// $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables.pdf','I');
+			break;
+			case 3: 
+				$this->fpdflibrary->pdf2x2fromto($pdf, $orders, $options); 
+				// $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables.pdf','I');
+			break;
+			case 4: 
+				$this->fpdflibrary->pdf3xn($pdf, $orders, $options, 7); 
+				$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables.pdf','I');
+			break;
+			case 5: 
+				$this->fpdflibrary->pdf3xn($pdf, $orders, $options, 8); 
+				$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables.pdf','I');
+			break;
 		}
-		$pdf->Output('onlables.pdf','I');
 	}
 
 	public function order_list($where = 'preprint')
@@ -136,9 +172,8 @@ class Order extends CI_Controller
     			$query = "print_status = '{$where}'";
     			break;
     		case 'beforedelivery':
-    		case 'waitingforfeedback':
+    		case 'shipped':
     			$query = "delivery_status = '{$where}'";
-    			
     			break;
     	}
         $list = $this->orders->get_orders($query);
@@ -159,8 +194,9 @@ class Order extends CI_Controller
 	        $row = array();
 	        //$row[] = '<input type="checkbox" value="'.$orders->sc_ordered_id.'" class="form-group tick">';
 	        $row[] = '<input type="checkbox" id="'.$no.'" value="'.$orders->sc_ordered_id.'" class="table_order_check form-group tick">';
-	        // $row[] = $orders->sc_market=='ebay'?'<b>1-'.$cnt_ebay.'</b>':'<b>2-'.$cnt_amazon.'</b>'; 
-	        $row[] = '<b>'.$orders->id.'</b>';
+	        //$row[] = $orders->sc_market=='ebay'?'<b>1-'.$cnt_ebay.'</b>':'<b>2-'.$cnt_amazon.'</b>'; 
+	        $row[] = $orders->sc_market=='ebay'?'<b>1-'.$orders->id.'</b>':'<b>2-'.$orders->id.'</b>'; 
+	        // $row[] = '<b>'.$orders->id.'</b>';
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->ordered_date));
 	        
 	        $row[] = $orders->sc_market;
