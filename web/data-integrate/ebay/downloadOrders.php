@@ -83,15 +83,19 @@ foreach ($sales_channel_list as $rows) {
                 $BuyerUserID = addslashes((string) $orders->BuyerUserID);
 
 
-                $order_valid = 'select * from EbayOrderDetails where `OrderID`="' . $OrderID . '"';
+                $org_status = "";
+                $valid_cnt = 0;
+                $order_valid_cnt_sql = 'select count(EbayOrderDatasId) as valid_cnt from EbayOrderDetails where `OrderID`="' . $OrderID . '"';
                 //echo $order_valid ;
                 //echo "<br>";
-                $result = $pm->fetchResult($order_valid);
-                //echo empty($result);
-                //echo "TEST";
-                $org_status = "";
+                $resultListValidCnt = $pm->fetchResult($order_valid_cnt_sql);
 
-                if (empty($result)) {
+                foreach ($resultListValidCnt as $rowsCnt) {
+                    $valid_cnt = $rowsCnt['valid_cnt'];
+                }
+
+
+                if ($valid_cnt == 0) {
                     
                     $sql = "REPLACE INTO `EbayOrderDetails` (`OrderID`, `OrderStatus`, `AdjustmentAmount`, `AmountPaid`, `AmountSaved`, `CreatedTime`, `PaymentMethods`,"
                             . " `SellerEmail`, `Name`, `Street1`, `Street2`, `CityName`, `StateOrProvince`,`CountryName`, `Phone`, `PostalCode`,`ExternalAddressID`,"
@@ -292,9 +296,14 @@ foreach ($sales_channel_list as $rows) {
 
                 } else { // existing record
 
-                        foreach ($result as $rows2) {
-                            $org_status = $rows2['OrderStatus'];
-                        } 
+                    $order_when_existed = 'select * from EbayOrderDetails where `OrderID`="' . $OrderID . '"';
+                    $result = $pm->fetchResult($order_when_existed);
+                    //echo empty($result);
+                    //echo "TEST";
+
+                    foreach ($result as $rows2) {
+                        $org_status = $rows2['OrderStatus'];
+                    } 
 
                     //foreach ($result as $rows) {
 
