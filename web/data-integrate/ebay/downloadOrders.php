@@ -189,7 +189,7 @@ foreach ($sales_channel_list as $rows) {
                             ." stateorprovice, "
                             ." companyphone "
                             ." FROM ol_company "
-                            ." WHERE ol_user_id =  ".$s_ol_user_id;
+                            ." WHERE ol_user_id =  ".$ol_user_id;
                 //echo $sql ;
                 //echo "<br>";
 
@@ -401,7 +401,7 @@ foreach ($sales_channel_list as $rows) {
                                     ." stateorprovice, "
                                     ." companyphone "
                                     ." FROM ol_company "
-                                    ." WHERE ol_user_id =  ".$s_ol_user_id;
+                                    ." WHERE ol_user_id =  ".$ol_user_id;
                         //echo $sql ;
                         //echo "<br>";
 
