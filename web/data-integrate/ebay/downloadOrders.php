@@ -288,7 +288,7 @@ foreach ($sales_channel_list as $rows) {
 
                         //echo $sql_item;
                         
-                        $sql = "UPDATE sales_order SET order_title = '".$Title."', order_sync_update_id = 0, paid_item_cnt = ".$paid_item_cnt.", feedback_point = 0 where sc_ordered_id = '".$OrderID."'";
+                        $sql = "UPDATE sales_order so SET so.order_title = '".$Title."', so.order_sync_update_id = 0, paid_item_cnt = ( select sum( item_count ) from sales_order_ship_item sosi where so.id = sosi.sales_order_id ), so.feedback_point = 0 where so.sc_ordered_id = '".$OrderID."'";
 
                 //echo $sql ;
                 //echo "<br>";
@@ -507,7 +507,7 @@ foreach ($sales_channel_list as $rows) {
 
                                 //echo $sql_item;
                                 
-                                $sql = "UPDATE sales_order SET order_title = '".$Title."', order_sync_update_id = 0, paid_item_cnt = ".$paid_item_cnt.", feedback_point = 0 where sc_ordered_id = '".$OrderID."'";
+                                $sql = "UPDATE sales_order so SET so.order_title = '".$Title."', so.order_sync_update_id = 0, paid_item_cnt = ( select sum( item_count ) from sales_order_ship_item sosi where so.id = sosi.sales_order_id ), so.feedback_point = 0 where so.sc_ordered_id = '".$OrderID."'";
 
                         //echo $sql ;
                         //echo "<br>";
