@@ -1,4 +1,3 @@
-
 <?php
 
 set_time_limit(0);
@@ -73,6 +72,9 @@ foreach ($sales_channel_list as $rows) {
                 $StateOrProvince = addslashes((string) $orders->ShippingAddress->StateOrProvince);
                 $CountryName = addslashes((string) $orders->ShippingAddress->CountryName);
                 $Phone = addslashes((string) $orders->ShippingAddress->Phone);
+		if ( $Phone == "Invalid Request" ) 
+			$Phone = "";
+
                 $PostalCode = addslashes((string) $orders->ShippingAddress->PostalCode);
                 $ExternalAddressID = addslashes((string) $orders->ShippingAddress->ExternalAddressID);
                 $ShippingService = addslashes((string) $orders->ShippingServiceSelected->ShippingService);
@@ -228,6 +230,10 @@ foreach ($sales_channel_list as $rows) {
                         $Title = addslashes((string) $item->Item->Title);
                         $ConditionID = addslashes((string) $item->Item->ConditionID);
                         $ConditionDisplayName = addslashes((string) $item->Item->ConditionDisplayName);
+
+			if ( $BuyerEmail == "Invalid Request" ) 
+				$BuyerEmail = "";
+
                         $sql_item = "INSERT INTO `EbayItemDetails` (`itemOrderDetailsId`, `ItemID`, `Site`, `Title`,`ConditionID`, `ConditionDisplayName`, "
                                 . "`BuyerEmail`, `UserFirstName`,`UserLastName`, `SellingManagerSalesRecordNumber`,`CreatedDate`,`QuantityPurchased`,"
                                 . "`PaymentHoldStatus`,`TransactionID`,`TransactionPrice`,`TransactionSiteID`,`Platform`,`OrderLineItemID`,`GuaranteedShipping`)";
@@ -288,7 +294,8 @@ foreach ($sales_channel_list as $rows) {
 
                         //echo $sql_item;
                         
-                        $sql = "UPDATE sales_order so SET so.order_title = '".$Title."', so.order_sync_update_id = 0, paid_item_cnt = ( select sum( item_count ) from sales_order_ship_item sosi where so.id = sosi.sales_order_id ), so.feedback_point = 0 where so.sc_ordered_id = '".$OrderID."'";
+			$sql = "UPDATE sales_order so SET so.order_title = '".$Title."', so.order_sync_update_id = 0, paid_item_cnt = ( select sum( item_count ) from sales_order_ship_item sosi where so.id = sosi.sales_order_id ), so.feedback_point = 0 where so.sc_ordered_id = '".$OrderID."'";
+
 
                 //echo $sql ;
                 //echo "<br>";
@@ -447,6 +454,10 @@ foreach ($sales_channel_list as $rows) {
                                 $Title = addslashes((string) $item->Item->Title);
                                 $ConditionID = addslashes((string) $item->Item->ConditionID);
                                 $ConditionDisplayName = addslashes((string) $item->Item->ConditionDisplayName);
+
+				if ( $BuyerEmail == "Invalid Request" ) 
+					$BuyerEmail = "";
+
                                 $sql_item = "INSERT INTO `EbayItemDetails` (`itemOrderDetailsId`, `ItemID`, `Site`, `Title`,`ConditionID`, `ConditionDisplayName`, "
                                         . "`BuyerEmail`, `UserFirstName`,`UserLastName`, `SellingManagerSalesRecordNumber`,`CreatedDate`,`QuantityPurchased`,"
                                         . "`PaymentHoldStatus`,`TransactionID`,`TransactionPrice`,`TransactionSiteID`,`Platform`,`OrderLineItemID`,`GuaranteedShipping`)";
@@ -581,5 +592,46 @@ foreach ($sales_order_list_for_feedback as $rows) {
 //        echo "Yes";
     }
 }
+
+
+
+
+// Shipping status ( delivery_status ) update
+$sql_list_ship = "SELECT sc.user_token, so.id, so.delivery_status, so.sc_ordered_id  "
+                ." FROM sales_order so inner join sales_channel sc on so.sales_channel_id = sc.id "
+                ." WHERE so.delivery_status = 'beforedelivery' ";
+if ($s_ol_user_id != "" && $s_ol_user_id != "0" ) 
+    $sql_list_ship = $sql_list_ship." and so.ol_user_id = '".$s_ol_user_id."' ";
+$sales_list_ship = $pm->fetchResult($sql_list_ship);
+
+foreach ($sales_list_ship as $rows_ship) {
+
+        $user_token_ship = $rows_ship['user_token'];
+        $sales_order_id_ship = $rows_ship['id'];
+        $delivery_status_ship = $rows_ship['delivery_status'];
+        $sc_ordered_id_ship = $rows_ship['sc_ordered_id'];
+
+        $responseShip = getshipping($sc_ordered_id_ship, $user_token_ship);
+
+        $xmlShip = simplexml_load_string($responseShip);
+        $ordersfullShip = $xmlShip->OrderArray->Order;
+
+        if (isset($ordersfullShip)) {
+                foreach ($ordersfullShip as $ordersShip) {
+                        $OrderID = addslashes((string) $ordersShip->OrderID);
+                        $ShippedTime = addslashes((string) $ordersShip->ShippedTime);
+                }
+        }
+
+        if ( strlen($ShippedTime) > 18 ) {
+                $sql = "UPDATE sales_order SET delivery_status = 'shipped' where id = '".$sales_order_id_ship."'";
+                $pm->executeQuery($sql);
+        }
+
+}
+
+
+
+
 
 ?>

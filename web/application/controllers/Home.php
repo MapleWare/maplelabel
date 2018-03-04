@@ -25,7 +25,8 @@ class Home extends CI_Controller
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 		}
-		$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+		// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+		$data['total_orders'] = $this->orders->count_all("",array(),1);
 		
 		$data['title'] = 'Home'; 
 		$this->load->view('header', $data);

@@ -120,4 +120,25 @@ function getItemsAwaitingFeedbackRequest($page, $user_token) {
 }
 
 
+function getshipping($orderId, $user_token) {
+    $site_id = 15;
+    $post_data = '<?xml version="1.0" encoding="utf-8"?>
+					<GetOrdersRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+					  <RequesterCredentials>
+					    <eBayAuthToken>' . $user_token . '</eBayAuthToken>
+					  </RequesterCredentials>
+						<ErrorLanguage>en_US</ErrorLanguage>
+						<WarningLevel>High</WarningLevel>
+					  <OrderIDArray>
+					      <!--Enter the OrderIDs (from-to) -->
+					    <OrderID>'.$orderId.'</OrderID>
+					  </OrderIDArray>
+					  <OrderRole>Seller</OrderRole>
+					</GetOrdersRequest>';
+
+
+    $body = callapi($post_data, "GetOrders", $site_id);
+    return $body;
+}
+
 ?>

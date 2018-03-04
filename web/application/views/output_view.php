@@ -1,15 +1,15 @@
       <style>
       table#table td:nth-child(1) {
-        width: 20%;
-      }
-      table#table td:nth-child(2) {
         width: 25%;
       }
-      table#table td:nth-child(3) {
+      table#table td:nth-child(2) {
         width: 15%;
       }
+      table#table td:nth-child(3) {
+        width: 10%;
+      }
       table#table td:nth-child(4) {
-        width: 45%;
+        width: 40%;
       }
 
       #info_epost {
@@ -60,7 +60,7 @@
                   <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
 
                     <div class="form-group">
-                      <label for="exampleInputEmail2">판매채널 </label>
+                      <!-- <label for="exampleInputEmail2">판매채널 </label> -->
                       <div class='input-group date' id='datetimepicker5'>
                         <input type='text' id="from_date" class="form-control  text-center" />
                         <span class="input-group-addon" style="background-color:#969393;">
@@ -176,8 +176,8 @@
                 </table>
                 <br>
                 <div class="form-group " style="width: 100%; text-align: right; margin: 0px auto; ">
-                 <button class="btn btn-lg btn-primary"   style=" ">다운로드</button>
-                 <button class="btn btn-lg btn-primary">출력</button>
+                 <button class="btn btn-lg btn-primary epostgenerate"   style=" ">다운로드</button>
+                 <button class="btn btn-lg btn-primary epostgenerate">출력</button>
                  <div class="clearfix"></div>
                </div>
              </div>
@@ -216,7 +216,7 @@
         //datatables
         table = $('#table').DataTable({ 
           "sDom": '<t><"#info"lip>',
-          "lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+          "lengthMenu": [[5, 10, 15, 100], [5, 10, 20, "All"]],
           "processing": true, 
           "serverSide": true, 
           "order": [],
@@ -239,7 +239,7 @@
 
         table_epost = $('#table_epost').DataTable({ 
           "sDom": '<t><"#info_epost"lip>',
-          "lengthMenu": [[5, 10, 15, -1], [5, 10, 20, "All"]],
+          "lengthMenu": [[5, 10, 15, 100], [5, 10, 20, "All"]],
           "processing": true, 
           "serverSide": true, 
           "order": [],
@@ -265,6 +265,10 @@
           return false;
         });
 
+      });
+
+      $('body').on('click','.epostgenerate', function(){
+        window.open("<?php echo base_url('/order/epost/'); ?>" + $('#epost').val(), "_blank");
       });
 
       $('body').on('change','#reprocess', function() {
@@ -301,6 +305,13 @@
           //table.draw();
           table_epost.draw();
           $('#table_epost').fadeOut('fast').fadeIn('slow');
+
+
+          if ($("#table_epost").length) {
+            // $("#table_epost").DataTable();
+          } else {
+            $('.epostgenerate').hide();
+          }
         }
         
       });

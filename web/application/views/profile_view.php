@@ -13,11 +13,11 @@
     text-align: left;
   }
 
-  .text-danger-company {
+  .text-danger-company, .text-danger-user, .text-danger-pass {
     color: #a94442;
     font-size: 11px;
   }
-  .text-danger-company p {
+  .text-danger-company p, .text-danger-user p, .text-danger-pass p {
     margin: 0;
   }
   .dropdown-toggle,
@@ -70,39 +70,98 @@
 
           <div class="tab-content clearfix">
             <div class="tab-pane" id="1b">
-              <div class="col-md-2">
+            <br>
+              <!-- <div class="col-md-2">
                 <h4 style="padding:2px 10px 5px 10px;">이름</h4>
                 <h4 style="padding:2px 10px 5px 10px;">회사명</h4>
                 <h4 style="padding:2px 10px 5px 10px;">이메일</h4>
                 <h4 style="padding:2px 10px 5px 10px;">전화번호</h4>
-              </div>
+              </div> -->
+              <?php $attributes = array("class"=> "form-horizontal", "name" => "userform", "id"=>"form");
+              echo form_open("profile/index/user", $attributes);?>
               <div class="col-md-10">
-              <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:20px 0px 0px 0px;"><?php echo $uname; ?></h4>
+                <?php 
+                if ($this->session->userdata('user_success')) :
+                  echo '<div class="msg-company alert alert-success text-center">User details has been updated</div>';
+                endif;
+                ?>
+                <div class="form-group">
+                    <label for="inputEmail" class="control-label col-xs-2">이름</label>
+                    <div class="col-xs-10">
+                        <input type="text" value="<?php echo $uname; ?>" name="username" class="form-control" id="" placeholder="이름">
+                        <span class="text-danger-user"><?php echo form_error('username'); ?></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="control-label col-xs-2">회사명</label>
+                    <div class="col-xs-10">
+                        <input type="text" value="<?php echo $user[0]->companyname; ?>" name="companyname1" class="form-control" id="" placeholder="회사명">
+                        <span class="text-danger-user"><?php echo form_error('companyname1'); ?></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="control-label col-xs-2">이메일</label>
+                    <div class="col-xs-10">
+                        <input type="text" readonly value="<?php echo $uemail; ?>" name="email" class="form-control" id="" placeholder="이메일">
+                        <span class="text-danger-user"><?php echo form_error('email'); ?></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="control-label col-xs-2">전화번호</label>
+                    <div class="col-xs-10">
+                        <input type="text" value="<?php echo $user[0]->companyphone; ?>" name="companyphone" class="form-control" id="" placeholder="전화번호">
+                        <span class="text-danger-user"><?php echo form_error('companyphone'); ?></span>
+                    </div>
+                </div>
+                <!-- <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:20px 0px 0px 0px;"><?php echo $uname; ?></h4>
                 <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;"> - </h4>
                 <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;"><?php echo $uemail; ?></h4>
-                <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px;margin:15px 0px 20px 0px;"> - </h4>
+                <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px;margin:15px 0px 20px 0px;"> - </h4> -->
                 <button type="submit" href="#" class=" btn btn-primary pull-right" style="">
                   업데이트
                 </button>
-                <button type="submit" href="#" class=" btn btn-primary pull-right" style="margin-right:10px; background-color:#3c3a3a;">
+                <button type="submit" name="user_update" class="btn btn-primary pull-right" style="margin-right:10px; background-color:#3c3a3a;">
                   &nbsp&nbsp&nbsp 취소 &nbsp&nbsp
                 </button>
               </div>
+              </form>
             </div>
             <div class="tab-pane" id="2b">
-                <div class="col-md-2">
-                  <h4 style="padding:2px 0px 5px 0px;">현재비밀번호 </h4>
-                  <h4 style="padding:2px 0px 5px 0px;">신규비밀번호</h4>
-                  <h4 style="padding:2px 0px 5px 0px; margin-right:-20px;">비밀번호재입력</h4>
-                </div>
+            <br>
+                <?php $attributes = array("class"=> "form-horizontal", "name" => "passform", "id"=>"form");
+                echo form_open("profile/index/pass", $attributes);?>
                 <div class="col-md-10">
-                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:20px 0px 0px 0px;">현재비밀번호를 입력하세요</h4>
-                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 0px 0px;">대소문자 및 특수 문자를 포함한 8자리 이상으로 입력하세요 </h4>
-                  <h4 style="font-weight: 200; background-color:#e3e3e3; padding:10px; margin:15px 0px 20px 0px;">새로운 비밀번호를 다시 입력하세요</h4>
+                  <?php 
+                  if ($this->session->userdata('pass_success')) :
+                    echo '<div class="msg-company alert alert-success text-center">Password has been updated</div>';
+                  endif;
+                  ?>
+                  <div class="form-group">
+                      <label for="inputEmail" class="control-label col-xs-2">현재비밀번호</label>
+                      <div class="col-xs-10">
+                          <input type="text" value="" name="oldpass" class="form-control" id="" placeholder="현재비밀번호를 입력하세요">
+                          <span class="text-danger-pass"><?php echo form_error('oldpass'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="inputEmail" class="control-label col-xs-2">신규비밀번호</label>
+                      <div class="col-xs-10">
+                          <input type="text" value="" name="newpass" class="form-control" id="" placeholder="대소문자 및 특수 문자를 포함한 8자리 이상으로 입력하세요">
+                          <span class="text-danger-pass"><?php echo form_error('newpass'); ?></span>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="inputEmail" class="control-label col-xs-2">비밀번호재입력</label>
+                      <div class="col-xs-10">
+                          <input type="text" value="" name="renewpass" class="form-control" id="" placeholder="새로운 비밀번호를 다 입력하세요">
+                          <span class="text-danger-pass"><?php echo form_error('renewpass'); ?></span>
+                      </div>
+                  </div>
                   <button type="submit" href="#" class=" btn btn-primary pull-right" style="">
                     업데이트
                   </button>
                 </div>
+                </form>
             </div>
 
             <div class="tab-pane" id="3b">
@@ -115,7 +174,7 @@
                 endif;
                 ?>
                 <?php $attributes = array("class"=> "form-horizontal", "name" => "companyform", "id"=>"form");
-          echo form_open("profile/index", $attributes);?>
+          echo form_open("profile/index/company", $attributes);?>
                   <div class="form-group">
                       <label for="inputEmail" class="control-label col-xs-2">회사 이름</label>
                       <div class="col-xs-8">
@@ -210,35 +269,44 @@
     $(document).ready(function() {
       $('#basic').flagStrap();
       var iscompany_error = false;
+      var isuser_error = false;
+      var ispass_error = false;
+
       $('body').find('.text-danger-company').each(function(){
-        if ($(this).html() != "") {
-          iscompany_error = true;
-          return false;
-        }
+        if ($(this).html() != "") { iscompany_error = true; return false; }
       });
 
+      $('body').find('.text-danger-user').each(function(){
+        if ($(this).html() != "") { isuser_error = true; return false; }
+      });
+
+      $('body').find('.text-danger-pass').each(function(){
+        if ($(this).html() != "") { ispass_error = true; return false; }
+      });
+
+      // console.log ('isuser_error ' + isuser_error);
+      // console.log ('iscompany_error ' + iscompany_error);
       //console.log ($('body').find('.msg-company').html());
 
-       <?php if ($this->session->userdata('company_success')) : 
-          $this->session->unset_userdata('company_success'); ?>
-          iscompany_error = true;
-        <?php endif; ?>
-      if (iscompany_error) {
+      <?php if ($this->session->userdata('user_success')) : 
+      $this->session->unset_userdata('user_success'); ?>
+      isuser_error = true;
+      <?php endif; ?>
 
-        $('.nav-pills li:nth-child(1), #1b').removeClass('active');
-        $('.nav-pills li:nth-child(3), #3b').addClass('active');
+      <?php if ($this->session->userdata('company_success')) : 
+      $this->session->unset_userdata('company_success'); ?>
+      iscompany_error = true;
+      <?php endif; ?>
 
-        //$('#1b').fadeOut('fast');
-        //$('#3b').fadeIn('slow');
-        // setTimeout(function(){
-        //   $('.text-danger-company').fadeOut('slow').html("");
-        // }, 2000)
-      }
-      else
-      { 
-        $('.nav-pills li:nth-child(3), #3b').removeClass('active');
-        $('.nav-pills li:nth-child(1), #1b').addClass('active');
-      }
+      <?php if ($this->session->userdata('pass_success')) : 
+      $this->session->unset_userdata('pass_success'); ?>
+      ispass_error = true;
+      <?php endif; ?>
+      
+      if (iscompany_error) $('.nav-pills li:nth-child(3), #3b').addClass('active');
+      else if (ispass_error) $('.nav-pills li:nth-child(2), #2b').addClass('active');
+      else $('.nav-pills li:nth-child(1), #1b').addClass('active');
+
     });
 
     $('body').on('click','#refreshorders', function() {

@@ -15,7 +15,8 @@
     <h3></h3>
     <ul  class="nav nav-pills nav-orders">
      <li class="active">
-      <a  href="#1b" data-toggle="tab">전체(<span id="total_order_count_sub"><?php echo $total_orders; ?></span>)</a>
+      <a  href="#1b" data-toggle="tab">전체</a>
+      <!-- <a  href="#1b" data-toggle="tab">전체(<span id="total_order_count_sub"><?php #echo $total_orders; ?></span>)</a> -->
     </li>
     <li>
       <a href="#2b" data-toggle="tab">결제완료(배송전)</a>
@@ -33,43 +34,43 @@
       <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
        <div class="form-group">
         <label for="exampleInputName2">기간 </label>
-        <select class="form-control" id="exampleInputName2" style="width: 80px;">
+        <select class="form-control" id="daterange1" style="width: 80px;">
+        <option class="option-11" value="0">All </option>
          <option class="option-11" value="7">7일 </option>
          <option class="option-11" value="15">15일 </option>
          <option class="option-11" value="30">30일 </option>
          <option class="option-11" value="60">60일 </option>
          <option class="option-11" value="90">90일 </option>
-         <option class="option-11" value="">All </option>
        </select>
      </div>
      <div class="form-group">
       <label for="exampleInputEmail2">판매채널 </label>
       <select class="form-control" id="salechannel"  style="width: 120px;">
        <option class="option-22">eBay </option>
-       <option class="option-22">Amazon </option>
-       <option class="option-22">Etsy </option>
+       <!-- <option class="option-22">Amazon </option>
+       <option class="option-22">Etsy </option> -->
      </select>
    </div>
    <div class="form-group">
     <label for="exampleInputEmail2">정렬 순 </label>
-    <select class="form-control" id="exampleInputName2"  style="width: 150px;">
-     <option class="option-33">최신 주문 </option>
-     <option class="option-33">오래된 주문 </option>
+    <select class="form-control" id="table_main_sort" style="width: 150px;">
+     <option class="option-33" value="desc">최신 주문 </option>
+     <option class="option-33" value="asc">오래된 주문 </option>
    </select>
  </div>
- <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+ <!-- <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button> -->
 </form>
 <div class="table-responsive">
  <table class="table" id="table" >
   <thead>
    <tr>
     <th width="10px"><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-    <th>일련번호</th>
-    <th>주문일자</th>
-    <th>판매채널</th>
-    <th>주문내역</th>
-    <th>주문자ID</th>
-    <th>진행현황</th>
+    <th style="width: 70px;">일련번호</th>
+    <th style="width: 120px;">주문일자</th>
+    <th style="width: 80px;">판매채널</th>
+    <th style="width: 150px;">주문내역</th>
+    <th style="width: 120px;">주문자ID</th>
+    <th style="width: 80px;">진행현황</th>
   </tr>
 </thead>
 <tbody>
@@ -147,43 +148,44 @@
             <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
              <div class="form-group">
               <label for="exampleInputName2">기간 </label>
-              <select class="form-control" id="exampleInputName2" style="width: 80px;">
-               <option class="option-11" value="7">7일 </option>
+              <select class="form-control" id="daterange2" style="width: 80px;">
+                <option class="option-11" value="0">All </option>
+               <option class="option-11"  value="7">7일 </option>
                <option class="option-11" value="15">15일 </option>
                <option class="option-11" value="30">30일 </option>
                <option class="option-11" value="60">60일 </option>
                <option class="option-11" value="90">90일 </option>
-               <option class="option-11" value="">All </option>
+               
              </select>
            </div>
            <div class="form-group">
             <label for="exampleInputEmail2">판매채널 </label>
             <select class="form-control" id="salechannel"  style="width: 120px;">
              <option class="option-22">eBay </option>
-             <option class="option-22">Amazon </option>
-             <option class="option-22">Etsy </option>
+             <!-- <option class="option-22">Amazon </option>
+             <option class="option-22">Etsy </option> -->
            </select>
          </div>
          <div class="form-group">
           <label for="exampleInputEmail2">정렬 순 </label>
-          <select class="form-control" id="exampleInputName2"  style="width: 150px;">
-            <option class="option-33">최신 주문 </option>
-            <option class="option-33">오래된 주문 </option>
+          <select class="form-control" id="table_delivery_sort"  style="width: 150px;">
+            <option class="option-33" value="desc">최신 주문 </option>
+            <option class="option-33" value="asc">오래된 주문 </option>
          </select>
        </div>
-       <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+       <!-- <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button> -->
      </form>
      <div class="table-responsive">
        <table class="table" id="table_delivery">
         <thead>
          <tr>
           <th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-          <th>일련번호</th>
-          <th>주문일자</th>
-          <th>판매채널</th>
-          <th>주문내역</th>
-          <th>주문자ID</th>
-          <th>진행현황</th>
+          <th style="width: 70px;">일련번호</th>
+          <th style="width: 120px;">주문일자</th>
+          <th style="width: 80px;">판매채널</th>
+          <th style="width: 150px;">주문내역</th>
+          <th style="width: 120px;">주문자ID</th>
+          <th style="width: 80px;">진행현황</th>
         </tr>
       </thead>
       <tbody>
@@ -202,43 +204,44 @@
     <form class="form-inline"  style="background: #ddd; padding: 30px 20px;margin: 30px 0px;">
      <div class="form-group">
       <label for="exampleInputName2">기간 </label>
-      <select class="form-control" id="exampleInputName2" style="width: 80px;">
+      <select class="form-control" id="daterange3" style="width: 80px;">
+      <option class="option-11" value="0">All </option>
        <option class="option-11" value="7">7일 </option>
        <option class="option-11" value="15">15일 </option>
        <option class="option-11" value="30">30일 </option>
        <option class="option-11" value="60">60일 </option>
        <option class="option-11" value="90">90일 </option>
-       <option class="option-11" value="">All </option>
+       
      </select>
    </div>
    <div class="form-group">
     <label for="exampleInputEmail2">판매채널 </label>
     <select class="form-control" id="salechannel"  style="width: 120px;">
      <option class="option-22">eBay </option>
-     <option class="option-22">Amazon </option>
-     <option class="option-22">Etsy </option>
+     <!-- <option class="option-22">Amazon </option>
+     <option class="option-22">Etsy </option> -->
    </select>
  </div>
  <div class="form-group">
   <label for="exampleInputEmail2">정렬 순 </label>
-  <select class="form-control" id="exampleInputName2"  style="width: 150px;">
-   <option class="option-33">최신 주문 </option>
-   <option class="option-33">오래된 주문 </option>
+  <select class="form-control" id="table_feedback_sort"  style="width: 150px;">
+   <option class="option-33" value="desc">최신 주문 </option>
+   <option class="option-33" value="asc">오래된 주문 </option>
  </select>
 </div>
-<button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button>
+<!-- <button type="submit" class="btn btn-primary">검색 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-search"></span></button> -->
 </form>
 <div class="table-responsive">
  <table class="table" id="table_feedback">
   <thead>
    <tr>
     <th><input id="order-select-all" type="checkbox" class="form-group tick"></th>
-    <th>일련번호</th>
-    <th>주문일자</th>
-    <th>판매채널</th>
-    <th>주문내역</th>
-    <th>주문자ID</th>
-    <th>진행현황</th>
+    <th style="width: 70px;">일련번호</th>
+    <th style="width: 120px;">주문일자</th>
+    <th style="width: 80px;">판매채널</th>
+    <th style="width: 150px;">주문내역</th>
+    <th style="width: 120px;">주문자ID</th>
+    <th style="width: 80px;">진행현황</th>
   </tr>
 </thead>
 <tbody>
@@ -1087,11 +1090,11 @@
 
       setTimeout(function(){ 
         if (orderItems>0) {
-          $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeIn();
+          $('#table_wrapper, #table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeIn();
         }
         else 
         {
-          $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
+          $('#table_wrapper, #table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
         }
       }, 100);
 		}
@@ -1240,9 +1243,9 @@
 		        "ajax": {
 		        	"url": "<?php echo base_url('/order/order_list')?>",
 		        	"type": "POST",
-		        	"dataType": "json",
-		        	"dataSrc": function (jsonData) {
-
+              "dataType": "json",
+              "data": function (jsonData) {
+                jsonData.date_range = $('#daterange1').val();
 		        		return jsonData.data;
 		        	}
 		        },
@@ -1253,6 +1256,14 @@
 		            "orderable": false, //set not orderable
               }],
             });
+
+      $('#daterange1').on('change', function() {
+         // var new_date_range = $(this).val();
+         table.draw();
+          $('#table').fadeOut('fast').fadeIn('slow');
+      });
+
+      table.order([2, 'desc']).draw();
 
       table_delivery = $('#table_delivery').DataTable({ 
        "sDom": '<t><"#info"lip><"#export"B>',
@@ -1266,7 +1277,8 @@
          "url": "<?php echo base_url('/order/order_list/beforedelivery')?>",
          "type": "POST",
          "dataType": "json",
-         "dataSrc": function (jsonData) {
+         "data": function (jsonData) {
+          jsonData.date_range = $('#daterange2').val();
           return jsonData.data;
         }
       },
@@ -1275,6 +1287,12 @@
         "orderable": false, 
       }],
     });
+
+      $('#daterange2').on('change', function() {
+         // var new_date_range = $(this).val();
+         table_delivery.draw();
+          $('#table_delivery').fadeOut('fast').fadeIn('slow');
+      });
 
       table_feedback = $('#table_feedback').DataTable({ 
        "sDom": '<t><"#info"lip><"#export"B>',
@@ -1288,7 +1306,8 @@
          "url": "<?php echo base_url('/order/order_list/shipped')?>",
          "type": "POST",
          "dataType": "json",
-         "dataSrc": function (jsonData) {
+         "data": function (jsonData) {
+          jsonData.date_range = $('#daterange3').val();
           return jsonData.data;
         }
       },
@@ -1297,6 +1316,12 @@
         "orderable": false, 
       }],
     });
+
+      $('#daterange3').on('change', function() {
+         // var new_date_range = $(this).val();
+         table_feedback.draw();
+          $('#table_feedback').fadeOut('fast').fadeIn('slow');
+      });
 
       $('#salechannel').on('change', function() {
         var myValue = 'amazon';
@@ -1315,7 +1340,7 @@
          "url": "<?php echo base_url('/order/msg_list')?>",
          "type": "POST",
          "dataType": "json",
-         "dataSrc": function (jsonData) {
+         "data": function (jsonData) {
           return jsonData.data;
         }
       },
@@ -1335,11 +1360,24 @@
       $('.buttons-html5').html('<button id="csvoutput" type="submit" class="btn btn-primary">엑셀 다운로드</button>');
     });
 
+    $('body').on('change','#table_main_sort', function(){
+      table.order([2, $(this).val()]).draw();
+    });
+
+    $('body').on('change','#table_delivery_sort', function(){
+      table_delivery.order([2, $(this).val()]).draw();
+    });
+
+    $('body').on('change','#table_feedback_sort', function(){
+      table_feedback.order([2, $(this).val()]).draw();
+    });
+
     $('#seller_msg_button').on('click', function() {
       var msg = $('#seller_msg_search').val();
 
       if (msg == "")
       {
+	alert("메시지를 입력하세요!");
 
       }
       else
@@ -1375,7 +1413,7 @@
 		var selected_tab = table;
 		$('.nav-orders').on('shown.bs.tab', function (e) {
       setTimeout(function() { 
-        $('#table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
+        $('#table_wrapper, #table_delivery_wrapper, #table_feedback_wrapper').find('#csvoutput').fadeOut();
       }, 500);
 			var target = $(e.target).attr("href");
 			switch(target)

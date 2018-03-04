@@ -36,33 +36,36 @@
                   <select class="form-control" id="salechannel"  style="width: 250px;">
                   <option class="option-33" value="">글로벌 판매 채널  </option>
                   <option class="option-33" value="ebay">Ebay  </option>
-                  <option class="option-33" value="amazon">Amazon  </option>
+                  <!-- <option class="option-33" value="amazon">Amazon  </option> -->
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary">연동추가</button>
+                <!-- <button type="submit" class="btn btn-primary">연동추가</button> -->
               </form>
             <div class="table-responsive"  style="">
             <table class="table table-borderless dataTable">
               <thead>
                 <tr>
                 
-                <th>프린트 수량 </th>
-                <th>사용자 ID</th>
-                <th>만료일</th>
-                <th>Action</th>
+                <th width="50px">글로벌채널</th>
+                <th width="150px">사용자 ID</th>
+                <th width="50px">생성 날짜</th>
+                <th width="50px">수정 날짜</th>
+                <th width="100px">Action</th>
               </tr>
               </thead>
               <tbody>
                 <?php if ($sellers) : ?>
-                  <?php foreach ($sellers as $seller) : ?>
+                  <?php foreach ($sellers as $k=>$seller) : ?>
                     <tr>
                       <td style="vertical-align: middle;"><?php echo $seller['sc_name'] ?></td>
-                      <td style="vertical-align: middle;"><?php echo $this->session->userdata('uname') ?></td>
+                      <td style="vertical-align: middle;"><?php echo $seller['sc_user_id'] ?></td>
                       <td style="vertical-align: middle;"><?php echo date('Y-m-d', strtotime($seller['created'])) ?></td>
+                      <td style="vertical-align: middle;"><?php echo date('Y-m-d', strtotime($seller['modified'])) ?></td>
                       <td>
-                        <select class="form-control" id="salechannelper" style="width: 80px;">
+                        <select class="form-control" id="salechannelper<?php echo $k; ?>" ref="<?php echo $seller['id']?>" style="width: 80px;">
                         <option class="option-11"> -- </option>
                         <option class="option-11" value="ebay">재인증 </option>
+                        <option class="option-11" value="delete">삭제 </option>
                         </select>
                       </td>
                     </tr>
@@ -100,7 +103,8 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script> 
     if ($(".dataTable").length) {
-      $(".dataTable").DataTable();
+      // $(".dataTable").DataTable();
+      var table = $('.dataTable').DataTable();
     }
     $('#DataTables_Table_0_length, #DataTables_Table_0_info').css({'font-size': '11px','padding-left':'10px'})
     $('#DataTables_Table_0_filter, #DataTables_Table_0_paginate').css({'font-size': '11px'})
@@ -115,7 +119,7 @@
           // console.log ('sales='+sales+' seller='+seller);
           if (sales == seller)
           {
-            $(this).prop('disabled', true);
+            // $(this).prop('disabled', true);
           }
         <?php endforeach; ?>
       }
@@ -128,19 +132,48 @@
       var top = (screen.height/2)-(600/2);
 
       if (salechannel == 'ebay') {
-        window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
+        $.ajax({
+          url  : '<?php echo base_url('/sellers/setsession/create'); ?>',
+          type : 'GET',
+          success : function(data) {
+            window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
+          }
+        });
+        //window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
       }
     });
 
-    $('#salechannelper').on('change', function() {
-      var salechannel = $("#salechannelper option:selected").val();
+    // $('#salechannelper').on('change', function() {
+
+    <?php if ($sellers) : ?>
+    <?php foreach ($sellers as $k=>$seller) : ?>
+    $('body').on('change','#salechannelper<?php echo $k?>', function() {
+      var salechannel = $("#salechannelper<?php echo $k?> option:selected").val();
       var left = (screen.width/2)-(1000/2);
       var top = (screen.height/2)-(600/2);
 
       if (salechannel == 'ebay') {
-        window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
+        $.ajax({
+          url  : '<?php echo base_url('/sellers/setsession/'); ?>'+'/'+$(this).attr('ref'),
+          type : 'GET',
+          success : function(data) {
+            window.open('<?php echo $ebay_link;?>','_blank','top='+top+',left='+left+', width=1000,height=600');
+          }
+        });
+      } else if (salechannel == 'delete') {
+        if (confirm('Are you sure you want to delete this channel?')) {
+           $.ajax({
+            url  : '<?php echo base_url('/sellers/delete/'); ?>'+'/'+$(this).attr('ref'),
+            type : 'GET',
+            success : function(data) {
+              window.location.reload();
+            }
+          }); 
+        }
       }
     });
+    <?php endforeach; ?>
+    <?php endif; ?>
 
     $('body').on('click','#refreshorders', function() {
         var $elem = $('#refreshorders');

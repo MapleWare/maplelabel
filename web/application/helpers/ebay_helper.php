@@ -99,7 +99,7 @@ if (!function_exists('get_ebay_userid'))
         $ci->load->database();
         $ci->load->model('saleschannel_model','saleschannel');
 
-        $verb = '';
+        $verb = 'GetUserProfile';
         $sc_details = $ci->saleschannel->get_user_channel($ci->session->userdata('uid'));
         $ebay_token = $sc_details['user_token'];
 
@@ -108,7 +108,7 @@ if (!function_exists('get_ebay_userid'))
                         'applicationID'=>$ci->config->item('appID'),
                         'certificateID'=>$ci->config->item('certID'),
                         'serverUrl'=>$ci->config->item('serverUrl'),
-                        'compatabilityLevel'=>$ci->config->item('compatabilityLevel'),
+                        'compatabilityLevel'=>'967',
                         'siteToUseID'=>$siteID, 
                         'callName'=>$verb);
         $ci->load->library('ebaylibrary',$params);
@@ -116,18 +116,17 @@ if (!function_exists('get_ebay_userid'))
 
         
         $requestXmlBody  = '<?xml version="1.0" encoding="utf-8" ?>';
-        $requestXmlBody .= '<GetSellerListRequest xmlns="urn:ebay:apis:eBLBaseComponents">
-  <RequesterCredentials>
-    <eBayAuthToken>'.$ebay_token.'</eBayAuthToken>
-  </RequesterCredentials>
-  <ErrorLanguage>en_US</ErrorLanguage>
-  <WarningLevel>High</WarningLevel>
-  <GranularityLevel>Coarse</GranularityLevel> 
+        $requestXmlBody .= '<GetUserProfileRequest xmlns="urn:ebay:apis:eBLBaseComponents">
   
-';
+                              <UserID>domeldon</UserID>
+                            </GetUserProfileRequest>';
+
+        //http://open.api.ebay.com/shopping?callname=GetUserProfile&responseencoding=XML&appid=Maplewar-9b5a-4329-8900-5702016d1fe3&siteid=0&version=967&UserID=harrypoter
+
+
         // $requestXmlBody .= "<Version>{$ci->config->item('compatabilityLevel')}</Version>";
         // $requestXmlBody .= "<SessionID>{$sessionid}</SessionID>";
-        $requestXmlBody .= '</GetSellerListRequest>';
+        // $requestXmlBody .= '</GetSellerListRequest>';
         $responseXml = $ci->ebaylibrary->sendHttpRequest($requestXmlBody);
 
         print_r($responseXml);
@@ -171,14 +170,33 @@ if (!function_exists('save_user_token'))
         $ci->session->set_userdata('ebay_token', $ebay_token);
 
         $user_channel = $ci->saleschannel->get_user_channel($ci->session->userdata('uid'));
+        
+        if ($ci->session->userdata('ebay_setting_new_token') == 'create') :
+            $ci->session->unset_userdata('ebay_setting_new_token');
+            $ci->saleschannel->create(array('ol_user_id'=>$ci->session->userdata('uid'),
+                                            'sc_name'=>'Ebay',
+                                            'sc_market'=>'ebay',
+                                            'status'=>'authorized',
+                                            'user_token'=>$ci->session->userdata('ebay_token'),
+                                            'sc_user_id'=>$_GET['username']));
+            return true;
+
+        elseif ($ci->session->userdata('ebay_setting_new_token') > 0) :
+            $ci->saleschannel->edit_specific(array('user_token'=>$ci->session->userdata('ebay_token'),'sc_user_id'=>$_GET['username']),$ci->session->userdata('ebay_setting_new_token'));
+            $ci->session->unset_userdata('ebay_setting_new_token');
+            return true;
+        endif;
+
+
         if (empty($user_channel))
             $ci->saleschannel->create(array('ol_user_id'=>$ci->session->userdata('uid'),
                                             'sc_name'=>'Ebay',
                                             'sc_market'=>'ebay',
                                             'status'=>'authorized',
-                                            'user_token'=>$ci->session->userdata('ebay_token')));
+                                            'user_token'=>$ci->session->userdata('ebay_token'),
+                                            'sc_user_id'=>$_GET['username']));
         else
-            $ci->saleschannel->edit(array('user_token'=>$ci->session->userdata('ebay_token')),$ci->session->userdata('uid'));
+            $ci->saleschannel->edit(array('user_token'=>$ci->session->userdata('ebay_token'),'sc_user_id'=>$_GET['username']),$ci->session->userdata('uid'));
 
         return true;
     }

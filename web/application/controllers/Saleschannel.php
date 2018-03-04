@@ -23,7 +23,8 @@ class Saleschannel extends CI_Controller
 		if ($this->session->userdata('uid') !== null)
 		{
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 
@@ -56,7 +57,7 @@ class Saleschannel extends CI_Controller
 			if ($this->session->userdata('ebay_session') !== NULL) save_user_token(0,'');
 			
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 

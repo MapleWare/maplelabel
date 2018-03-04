@@ -14,19 +14,42 @@ class Printlist_model extends CI_Model
 	public function create($values1, $values2) 
 	{
 		$this->db->set($values1);
-		$this->db->insert('print_list');
+		$result = $this->db->insert('print_list');
 
-		$insert_id = $this->db->insert_id();
-		if ($insert_id>0) 
-		{
+		$rows =  $this->db->affected_rows();
+    	if($rows>0) {
+			$this->update_clickid($values1['print_date']);
 			$this->deduct_subscript();
 			// $this->db->set(array('print_list_id'=>$insert_id,
 			// 					 'start_point'=>$values2['start_point'],));
 			// $this->db->insert('print_log');
 			// $this->db->insert_id();
-			return $insert_id;
+
+			
+			return true;
 		}
 		return false;
+	}
+
+
+	public function update_clickid($print_date) 
+	{
+		$click_info = $this->getclickid($print_date);
+		$this->db->query('update print_list
+						set click_id = '.$click_info['clickid'].' 
+						where ol_user_id ='. $this->session->userdata('uid').'
+						and print_date = "'. $print_date .'"');
+	}
+
+	public function getclickid($print_date)
+	{
+		$this->db->select("min(id) as clickid");
+		$this->db->where("ol_user_id", $this->session->userdata('uid'));
+		$this->db->where("print_date", $print_date);
+		$res = $this->db->get('print_list');
+		if ($res->num_rows()>0)
+			return $res->row_array();
+		return 0;
 	}
 
 	public function edit($values,$id)
@@ -71,6 +94,15 @@ class Printlist_model extends CI_Model
 		return $this->db->get('print_list')->row_array()['id'];
 	}
 
+	public function get_min_date_from_records()
+	{
+		$this->db->select("MIN(pl.print_date) as min_date");
+        $this->db->from('print_list pl');
+		$this->db->where('pl.ol_user_id', $this->session->userdata('uid'));
+		$query = $this->db->get();
+        return $query->row();
+	}
+
 	private function _get_query($custom_where = '', $dates = array())
     {
     	$this->db->select("pl.id,
@@ -81,11 +113,13 @@ class Printlist_model extends CI_Model
 						    case when pl.ship_method = 'post_office' then '우체국'
 							     when pl.ship_method = 'fedex' then 'Fedex'
 							     when pl.ship_method = 'dhl' then 'DHL' 
+							     when pl.ship_method IS NULL then '우체국' 
 							end as ship_method_name,
 						    case when pl.delivery_type = 'document' then '서장'
 							     when pl.delivery_type = 'cn22' then '소형포장(CN22)'
 							     when pl.delivery_type = 'kpacket' then 'K-Packet'
 							     when pl.delivery_type = 'ems' then 'EMS' 
+							     when pl.delivery_type IS NULL then '서장' 
 							end as delivery_type_name,
 							pl.is_ship_from, 
 							pl.is_ship_to, 
@@ -93,28 +127,31 @@ class Printlist_model extends CI_Model
 							pl.is_print_comment,
 							pl.is_print_logo,
 							lp.label_paper_name,
-							count(*) as count");
+							count(*) as count,
+							sc.sc_name");
         $this->db->from('print_list pl');
         $this->db->join('label_paper lp', 'pl.label_paper_id = lp.id', 'left');
         $this->db->join('sales_order so', 'pl.sales_order_id = so.id', 'left');
+        $this->db->join('sales_channel sc', 'so.sales_channel_id = sc.id', 'left');
 
-		$this->db->where('pl.ol_user_id', 1);
+		$this->db->where('pl.ol_user_id', $this->session->userdata('uid'));
 
-		$where = "pl.created between DATE_ADD(NOW(), interval -60 day ) and NOW()";
-		if (count($dates)>0) $where = "pl.created between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
+		$where = "pl.print_date between DATE_ADD(NOW(), interval -60 day ) and NOW()";
+		if (count($dates)>0) $where = "pl.print_date between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
 		$this->db->where($where);
 
 		if ($custom_where != '') $this->db->where($custom_where);
 
-		$this->db->group_by(array("pl.click_id", 
-								  "pl.ship_method", 
-								  "pl.delivery_type", 
-								  "pl.is_ship_from", 
-								  "pl.is_ship_to",
-								  "pl.is_cn22", 
-								  "pl.is_print_comment", 
-								  "pl.is_print_logo", 
-								  "lp.label_paper_name"));
+		$this->db->group_by(array("so.sc_ordered_id"));
+		// $this->db->group_by(array("pl.click_id", 
+		// 						  "pl.ship_method", 
+		// 						  "pl.delivery_type", 
+		// 						  "pl.is_ship_from", 
+		// 						  "pl.is_ship_to",
+		// 						  "pl.is_cn22", 
+		// 						  "pl.is_print_comment", 
+		// 						  "pl.is_print_logo", 
+		// 						  "lp.label_paper_name"));
 
         $i = 0;
         foreach ($this->column_search as $emp) // loop column 
@@ -238,6 +275,28 @@ class Printlist_model extends CI_Model
 		}
     }
 
+    public function get_epost_details($click_id) {
+    	$this->db->select("pl.sales_order_id, 
+    						sc.sc_name, 
+    						so.order_title,
+    						so.paid_item_cnt, 
+    						so.paid_amount, 
+    						so.paid_amount_currency,
+    						sosf.*,
+    						sost.*,
+    						sosi.*");
+        $this->db->from('print_list pl');
+        $this->db->join('sales_order so', 'pl.sales_order_id = so.id', 'left');
+        $this->db->join('sales_channel sc', 'so.sales_channel_id = so.id', 'left');
+        $this->db->join('sales_order_ship_from sosf', 'sosf.sales_order_id = so.id', 'left');
+        $this->db->join('sales_order_ship_to sost', 'sost.sales_order_id = so.id', 'left');
+        $this->db->join('sales_order_ship_item sosi', 'sosi.sales_order_id = so.id', 'left');
+		$this->db->where('pl.click_id', $click_id);
+		$query = $this->db->get();
+        // echo $this->db->last_query();
+        return $query->result();
+    }
+
     function get_epost($click_id)
     {
         $this->_get_query_epost($click_id);
@@ -251,6 +310,7 @@ class Printlist_model extends CI_Model
 		
         $this->db->limit($_POST['length'], $_POST['start']);
         $query = $this->db->get();
+        // echo $this->db->last_query();
         return $query->result();
     }
 

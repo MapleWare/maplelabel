@@ -74,6 +74,7 @@ class Notice_model extends CI_Model
     {
         // $this->db->where('id', $id);
         $this->db->delete('notice', array('id' => $id));
+        
         return $this->db->affected_rows();
     }
 

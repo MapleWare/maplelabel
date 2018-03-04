@@ -15,6 +15,8 @@ class Sellers_model extends CI_Model
 	{
 		$this->db->select("*");
 		$this->db->where("ol_user_id", $id);
+		$this->db->where("status", 'authorized');
+		$this->db->order_by('id', 'desc');
 		$res = $this->db->get('sales_channel');
 
 		if ($res->num_rows()>0)

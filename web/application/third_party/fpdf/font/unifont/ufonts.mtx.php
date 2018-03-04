@@ -13,7 +13,7 @@ $desc=array (
 );
 $up=-100;
 $ut=50;
-$ttffile='/Applications/XAMPP/xamppfiles/htdocs/onlabels/application/third_party/fpdf/font/unifont/ufonts.com_arial-unicode-ms.ttf';
+$ttffile='/var/www/html/application/third_party/fpdf/font/unifont/ufonts.com_arial-unicode-ms.ttf';
 $originalsize=24131012;
 $fontkey='kr';
 ?>

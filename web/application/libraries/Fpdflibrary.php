@@ -2,7 +2,7 @@
 
 require_once APPPATH.'third_party/fpdf/tfpdf.php';
 // require_once APPPATH.'third_party/fpdf/fpdf.php';
-// require_once('easyTable.php');
+require_once('easyTable.php');
 require_once('fpdi.php');
 
 
@@ -55,7 +55,7 @@ class Fpdflibrary extends tFPDF {
         endfor;
         $fromtopdfname = 'fromto-1-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
         $pdffiles[] = $fromtopdfname;
-        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$fromtopdfname,'F');
 
         if ($options['cn22']>0) :
             $pdf = new fpdflibrary('P','mm', array(132,190));
@@ -69,7 +69,7 @@ class Fpdflibrary extends tFPDF {
             endfor;
             $cn22pdfname = 'cn22-1-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
             $pdffiles[] = $cn22pdfname;
-            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$cn22pdfname,'F');
         endif;
 
         $paper_margin_left = $options['paper_margin_left'];
@@ -86,7 +86,7 @@ class Fpdflibrary extends tFPDF {
         $repeater=0;
         for ($i=0;$i<count($pdffiles);$i++) :
 
-            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
 
             if ($repeater>0) break;
             
@@ -105,7 +105,7 @@ class Fpdflibrary extends tFPDF {
 
                 if ($options['from']>0 || $options['to']>0):
                     //fromto
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[0]);
                     $templateId = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId, $separationwidth, $paper_margin_top, $print_box_width, $print_box_height);
                 endif;
@@ -115,7 +115,7 @@ class Fpdflibrary extends tFPDF {
                         $separationwidth = (($paper_margin_left*2)+$print_box_width);
                     endif; 
                     //cn22
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[1]);
                     $templateId1 = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId1, $separationwidth, $paper_margin_top, $print_box_width, $print_box_height);
                 endif;
@@ -148,10 +148,10 @@ class Fpdflibrary extends tFPDF {
         endfor;
 
         $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
-        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$final,'I');
 
         for ($i=0;$i<count($pdffiles);$i++) :
-            unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+            unlink($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
         endfor;
     }
 
@@ -181,7 +181,7 @@ class Fpdflibrary extends tFPDF {
         endfor;
         $fromtopdfname = 'fromto-2-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
         $pdffiles[] = $fromtopdfname;
-        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$fromtopdfname,'F');
         
         if ($options['cn22']>0) :
             $pdf = new fpdflibrary('P','mm', array(95,135));
@@ -195,7 +195,7 @@ class Fpdflibrary extends tFPDF {
             endfor;
             $cn22pdfname = 'cn22-2-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
             $pdffiles[] = $cn22pdfname;
-            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$cn22pdfname,'F');
         endif;
 
         $paper_margin_left = $options['paper_margin_left'];
@@ -212,7 +212,7 @@ class Fpdflibrary extends tFPDF {
         $repeater=0;
         for ($i=0;$i<count($pdffiles);$i++) :
 
-            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
 
             if ($repeater>0) break;
 
@@ -243,7 +243,7 @@ class Fpdflibrary extends tFPDF {
 
                 if ($options['from']>0 || $options['to']>0):
                     //fromto
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[0]);
                     $templateId = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId, $separationwidth, $separationtop, $print_box_width, $print_box_height);
                 endif;
@@ -253,7 +253,7 @@ class Fpdflibrary extends tFPDF {
                         $separationwidth = (($paper_margin_left*2)+$print_box_width);
                     endif; 
                     //cn22
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[1]);
                     $templateId1 = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId1, $separationwidth, $separationtop, $print_box_width, $print_box_height);
                 endif;
@@ -284,11 +284,346 @@ class Fpdflibrary extends tFPDF {
         endfor;
 
         $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
-        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$final,'I');
 
         for ($i=0;$i<count($pdffiles);$i++) :
-           unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+           unlink($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
         endfor;
+    }
+
+    function pdfepost($pdf, $detail) {
+
+        $pdf = new fpdflibrary('P','mm', 'A4');
+        $pdf->AddPage();
+        $pdf->AddFont('NanumBarunGothic','','NanumBarunGothic.ttf',true);
+        $pdf->AddFont('NanumBarunGothicBold','','NanumBarunGothicBold.ttf',true);
+
+        $table=new easyTable($pdf, '%{11, 25, 6, 10, 15, 6, 6, 21}', 'width:190; font-size:10; border-width:0; border:1; ');
+        $pdf->SetFont('NanumBarunGothic','',5);
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:1; min-height:9');
+        $pdf->Cell(127,5,'국제등기우편물접수증원부(을)',0,0,'C');
+        $table->easyCell("Receipt for Registered Items","valign:M; border:TL; colspan:5");
+        $pdf->Cell(63,5,'일련번호',0,0,'C');
+        $table->easyCell("Serial No.","valign:M; colspan:3; border:TLR; ");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0;');
+        $pdf->Cell(21,7,'발 송 인  주소.성명',0,0,'C');
+        $table->easyCell("Sender","valign:M; border:TL; rowspan:4");
+        $pdf->Cell(106,7,'',0,0,'C');
+        $table->easyCell("","border:TL; rowspan:4");
+        $table->easyCell("","colspan:3; border:T; rowspan:4");
+        $pdf->Cell(63,7,'접 수 일 부 인',0,0,'C');
+        $table->easyCell("Date stamp","valign:M; colspan:3; border:TLR; rowspan:4");
+        $table->printRow();
+
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0;');
+        $table->easyCell("","valign:M; ");
+        $table->easyCell($detail[0]->seller_first_name . ' ' .$detail[0]->seller_last_name ,"valign:M; colspan:3; align:L; font-size: 7");
+        $table->easyCell(" . ","valign:M; ");
+        
+        $table->easyCell("","valign:M; colspan:3; border:;");
+        $table->printRow();
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0');
+        $table->easyCell("","valign:M; ");
+        $table->easyCell($detail[0]->seller_street1 . ' ' .$detail[0]->seller_last_name ,"valign:M; colspan:3; align:L; font-size: 7");
+        $table->easyCell(" . ","valign:M; ");
+        
+        $table->easyCell("","valign:M; colspan:3; border:;");
+        $table->printRow();
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0');
+        $table->easyCell("","valign:M; ");
+        $table->easyCell($detail[0]->city . ' ' .$detail[0]->stateorprovice,"valign:M; colspan:3; align:L; font-size: 7");
+        $table->easyCell(" . ","valign:M; ");
+        
+        $table->easyCell("","valign:M; colspan:3; border:;");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0');
+        $table->easyCell("","vlign:M; border:LR;");
+        $table->easyCell($detail[0]->seller_country . ' ' .$detail[0]->seller_postal_code,"valign:M; colspan:3; align:L; font-size: 7");
+        $table->easyCell(" . ","valign:M; ");
+        
+        $table->easyCell("","valign:M; colspan:3; border:LR;");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7;');
+        $pdf->Cell(21,5,'등기번호',0,0,'C');
+        $table->easyCell("Item No.","valign:B");
+        $pdf->Cell(47,5,'수취인주소 . 성명',0,0,'C');
+        $table->easyCell("Address","valign:B");
+        $pdf->Cell(12,5,'도착국가',0,0,'C');
+        $table->easyCell("Country","valign:B");
+        $pdf->Cell(19,5,'보험가액',0,0,'C');
+        $table->easyCell("Insured Value","valign:B");
+        $pdf->Cell(28,5,'내용품명',0,0,'C');
+        $table->easyCell("Contents","valign:B");
+        $pdf->Cell(12,5,'내용품가액',0,0,'C');
+        $table->easyCell("*","valign:B");
+        $pdf->Cell(11,5,'중 량',0,0,'C');
+        $table->easyCell("Weight","valign:B");
+        $pdf->Cell(40,5,'요 금',0,0,'C');
+        $table->easyCell("Postage","valign:B");
+        $table->printRow();
+
+        // $pdf->SetFont('NanumBarunGothic','',5);
+        // print_r($detail);
+        foreach ($detail as $key => $row) : 
+            $table->rowStyle('align:{CCCCCCCC}; font-style:; min-height:25;');
+            $table->easyCell(($key+1).". ".$row->item_id,"font-size: 6; align:L; valign:M");
+            $table->easyCell($row->address_owner. ' ' .$row->street1 . ' ' .$row->street2 . ' ' . $row->city_name . ' ' .$row->stateorprovince. ' ' . $row->country_name . ' ' .$row->postal_code, 'font-size: 6; valign:M');
+            $table->easyCell($row->country_code, 'font-size: 6;valign:M');
+            $table->easyCell("SDR","align:R; font-size: 6;valign:M");
+            $table->easyCell($row->item_count.'x '.$row->item_name, 'font-size: 6;valign:M');
+            $table->easyCell("$".$row->item_price,"font-size: 6; align:R;valign:M");
+            $table->easyCell(" g","align:R;font-size: 6;valign:M");
+            $table->easyCell(" ");
+            $table->printRow();
+        endforeach;
+
+        // for($i=3;$i<=10;$i++) :
+        //     $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7');
+        //     $table->easyCell($i.". ","align:L");
+        //     $table->easyCell(" ");
+        //     $table->easyCell(" ");
+        //     $table->easyCell("SDR","align:R");
+        //     $table->easyCell(" ");
+        //     $table->easyCell("US $","align:R");
+        //     $table->easyCell(" g","align:R");
+        //     $table->easyCell(" ");
+        //     $table->printRow();
+        // endfor;
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7;');
+        $pdf->Cell(21,5,'편 별',0,0,'C');
+        $table->easyCell("Route","align:C; valign:B");
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'항공',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(36.5,10,'Air',0,0,'R');
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'선편',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(55.5,10,'Surface',0,0,'R');
+        $table->easyCell(" ","colspan:7; valign: M");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:4');
+        $table->easyCell("","colspan:8");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7');
+        $pdf->Cell(21,5,'종 별',0,0,'C');
+        $table->easyCell("Category","align:C; valign:B");
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'서장',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(39.5,10,'Letters',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'인쇄물',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(63.5,10,'Printed Papers',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(31,4,'소형포장물',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(87,10,'Small packets',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(31,4,'맹인용점자 ',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(117.5,10,'Literature for the blind',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'기타 ',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(133.5,10,'ETC',0,0,'R');
+        $table->easyCell("","colspan:7");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:4');
+        $table->easyCell("","colspan:8");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7');
+        $pdf->Cell(21,5,'특수취급',0,0,'C');
+        $table->easyCell("Special Services","align:C; valign:B");
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(30,4,'배달통지',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(39.5,10,'A.R.    ',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(30,4,'보험서장',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(66,10,'Insureance Docu',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'속달',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(89,10,'Fast Delivery',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(28,7,'IBRS ',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(105,10,' ',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'기타 ',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(121,10,'ETC',0,0,'R');
+        $table->easyCell("","colspan:7");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:4');
+        $table->easyCell("","colspan:8");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7');
+        $pdf->Cell(21,5,'요금납부',0,0,'C');
+        $table->easyCell("Postage Payment","align:C; valign:B");
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'우표',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(46,10,'Postage Stamp',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'별납',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(71,10,'Paid separately',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'후납',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(96.5,10,'Paid afterwards',0,0,'R');
+
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+2);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+5,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+6,$pdf->GetY()+2,$pdf->GetX()+6,$pdf->GetY()+5);
+        $pdf->Line($pdf->GetX()+10,$pdf->GetY()+2,$pdf->GetX()+10,$pdf->GetY()+5);
+        $pdf->Cell(27,4,'기타 ',0,0,'C');
+        $pdf->SetY($pdf->GetY());
+        $pdf->Cell(112.5,10,'ETC',0,0,'R');
+        $table->easyCell("","colspan:7");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:4');
+        $table->easyCell("","colspan:8");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; min-height:7');
+        $pdf->Cell(21,6,'비 고',0,0,'C');
+        $table->easyCell("Remarks","align:C; valign:B");
+        $table->easyCell("","align:C; valign:M; colspan:8");
+        $table->printRow();
+
+
+        $pdf->SetFont('NanumBarunGothic','',5);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0;');
+        $pdf->Cell(21,15,'참고사항',0,0,'C');
+        $table->easyCell("Note","valign:M; border:L; rowspan:4");
+
+        $pdf->SetX($pdf->GetX()+1);
+        $pdf->Cell(106,7,'1. 등기우편에대한 손해 배상은 내용품 가격에 관계없이 통당 정액(35.520원)을 배상하므로 유가증권,보석류등 귀중품은 지정된 우체국(통관국) ',0,0,'L');
+        $pdf->SetY($pdf->GetY());
+        $pdf->SetX($pdf->GetX()+22);
+        $pdf->Cell(126,11,'에서 보험서장을 이용하여야 분실,파손등 사고발생의 경우에 보험가액 범위내의 실제 손해액을 배상 받을수 있습니다',0,0,'L');
+
+        $pdf->SetX($pdf->GetX()-126);
+        $pdf->Cell(126,21,'2. 주소 성명은 로마문자와 아라비아 숫자로 기재하되 배달국가에서 일반적으로 통용되는 문자가 있는경우에는 그 문자로 함께',0,0,'L');
+        $pdf->SetX($pdf->GetX()-126);
+        $pdf->Cell(126,25,'기재할 수 있습니다. (나라의 이름과 도시의 이름은 대문자로 기재하고 밑줄을 긋지 마십시오)',0,0,'L');
+
+        $pdf->SetX($pdf->GetX()-126);
+        $pdf->Cell(126,33,'3. 소형포장물이나 물품에는 세관 표시(CN22) 또는 세관신고서(CN23)을 작성하여 붙여야 합니다',0,0,'L');
+
+        // 
+        $table->easyCell("","border:L; rowspan:4");
+        $table->easyCell("","colspan:3; border:R; rowspan:4");
+        $table->easyCell("","valign:M; colspan:3; border:R; rowspan:4");
+        $table->printRow();
+
+        $pdf->SetFont('NanumBarunGothicBold','',7);
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0; min-height:');
+        $pdf->SetX($pdf->GetX()-21);
+        $pdf->Cell(63,10,'담 당 자 서 명',0,0,'C');
+        $table->easyCell("","valign:M; ");
+        $table->easyCell("  ","valign:M; ");
+        $table->easyCell("  ","valign:M; colspan:3; ");
+        $table->easyCell("","valign:M; colspan:3; border:;");
+        $table->printRow();
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0; min-height:8');
+        $table->easyCell("","valign:M; ");
+        $table->easyCell(" ","valign:M; ");
+        $table->easyCell("  ","valign:M; colspan:3; ");
+        $table->easyCell("","valign:M; colspan:3; border:;");
+        $table->printRow();
+
+        $table->rowStyle('align:{CCCCCCCC}; font-style:;font-size: 5; border:0; min-height:10');
+        $table->easyCell("","vlign:T; border:B;");
+        $table->easyCell("  ","valign:T; border:B");
+        $table->easyCell("  ","valign:T; colspan:3; border:B");
+        $table->easyCell("","valign:T; colspan:3; border:B;");
+        $table->printRow();
+
+
+        $table->endTable();
+        $pdf->Output();
     }
 
     function pdf2x2fromto($pdf, $order, $options) {
@@ -317,7 +652,7 @@ class Fpdflibrary extends tFPDF {
         endfor;
         $fromtopdfname = 'fromto-3-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
         $pdffiles[] = $fromtopdfname;
-        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$fromtopdfname,'F');
+        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$fromtopdfname,'F');
         
         if ($options['cn22']>0) :
             $pdf = new fpdflibrary('P','mm', array(66, 96));
@@ -331,7 +666,7 @@ class Fpdflibrary extends tFPDF {
             endfor;
             $cn22pdfname = 'cn22-3-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
             $pdffiles[] = $cn22pdfname;
-            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$cn22pdfname,'F');
+            $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$cn22pdfname,'F');
         endif;
 
         $paper_margin_left = $options['paper_margin_left'];
@@ -348,7 +683,7 @@ class Fpdflibrary extends tFPDF {
         $repeater=0;
         for ($i=0;$i<count($pdffiles);$i++) :
 
-            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+            $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
 
             if ($repeater>0) break;
 
@@ -393,7 +728,7 @@ class Fpdflibrary extends tFPDF {
                 
                 if ($options['from']>0 || $options['to']>0):
                     //fromto
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[0]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[0]);
                     $templateId = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId, $separationwidth, $separationtop, $print_box_width, $print_box_height);
                 endif;
@@ -419,7 +754,7 @@ class Fpdflibrary extends tFPDF {
                     // endif;
 
                     //cn22
-                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[1]);
+                    $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[1]);
                     $templateId1 = $pdf1->importPage($p);
                     $pdf1->useTemplate($templateId1, $separationwidth, $separationtop, $print_box_width, $print_box_height);
                 endif;
@@ -445,10 +780,10 @@ class Fpdflibrary extends tFPDF {
         endfor;
 
         $final = 'final-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
-        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$final,'I');
+        $pdf1->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$final,'I');
 
         for ($i=0;$i<count($pdffiles);$i++) :
-           unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdffiles[$i]);
+           unlink($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdffiles[$i]);
         endfor;
     }
 
@@ -941,7 +1276,12 @@ endif;
         $pdf->Cell(25,4,'Country',0,1,'C');
 
         $pdf->SetXY($options['paper_margin_left']+87+$ValueToAdd,$options['paper_margin_top']+137);
-        $pdf->SetFont('Arial','B',16);
+	$xFontSize = 16;
+        $pdf->SetFont('Arial','B', $xFontSize);
+	while ( $pdf->GetStringWidth( $order['country_name'] ) > 40 ) {
+		$xFontSize--;
+		$pdf->SetFont('Arial','B',$xFontSize);
+	}
         $pdf->Cell(40,5,$order['country_name'],0,1,'C');
 
         $pdf->SetXY($options['paper_margin_left']+5+$ValueToAdd,$options['paper_margin_top']+149);
@@ -955,20 +1295,20 @@ endif;
         $pdf->SetXY($options['paper_margin_left']+8.5+$ValueToAdd,$options['paper_margin_top']+162);
         $pdf->MultiCell(115,5,$order['seller_msg'],0,'C');
 
-        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/onlables'.$order['id'].'.pdf','F');
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/onlables'.$order['id'].'.pdf','F');
 
         //generate
         // $pdfname = 'fromto-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
-        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname,'F');
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdfname,'F');
 
         //formulate
         // $pdf1=new fpdi('L'); // so we initiate exFPDF instead of FPDI
         // $pdf1->AddPage();
-        // $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname);
+        // $pdf1->setSourceFile($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdfname);
         // $tplIdx = $pdf1->importPage(1);
         // $pdf1->useTemplate($tplIdx, 0, 0, 264, 380);
         // $pdf1->Output();
-        // unlink($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname);
+        // unlink($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdfname);
     }
 
     function createAirMail2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order, $options)
@@ -1102,8 +1442,16 @@ endif;
         $pdf->SetFont('Arial','',10);
         $pdf->Cell(17,3,'Country',0,1,'C');
         $pdf->SetXY(70+$xToAdd,107+$yToAdd);
-        $pdf->SetFont('Arial','B',12);
+
+	$xFontSize = 12;
+        $pdf->SetFont('Arial','B', $xFontSize);
+	while ( $pdf->GetStringWidth( $order['country_name'] ) > 29 ) {
+		$xFontSize--;
+		$pdf->SetFont('Arial','B',$xFontSize);
+	}
         $pdf->Cell(29,3,$order['country_name'],0,1,'C');
+
+        $pdf->SetFont('Arial','B',12);
         $pdf->SetXY(12+$xToAdd,116+$yToAdd);
         $pdf->SetFont('Arial','',11);
         $pdf->Cell(18,3,'TEL',0,1,'C');
@@ -1255,8 +1603,18 @@ endif;
         $pdf->SetFont('Arial','',7);
         $pdf->Cell(14,2.7,'Country',0,1,'C');
         $pdf->SetXY(46+$xToAdd,71.7+$yToAdd);
-        $pdf->SetFont('Arial','B',8);
+
+
+	$xFontSize = 8;
+        $pdf->SetFont('Arial','B', $xFontSize);
+	while ( $pdf->GetStringWidth( $order['country_name'] ) > 20 ) {
+		$xFontSize--;
+		$pdf->SetFont('Arial','B',$xFontSize);
+	}
         $pdf->Cell(20,2.7,$order['country_name'],0,1,'C');
+
+
+
         $pdf->SetXY(4+$xToAdd,77.7+$yToAdd);
         $pdf->SetFont('Arial','',7);
         $pdf->Cell(12,2.5,'TEL',0,1,'C');
@@ -1404,8 +1762,8 @@ endif;
 
         // text for quantiy
         $pdf->SetFont('NanumBarunGothicBold','',9);
-        $pdf->SetXY(164+$ValueToAdd,$yValueToADd+87);
-        $pdf->MultiCell(70,11,$order['cnt'].'x '.$order['order_title'],0,'L');
+        $pdf->SetXY(164+$ValueToAdd,$yValueToADd+89);
+        $pdf->MultiCell(70,3,$order['cnt'].'x '.$order['order_title'],0,'L');
 
         $pdf->SetXY(238+$ValueToAdd,$yValueToADd+71);
         $pdf->SetFont('NanumBarunGothic','',10);
@@ -1470,14 +1828,20 @@ endif;
         $pdf->MultiCell(120,4.2,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
         $pdf->SetXY(163+$ValueToAdd,$yValueToADd+164);
         $pdf->MultiCell(120,4.5,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나 위험물품을 포함하지 않음을 증명합니다',0,'L');
+
         $pdf->SetXY(163+$ValueToAdd,$yValueToADd+176.5);
         $pdf->SetTextColor(0);
-        $pdf->SetFont('Arial','B',17);
-        $pdf->MultiCell(120,5,'Date and senders signature(8)',0,'L');
+        $pdf->SetFont('Arial','BU',15);
+        $pdf->MultiCell(60,5,"20".date("y.m.d"),0,'L');
+
+        $pdf->SetXY(223+$ValueToAdd,$yValueToADd+176.5);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial','BU',15);
+        $pdf->MultiCell(60,5,$order['seller_company_name'],0,'L');
 
         //generate
         // $pdfname = 'cn22-'.$options['uid'].'-'.$options['dimension'].'-'.$options['order_ids'].'.pdf';
-        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/onlabels/assets2/'.$pdfname,'F');
+        // $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/assets2/'.$pdfname,'F');
     }
 
     function createCustomsDeclaration2Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
@@ -1648,10 +2012,16 @@ endif;
         $pdf->MultiCell(87,3,'I. the undersinged, whose name and address are given on the item, ceritify that the particulars given in this declaration are correct and that this item dose not contain any dangerous article or articles prohibited by legislation or by postal or customs regulations',0,'L');
         $pdf->SetXY(111.5+$xToAdd,127.5+$yToAdd);
         $pdf->MultiCell(86,3,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나위험물품을 포함하지 않음을 증명합니다',0,'L');
+
         $pdf->SetXY(111.5+$xToAdd,134+$yToAdd);
         $pdf->SetTextColor(0);
-        $pdf->SetFont('Arial','B',9);
-        $pdf->MultiCell(87,5,'Date and senders signature(8)',0,'L');
+        $pdf->SetFont('Arial','BU',9);
+        $pdf->MultiCell(40,5,"20".date("y.m.d"),0,'L');
+
+        $pdf->SetXY(152+$xToAdd,134+$yToAdd);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial','BU',9);
+        $pdf->MultiCell(47.5,5,$order['seller_company_name'],0,'L');
     }
 
     function createCustomsDeclaration3Form($xToAdd = 0, $yToAdd = 0, $pdf, $order)
@@ -1824,10 +2194,18 @@ endif;
         $pdf->SetXY(74+$xToAdd,86.2+$yToAdd);
         $pdf->SetFont('NanumBarunGothic','',4.8);
         $pdf->MultiCell(61,2,'신고 서에 시고한 물품이 정확하며, 법류, 유편 및 관세법에 규정된 금지물품이나위험물품을 포함하지 않음을 증명합니다',0,'L');
+
+
         $pdf->SetXY(74+$xToAdd,91.5+$yToAdd);
         $pdf->SetTextColor(0);
-        $pdf->SetFont('Arial','B',7);
-        $pdf->MultiCell(61,2,'Date and senders signature(8)',0,'L');
+        $pdf->SetFont('Arial','BU',6);
+        $pdf->MultiCell(30,2,"20".date("y.m.d"),0,'L');
+
+        $pdf->SetXY(104+$xToAdd,91.5+$yToAdd);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial','BU',6);
+        $pdf->MultiCell(31,2,$order['seller_company_name'],0,'L');
+        $pdf->SetTextColor(0);
     }
 
     function createBoxForm($xToAdd = 0, $yToAdd = 0, $sizex, $sizey, $pdf, $order, $count=0, $options=array())

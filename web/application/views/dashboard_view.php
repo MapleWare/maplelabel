@@ -39,14 +39,14 @@
                       <td>eBay</td>
                       <td class="text-right"><?php echo sprintf('%02d', $total_orders); ?></td>
                     </tr>
-                    <tr>
+                   <!--  <tr>
                       <td>Amazon</td>
                       <td class="text-right">00</td>
                     </tr>
                     <tr>
                       <td>Esty</td>
                       <td class="text-right">00</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
               </table>
             </div>
@@ -77,8 +77,8 @@
                         <strong class="pull-right"><?php echo $printed_count_total; ?></strong>
                         <div class="collapse in" id="collapseExample" style="padding: 10px 0px 10px 15px;">
                           <p>eBay<strong  class="pull-right"><?php echo $ebay_count; ?></strong></p>
-                          <p>Amazon<strong class="pull-right"><?php echo $amazon_count; ?></strong></p>
-                          <p>Esty<strong class="pull-right"><?php echo $esty_count; ?></strong></p>
+                          <!-- <p>Amazon<strong class="pull-right"><?php echo $amazon_count; ?></strong></p> -->
+                          <!-- <p>Esty<strong class="pull-right"><?php echo $esty_count; ?></strong></p> -->
                           
                         </div>
                       </td>
@@ -251,15 +251,19 @@
               fontSize: 20,
               fontFamily: "Helvetica"        
             },
-            /*theme: "theme2",*/
+            // theme: "theme2",
             data: [{
               type: "column",
-              /*showInLegend: true,*/
+              // showInLegend: true,
               dataPoints: [
-
-              <?php foreach($graph as $row) : ?>
-                { legendText: "<?php echo $row['printed_month'] ?>월", y: <?php echo $row['count(*)'] ?>, label: "<?php echo $row['printed_month'] ?>월" },
-              <?php endforeach; ?>
+              <?php if ($graph) : ?>
+                <?php foreach($graph as $row) : ?>
+                  { legendText: "<?php echo $row['printed_month'] ?>월", y: <?php echo $row['count(*)'] ?>, label: "<?php echo $row['printed_month'] ?>월" },
+                <?php endforeach; ?>
+              <?php else : ?>
+                 { legendText: "<?php echo date("M", strtotime( "-1 month" ) ); ?>월", y: 0, label: "<?php echo date("M", strtotime( "-1 month" ) ); ?>월" },
+                 { legendText: "<?php echo date('M') ?>월", y: 0, label: "<?php echo date('M') ?>월" },
+              <?php endif; ?>
 
               // { legendText: "4월", y: 45, label: "4월" },
               // { legendText: "5월", y: 31, label: "5월" },

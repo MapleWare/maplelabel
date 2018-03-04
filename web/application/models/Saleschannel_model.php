@@ -29,6 +29,18 @@ class Saleschannel_model extends CI_Model
 		return false;
 	}
 
+	public function edit_specific($values,$id)
+	{
+		$this->db->set($values);
+		$this->db->where('id', $id);
+		// $this->db->where('sc_market', 'ebay');
+		$this->db->update('sales_channel');
+		// echo $this->db->last_query();
+		if ($this->db->affected_rows())
+			return true;
+		return false;
+	}
+
 	public function get_user_channel($id, $channel = 'ebay')
 	{
 		$this->db->select("*");

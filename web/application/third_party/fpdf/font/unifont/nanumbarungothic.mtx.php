@@ -13,7 +13,7 @@ $desc=array (
 );
 $up=-260;
 $ut=58;
-$ttffile='/Applications/XAMPP/xamppfiles/htdocs/onlabels/application/third_party/fpdf/font/unifont/NanumBarunGothic.ttf';
+$ttffile='/var/www/html/application/third_party/fpdf/font/unifont/NanumBarunGothic.ttf';
 $originalsize=4184028;
 $fontkey='nanumbarungothic';
 ?>

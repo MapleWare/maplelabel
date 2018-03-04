@@ -58,3 +58,19 @@
       </div>
       <!--/.footer-bottom--> 
 </footer>
+<iframe frameborder="0" title="빈프레임" name="data-process" style="display:none;display:block\9;display:block\0/;position:absolute;top:-1px;left:-1px;z-index:-1;width:100%;height:100%;padding:1px;filter:alpha(opacity=0);opacity:0"></iframe>
+
+<script>
+function callShippingUpdate(callUrl, idname, iconidname) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+	document.getElementById(idname).innerHTML =
+	      this.responseText;
+	if ( this.responseText.length < 5 ) document.getElementById(iconidname).style = "opacity:1.0";
+    }
+  };
+  xhttp.open("GET", callUrl, true);
+  xhttp.send();
+}
+</script>

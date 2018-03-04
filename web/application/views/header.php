@@ -361,11 +361,13 @@
                                           <a href="<?php echo base_url(); ?>sellers/index"><img src="<?php echo base_url("assets2/img/new/setting.png"); ?>" class="right10"/> 셀러설정</a>
                                           <a href="<?php echo base_url(); ?>layout/index"><img src="<?php echo base_url("assets2/img/new/print.png"); ?>" class="right10"/> 프린팅</a>
                                           <a href="<?php echo base_url(); ?>upgrade/index"s><img src="<?php echo base_url("assets2/img/new/up.png"); ?>" class="right10"/> 업그레이드</a>
+                                          <a href="<?php echo base_url(); ?>index.php/home/logout"><img src="<?php echo base_url("assets2/img/new/logout.png"); ?>" class="right10"/> 로그아웃</a>
+
                                           <br>
                                     </div>
                               </li>       
                               <!-- <li><a href="<?php echo base_url(); ?>profile/index"> <?php echo $this->session->userdata('uname'); ?></a></li> -->
-                              <li><a href="<?php echo base_url(); ?>index.php/home/logout">도움말</a></li>
+                              <li><a href="#">도움말</a></li>
                         </ul>
                   </div><!--/.nav-collapse -->
             </div>

@@ -57,7 +57,8 @@ class Dashboard extends CI_Controller
 			//print_r($data['graph']);
 
 			$details = $this->user_model->get_user_by_id($uid);
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 

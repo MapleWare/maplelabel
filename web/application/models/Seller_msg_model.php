@@ -44,7 +44,7 @@ class Seller_msg_model extends CI_Model
     					   seller_msg_template.seller_msg');
         $this->db->from('seller_msg_template');
         $this->db->join('ol_user', 'seller_msg_template.ol_user_id = ol_user.id', 'left');
-		$this->db->where('seller_msg_template.ol_user_id', 1);
+		$this->db->where('seller_msg_template.ol_user_id', $this->session->userdata('uid'));
 
         $i = 0;
         foreach ($this->column_search as $emp) // loop column 

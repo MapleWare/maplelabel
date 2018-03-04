@@ -56,9 +56,9 @@ class Order_model extends CI_Model
 	    				   shipitem.item_price_currency,
 	    				   msg_template.seller_msg');
         $this->db->from($this->table);
-        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'left');
-        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'left');
-        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'left');
+        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
+        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
 
         $this->db->join('print_list printlist', 'ord.id = printlist.sales_order_id', 'left');
@@ -84,8 +84,9 @@ class Order_model extends CI_Model
 		return false;
 	}
 
-    private function _get_query($custom_where = '', $dates = array())
+    private function _get_query($custom_where = '', $dates = array(), $date_range)
     {
+    	// if ($date_range == "") $date_range = 7;
     	$this->db->select('ord.id,
     					   ord.sc_ordered_id, 
 	    				   ord.ordered_date, 
@@ -133,9 +134,9 @@ class Order_model extends CI_Model
 	    				   printlist.is_print_comment,
 	    				   printlog.start_point');
         $this->db->from($this->table);
-        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'left');
-        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'left');
-        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'left');
+        $this->db->join('sales_channel channel', 'ord.sales_channel_id = channel.id', 'inner');
+        $this->db->join('sales_order_ship_from shipfrom', 'ord.id = shipfrom.sales_order_id', 'inner');
+        $this->db->join('sales_order_ship_item shipitem', 'ord.id = shipitem.sales_order_id', 'inner');
         $this->db->join('sales_order_ship_to shipto', 'ord.id = shipto.sales_order_id', 'left');
 
 
@@ -143,9 +144,15 @@ class Order_model extends CI_Model
         $this->db->join('print_log printlog', 'printlist.id = printlog.print_list_id', 'left');
 
 		$this->db->where('ord.ol_user_id', $this->session->userdata('uid'));
-		$where = "ord.ordered_date between DATE_ADD(NOW(), interval -180 day ) and NOW()";
-		if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
-		$this->db->where($where);
+		
+		if ($date_range>0) 
+		{
+			$where = "ord.ordered_date between DATE_ADD(NOW(), interval -".$date_range." day ) and NOW()";
+			$this->db->where($where);
+		}
+
+		//if (count($dates)>0) $where = "printlist.created between '".$dates['from_date']."' and DATE_ADD('".$dates['to_date']."', INTERVAL 1 DAY)";
+		// $this->db->where($where);
 
 		if ($custom_where != '') $this->db->where($custom_where);
 
@@ -188,9 +195,9 @@ class Order_model extends CI_Model
 		}
     }
 
-    function get_orders($where = '', $dates = array())
+    function get_orders($where = '', $dates = array(), $date_range)
     {
-        $this->_get_query($where, $dates);
+        $this->_get_query($where, $dates, $date_range);
 		if(isset($_POST['length']) && $_POST['length'] < 1) {
 			$_POST['length']= '10';
 		} else
@@ -206,18 +213,19 @@ class Order_model extends CI_Model
         return $query->result();
     }
 
-    function count_filtered($where = '', $dates = array())
+    function count_filtered($where = '', $dates = array(), $date_range)
     {
-        $this->_get_query($where, $dates);
+        $this->_get_query($where, $dates, $date_range);
         $query = $this->db->get();
         return $query->num_rows();
     }
 
-    public function count_all($where = '', $dates = array())
+    public function count_all($where = '', $dates = array(), $date_range)
     {
         //$this->db->from($this->table);
-        $this->_get_query($where, $dates);
+        $this->_get_query($where, $dates, $date_range);
         $query = $this->db->get();
+        // echo $this->db->last_query();
         return $query->num_rows();
         // return $this->db->count_all_results();
     }

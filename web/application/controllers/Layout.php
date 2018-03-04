@@ -25,7 +25,8 @@ class Layout extends CI_Controller
 		{
 			$uid = $this->session->userdata('uid');
 			$details = $this->user_model->get_user_by_id($uid);
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 
@@ -65,7 +66,7 @@ class Layout extends CI_Controller
 			$info['manufacturer'] = $default_info['manufacturer'];
 			$info['label_paper_code'] = $default_info['label_paper_code'];
 			$info['url_desc'] = $default_info['url_desc'];
-			$info['cols'] = $default_info['rows'];
+			$info['cols'] = $default_info['cols'];
 			$info['rows'] = $default_info['rows'];
 			$info['paper_height'] = $default_info['paper_height'];
 			$info['paper_width'] = $default_info['paper_width'];

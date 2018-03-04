@@ -94,7 +94,7 @@
 
     function closeWindow() {
       setTimeout(function() {
-        window.opener.location.href = "<?php echo base_url('dashboard/index') ?>";
+        window.opener.location.href = "<?php echo base_url('sellers/index') ?>";
         window.close();
       }, 3000);
     }

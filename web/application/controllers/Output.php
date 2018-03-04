@@ -30,7 +30,8 @@ class Output extends CI_Controller
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['print_labels'] = $this->print_label->get_print_labels();
 
 			$data['title'] = 'Printing Management'; 
@@ -44,8 +45,13 @@ class Output extends CI_Controller
 	public function ajax_list()
     {
     	$post = $this->input->post();
-    	$from_date = date("Y-m-d", strtotime($post['from_date']));
+    	
     	$to_date = date("Y-m-d", strtotime($post['to_date']));
+
+    	$min_date = $this->print_list->get_min_date_from_records();
+    	if ($min_date) $from_date = date("Y-m-d", strtotime($min_date->min_date));
+    	else $from_date = date("Y-m-d", strtotime($post['from_date']));
+
     	$dates = array('from_date'=>$from_date, 
     				   'to_date'=>$to_date);
         $list = $this->print_list->get_printlist("", $dates);       
@@ -54,7 +60,7 @@ class Output extends CI_Controller
         foreach ($list as $orders) {
 	        $no++;
 	        $row = array();
-	        $row[] = '<b>'.$orders->click_id.'</b>'; 
+	        $row[] = '<b>'.$orders->sc_ordered_id.'</b>'; 
 	        $row[] = date("Y.m.d h:i A",strtotime($orders->created));
 	        $row[] = $orders->count;
 	        $isfrom = $orders->is_ship_from==1?'From':'';
@@ -77,7 +83,7 @@ class Output extends CI_Controller
 	        $row[] = '<select class="form-control" id="reprocess" style="width: 100px;">
                       	<option class="option-11">선택  </option>
                       	<option value="'.$orders->sc_ordered_id.'" class="option-11">PDF </option>
-                      	<option value="'.$orders->id.'" class="option-11">국제우편물접수출력 </option>
+                      	<option value="'.$orders->click_id.'" class="option-11">국제우편물접수출력 </option>
                       </select>';
 
 	        $data[] = $row;

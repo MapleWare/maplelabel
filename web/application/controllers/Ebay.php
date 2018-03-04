@@ -26,13 +26,26 @@ class Ebay extends CI_Controller
         $sessionid = $this->session->userdata('ebay_session');
         $ebay_token = get_ebay_token($siteID, $RuName, $sessionid);
 
-        if (empty($ebay_token))
-        {
-            redirect('saleschannel/index');
-        }
+        //if (empty($ebay_token))
+        //{
+        //    redirect('saleschannel/index');
+        //}
 
         $this->session->set_userdata('ebay_token', $ebay_token);
         // $this->session->userdata('ebay_token');
         $this->saleschannel->edit (array('user_token'=>$this->session->userdata('ebay_token')),1);
+    }
+
+    public function showToken()
+    {
+        $RuName = "";
+        $siteID = 0;
+        $sessionid = $this->session->userdata('ebay_session');
+        $ebay_token = get_ebay_token($siteID, 'FetchToken', $RuName, $sessionid);
+
+        if (strlen($ebay_token)>0)
+            echo $ebay_token;
+        else 
+            echo 'no token retrieve yet, please login to ebay first';
     }
 }

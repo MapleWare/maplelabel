@@ -30,7 +30,8 @@ class Product extends CI_Controller
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['print_labels'] = $this->print_label->get_print_labels();
 
 			$data['title'] = 'Product Management'; 

@@ -32,7 +32,7 @@ class Order extends CI_Controller
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 			$data['print_labels'] = $this->print_label->get_info($this->session->userdata('uid')); //$this->print_label->get_print_labels();
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 
 			$data['title'] = 'Order Management'; 
 			$this->load->view('header', $data);
@@ -46,6 +46,14 @@ class Order extends CI_Controller
 	{
 		$order_ids = $_POST['ids'];
 		echo json_encode(encode($order_ids));
+	}
+
+	public function epost($id)
+	{
+		$outputdetail = $this->print_list->get_epost_details($id);
+		// print_r($outputdetail);
+		$pdf = new fpdflibrary('P', 'mm', 'A4');
+		$this->fpdflibrary->pdfepost($pdf, $outputdetail);
 	}
 
 	public function generate($ids) 
@@ -69,15 +77,18 @@ class Order extends CI_Controller
 		$is_print_comment = 0;
 		if ($msg_template>0) $is_print_comment = 1;
 
+		$label_paper_info = $this->print_label->detail($this->session->userdata('uid'), $dimension);
+		$label_id = $dimension;
+		if ($label_paper_info != 0) $label_id = $label_paper_info['id'];
+
 		for ($i=0; $i<count($order_ids); $i++)
 		{
 			$order = $this->orders->get_specific_order($order_ids[$i]);
 			$this->orders->edit(array('print_status'=>'postprint'),$order_ids[$i]);
 
-
 			$print_list_maxid = ($this->print_list->getmaxid()+1);
 			$printlist = array('id'=>$print_list_maxid,
-							   'pdf_file'=>$dimension,
+							   // 'pdf_file'=>$dimension,
 							   'ol_user_id'=>$this->session->userdata('uid'),
 							   'sales_order_id'=>$order['id'],
 							   'pdf_down_cnt'=>1,
@@ -85,12 +96,11 @@ class Order extends CI_Controller
 							   'is_ship_to'=>$to_toggle,
 							   'is_cn22'=>$cn22_toggle,
 							   'seller_msg_template_id'=>$msg_template,
-							   'is_print_comment'=>$is_print_comment);
+							   'is_print_comment'=>$is_print_comment,
+							   'label_paper_id'=>$label_id);
 			$printlog = array('start_point'=>$startpoint);
 			$check_print_list = $this->print_list->get_order($order['id']);
 
-
-			
 			if ($check_print_list == 0)
 			{
 				$printlist['print_date'] = date('Y-m-d H:i:s');
@@ -98,13 +108,14 @@ class Order extends CI_Controller
 			}
 			else
 			{
-				$new_printlist = array('pdf_file'=>$dimension,
-									   'pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1),
+				// 'pdf_file'=>$dimension,
+				$new_printlist = array('pdf_down_cnt'=>($check_print_list['pdf_down_cnt']+1),
 									   'is_ship_from'=>$from_toggle,
 							   		   'is_ship_to'=>$to_toggle,
 							           'is_cn22'=>$cn22_toggle,
 							           'seller_msg_template_id'=>$msg_template,
-							           'is_print_comment'=>$is_print_comment);
+							           'is_print_comment'=>$is_print_comment,
+							   		   'label_paper_id'=>$label_id);
 				$new_printlist['modified'] = date('Y-m-d H:i:s');
 				$this->print_list->edit($new_printlist, $check_print_list['id']);
 			}
@@ -164,19 +175,27 @@ class Order extends CI_Controller
 		}
 	}
 
-	public function order_list($where = 'preprint')
+	public function order_list($where = '')
     {
+    	$post = $this->input->post();
+
+    	$daterange = $post['date_range'];
+
+    	$query = '';
     	switch ($where) {
     		case 'preprint':
     		case 'postprint':
     			$query = "print_status = '{$where}'";
     			break;
     		case 'beforedelivery':
+    			$query = "print_status = 'preprint'";
+    			// $query = "delivery_status = '{$where}'";
+    			break;
     		case 'shipped':
-    			$query = "delivery_status = '{$where}'";
+    			$query = "feedback_status = 'n'";
     			break;
     	}
-        $list = $this->orders->get_orders($query);
+        $list = $this->orders->get_orders($query, array(), $daterange);
         $data = array();
         $no = $_POST['start'];
 
@@ -201,25 +220,36 @@ class Order extends CI_Controller
 	        
 	        $row[] = $orders->sc_market;
 	        
-	        $row[] = $orders->order_title."<br>수량 : ".$orders->cnt."개 <br>가격 : ".$orders->amount.
-	        '<br><br><a class="collapse_tbl" role="button" data-toggle="collapse" href="#no'.$no.'" aria-expanded="false" aria-controls="#'.$no.'">
+	        $row[] = $orders->order_title."<br>수량 : ".$orders->cnt."개 <br>가격 : ".$orders->item_price_currency. " " .$orders->amount.
+	        '<br><br><a class="collapse_tbl" role="button" data-toggle="collapse" href="#'.$where.'no'.$no.'" aria-expanded="false" aria-controls="#'.$no.'">
 				<span class="fa fa-caret-right"> </span> 배송정보
 				</a>
-				<div class="collapse out" id="no'.$no.'">
-				주문자   :  '.$orders->seller_first_name.' '.$orders->seller_last_name.' <br/>
-				연략처   :  '.$orders->seller_phone_no.' <br/>
+				<div class="collapse out" id="'.$where.'no'.$no.'">
+				주문자   :  '.$orders->name.' <br/>
+				연략처   :  '.$orders->shipto_phone_no.' <br/>
 				Email  : - <br/>
 				주소<br/>
-					 '.$orders->seller_street1.' <br/>
-					 '.$orders->seller_street2.'<br/>
-					 '.$orders->seller_country.'<br/>
+					 '.$orders->street1.' <br/>
+					 '.$orders->street2.'<br/>
+					 '.$orders->country_name.'<br/>
 				</div>';
 	        
+	        $style_shipping = 'style="opacity:0.5"';
 	        $style_print = 'style="opacity:0.5"';
+	        if ($orders->delivery_status == 'shipped') $style_shipping = 'style="opacity:1"'; 
 	        if ($orders->print_status == 'postprint') $style_print = 'style="opacity:1"'; 
-	        $row[] = $orders->order_user_name."<br>"."피드백 : ".$orders->feedback_score."점 주문수 : ".$orders->cnt."회";
-	        $row[] = '<span><img '.$style_print.' src="'.base_url("assets2/img/icon-1.png").'"></span>
-					  <span><img src="'.base_url("assets2/img/icon-3.png").'"></span>
+	        // $row[] = $orders->order_user_name."<br>"."피드백 : ".$orders->feedback_score."점 주문수 : ".$orders->cnt."회";
+		$server_gubun_dir = "";
+		if ($_SERVER['HTTP_HOST'] == 'stg.onlabels.co.kr') {
+			$server_gubun_dir = "-stg";
+		}
+			
+	        $shpping_status = '<a href="/data-integrate'.$server_gubun_dir.'/ebay/updateShippingStatus.php?sales_order_id='.$orders->id.'" target="data-process" id="alinkso'.$orders->id.'">Unshipped</a>';
+	        $shpping_status = '<a href=javascript:callShippingUpdate("/data-integrate'.$server_gubun_dir.'/ebay/updateShippingStatus.php?sales_order_id='.$orders->id.'","alinkso'.$orders->id.'","so_icon'.$orders->id.'") id="alinkso'.$orders->id.'">Unshipped</a>';
+		if ($orders->delivery_status == 'shipped') $shpping_status = "";
+	        $row[] = $orders->order_user_name.'<br/>'.$shpping_status;
+	        $row[] = '<span><img '.$style_shipping.' src="'.base_url("assets2/img/icon-1.png").'" id="so_icon'.$orders->id.'"></span>
+					  <span><img '.$style_print.' src="'.base_url("assets2/img/icon-3.png").'"></span>
 					  <span><img src="'.base_url("assets2/img/icon-4.png").'"></span>';
 
 	        $data[] = $row;
@@ -228,8 +258,8 @@ class Order extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_all($query),
-            "recordsFiltered" => $this->orders->count_filtered($query),
+            "recordsTotal" => $this->orders->count_all($query, array(), $daterange),
+            "recordsFiltered" => $this->orders->count_filtered($query, array(), $daterange),
             "data" => $data,
         );
         //output to json format

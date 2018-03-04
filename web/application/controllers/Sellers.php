@@ -18,13 +18,24 @@ class Sellers extends CI_Controller
 	        endif; 
 		}
 	}
+
+	function setsession($kind)
+	{
+		$this->session->set_userdata('ebay_setting_new_token', $kind);
+	}
+
+	function delete($id) 
+	{
+		$this->sellers->edit(array('status'=>'removed'),$id);
+	}
 	
 	function index()
 	{
 		if ($this->session->userdata('uid') !== null)
 		{
 			$details = $this->user_model->get_user_by_id($this->session->userdata('uid'));
-			$data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			// $data['total_orders'] = $this->orders->count_all("print_status = 'preprint'");
+			$data['total_orders'] = $this->orders->count_all("",array(),1);
 			$data['uname'] = $details[0]->username;
 			$data['uemail'] = $details[0]->email;
 			
